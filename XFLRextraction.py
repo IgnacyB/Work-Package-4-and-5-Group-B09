@@ -1,3 +1,4 @@
+
 def extract_main_wing_data(filepath):
     y_span = []
     Cl = []
