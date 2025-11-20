@@ -43,7 +43,7 @@ def extract_main_wing_data(filepath):
 '''
 # Example usage:
 file_path = "MainWing_a=10.00_v=10.00ms.txt"
-y, cl, cm, cd_i = extract_main_wing_data(file_path)
+y, cl, cm, cd_i, CL= extract_main_wing_data(file_path)
 
 print("y-span:", y)
 print("Cl:", cl)
