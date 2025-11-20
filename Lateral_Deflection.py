@@ -1,8 +1,6 @@
-import math as np
-import scipy as sp
-#from scipy.integrate import dblquad
 
-# lateral deflection d_y
+import scipy as sp
+
 
 E = float(input("Material Young's Modulus: "))
 
