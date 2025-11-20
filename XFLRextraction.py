@@ -38,7 +38,7 @@ def extract_main_wing_data(filepath):
 
         i += 1
 
-    return y_span, Cl, Cm, Cd_i, CL_wing
+    return y_span, Cl, Cd_i, Cm, CL_wing
 
 '''
 # Example usage:
