@@ -10,7 +10,8 @@ ylst,cllst,cdlst,cmlst,CL0 = extract_main_wing_data("MainWing_a=0.00_v=10.00ms.t
 fcl0,fcd0,fcm0 = interpolate(ylst,cllst,cdlst,cmlst)
 
 Cl = linear_model(fcl0,fcl10,CL10,CL0)
-
+Cd = linear_model(fcd0,fcd10,CL10,CL0)
+Cm = linear_model(fcm0,fcm10,CL10,CL0)
 
 
 """
