@@ -8,6 +8,11 @@ def extract_main_wing_data(filepath):
     with open(filepath, 'r') as f:
         lines = f.readlines()
 
+    # Find the Cl of the whole wing
+    line10 = lines[9].strip()
+    CL_wing = float(line10.split("=")[1].strip())
+
+
     # Locate the "Main Wing" section
     i = 0
     while i < len(lines) and "Main Wing" not in lines[i]:
@@ -33,9 +38,9 @@ def extract_main_wing_data(filepath):
 
         i += 1
 
-    return y_span, Cl, Cm, Cd_i
+    return y_span, Cl, Cm, Cd_i, CL_wing
 
-
+'''
 # Example usage:
 file_path = "MainWing_a=10.00_v=10.00ms.txt"
 y, cl, cm, cd_i = extract_main_wing_data(file_path)
@@ -44,3 +49,4 @@ print("y-span:", y)
 print("Cl:", cl)
 print("Cm:", cm)
 print("Cd_i:", cd_i)
+'''
