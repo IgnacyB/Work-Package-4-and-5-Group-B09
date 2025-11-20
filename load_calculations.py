@@ -23,7 +23,6 @@ def weight_distribution(mass_wing, b, c_r, c_t):
     return w_dist
 
 # create distribution function and plot from 0 to b/2
-y_0 = b / 2 * c_r / (c_r - c_t)
 w_dist = weight_distribution(mass_wing, b, c_r, c_t)
 y = np.linspace(0, b/2, 500)
 w = w_dist(y)
@@ -32,7 +31,8 @@ plt.figure()
 plt.plot(y, w, lw=2)
 plt.xlabel("Spanwise coordinate y (m)")
 plt.ylabel("Weight per unit length w(y) (N/m)")
-plt.title("Wing weight distribution (half-span)")
+plt.title("Wing weight distribution (0 to b/2)")
 plt.grid(True)
+plt.ylim(bottom=0)
 plt.tight_layout()
 plt.show()
