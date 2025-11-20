@@ -1,6 +1,8 @@
 def extract_main_wing_data(filepath):
     y_span = []
     Cl = []
+    Cm = []
+    Cd_i = []
 
     with open(filepath, 'r') as f:
         lines = f.readlines()
@@ -25,15 +27,19 @@ def extract_main_wing_data(filepath):
         if len(parts) >= 4:
             y_span.append(float(parts[0]))
             Cl.append(float(parts[3]))
+            Cm.append(float(parts[7]))
+            Cd_i.append(float(parts[5]))
 
         i += 1
 
-    return y_span, Cl
+    return y_span, Cl, Cm, Cd_i
 
 
 # Example usage:
-file_path = "MainWing_a=10.00_v=10.00ms.txt"
-y, cl = extract_main_wing_data(file_path)
+#file_path = "MainWing_a=10.00_v=10.00ms.txt"
+#y, cl, cm, cd_i = extract_main_wing_data(file_path)
 
-print("y-span:", y)
-print("Cl:", cl)
+#print("y-span:", y)
+#print("Cl:", cl)
+#print("Cm:", cm)
+#print("Cd_i:", cd_i)
