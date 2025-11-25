@@ -12,10 +12,14 @@ fcl10,fcd10,fcm10 = interpolate(ylst,cllst,cdlst,cmlst)
 ylst,cllst,cdlst,cmlst,CL0 = extract_main_wing_data("MainWing_a=0.00_v=10.00ms.txt")
 fcl0,fcd0,fcm0 = interpolate(ylst,cllst,cdlst,cmlst)
 
+#Constants
+from constants import g, rho_air
+v = 54 #m/s
+q = 0.5*rho_air*v**2
+
 #Define chord distribution function and ask for q
 def c(y):
     return c_r - (c_r - c_t)*(2*y)/b
-q = float(input("Enter dynamic pressure q in N/m^2: "))
 Cl = linear_model(fcl0,fcl10,CL10,CL0)
 Cd = linear_model(fcd0,fcd10,CL10,CL0)
 Cm = linear_model(fcm0,fcm10,CL10,CL0)
