@@ -13,6 +13,7 @@ def MOI_single_cell(y):
 
     from Wing_geometry import b, c_r, c_t
     from torsional_stiffness_functions import find_sparheight
+    from MOI import check_even
 
     #calculate chord
     chord = c_r-((c_r-c_t)/(b/2))*y
