@@ -38,12 +38,12 @@ def extract_main_wing_data(filepath):
 
         i += 1
 
-    return y_span, Cl, Cm, Cd_i, CL_wing
+    return y_span, Cl, Cd_i, Cm, CL_wing
 
 '''
 # Example usage:
 file_path = "MainWing_a=10.00_v=10.00ms.txt"
-y, cl, cm, cd_i = extract_main_wing_data(file_path)
+y, cl, cm, cd_i, CL= extract_main_wing_data(file_path)
 
 print("y-span:", y)
 print("Cl:", cl)

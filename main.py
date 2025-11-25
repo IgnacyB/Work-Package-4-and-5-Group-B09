@@ -22,7 +22,7 @@ CL_vals = np.linspace(CL0, CL10, 200)
 Y, CLgrid = np.meshgrid(y_vals, CL_vals)
 
 # Evaluate your function on the grid
-Z = Cl(Y, CLgrid)
+Z = Cd(Y, CLgrid)
 
 # Plot
 fig = plt.figure()
@@ -32,7 +32,7 @@ surf = ax.plot_surface(Y, CLgrid, Z)
 
 ax.set_xlabel("y")
 ax.set_ylabel("CL")
-ax.set_zlabel("Cl(y, CL)")
+ax.set_zlabel("Cd(y, CL)")
 
 plt.show()
 
