@@ -3,12 +3,11 @@
 #first import the necessary packages and functions from 
 import numpy as np
 import scipy as sp
-#from moment of intertia calculations.py import MOI_total
+
 
 #import all the information from the other files
-#from MOI import *
-from CENTROID import *
-
+from material_properties import E
+#test
 #get from 4.1 people
 def Mx(y):
     return 4*y ** 2
@@ -29,12 +28,10 @@ def dvdy(y):
 # Now that all calculating functions have been defined the code beneath does the actual calculations
 
 #input the material the wingbox is made of:
-E = float(input("Material Young's Modulus: "))
 #input the position along the wing span, so this is how far we integrate over the wing
-y_pos = input("spanwise location: ")
+y_pos = float(input("spanwise location: "))
 
-
-lateral_deflection , error2 = sp.integrate.quad(dvdy,0,float(y_pos))
+lateral_deflection , error2 = sp.integrate.quad(dvdy,0,y_pos)
 
 print(lateral_deflection)
 
