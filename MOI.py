@@ -158,10 +158,6 @@ def MOI_multi_cell(y,chord_position_front,chord_position_middle,chord_position_r
     # there is a minimum of 8 for a multicell design
     MOI_stringer = np.power(abs(y_top_front_spar - y_centroid),2)*mass_stringer + np.power(abs(y_bottom_front_spar-y_centroid),2)*mass_stringer + np.power(abs(y_top_rear_spar-y_centroid),2)*mass_stringer + np.power(abs(y_bottom_rear_spar - y_centroid),2)*mass_stringer + 2*np.power(abs(y_top_middle_spar-y_centroid),2)*mass_stringer + 2* np.power(abs(y_bottom_middle_spar-y_centroid),2)*mass_stringer
 
-    
-
-
-
     # sum all the elements together 
     MOI_total = MOI_front_spar + MOI_rear_spar + MOI_stringer + MOI_top + MOI_bottom + MOI_middle_spar
 
