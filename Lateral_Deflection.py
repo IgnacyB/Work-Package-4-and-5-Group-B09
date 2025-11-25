@@ -5,18 +5,13 @@ import numpy as np
 import scipy as sp
 
 
-#import all the information from the other files
-from MOI import *
-from CENTROID import *
 
-
-
-
-
+#get from 4.1 people
 def Mx(y):
     return 4*y ** 2
 
 def Ixx(y):
+
     return 4*y
 
 def h(y):
@@ -24,12 +19,6 @@ def h(y):
 
 
 def dvdy(y):
-
-
-
-
-
-
 
     return -1 * sp.integrate.quad(h,0,y)[0]
 

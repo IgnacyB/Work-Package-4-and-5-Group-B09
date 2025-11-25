@@ -2,9 +2,7 @@
 import numpy as np
 import scipy as sp
 
-def MOI_single_cell(y,chord_position_front,chord_position_rear,
-        thickness,skin_thickness,
-        n_stringer, mass_stringer):
+def MOI_single_cell(y):
     
     #calculate chord
     chord = c_r-((c_r-c_t)/(b/2))*y
