@@ -5,12 +5,8 @@ import matplotlib.pyplot as plt
 
 #Importing necessary constants
 from constants import g, rho_air
-b = 15  # Wing span in meters (example value)
-mass_wing = 690 # Mass of the wing in kg (example value)
-c_r = 2.75  # Root chord length in meters (example value)
-c_t = 1 # Tip chord length in meters (example value)
-mass_fuel = 1200  # Total fuel mass in kg (example value)
-n_fuel = 0.8  # Fraction of fuel in the wing (example value)
+from Wing_geometry import b, c_r, c_t
+from mass import mass_wing, mass_fuel, n_fuel
 
 #=========WEIGHT CALCULATIONS=========#
 
@@ -38,6 +34,10 @@ def fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t):
         return A * (y_0 - y)**2
     
     return f_dist
+
+#=========LIFT CALCULATIONS=========#
+
+#LIFT DISTRIBUTION (HALF OF SPAN)
 
 #=========PLOTTING WEIGHT AND FUEL DISTRIBUTIONS=========#
 # create distribution function and plot from 0 to b/2
