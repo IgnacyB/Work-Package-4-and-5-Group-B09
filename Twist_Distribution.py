@@ -1,8 +1,10 @@
 
 import scipy as sp
 
+#importing variables/functions from other files
+from material_properties import G
 
-G = int(input("Material G Modulus: "))
+
 
 def T(y):
     return y
