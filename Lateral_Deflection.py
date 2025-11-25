@@ -7,6 +7,10 @@ import scipy as sp
 
 #import all the information from the other files
 from material_properties import E
+import MOI_single_cell(y) from MOI
+
+MOI_single_cell(y)
+
 #test
 #get from 4.1 people
 def Mx(y):
@@ -17,7 +21,7 @@ def Ixx(y):
     return 4*y
 
 def h(y):
-    return Mx(y) / (E * Ixx(y))
+    return MOI_single_cell(y) / (E * Ixx(y))
 
 
 def dvdy(y):
