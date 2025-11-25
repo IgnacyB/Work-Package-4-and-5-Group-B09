@@ -15,12 +15,12 @@ from MOI import MOI_single_cell
 #test
 #get from 4.1 people
 
-def Ixx(y):
+def Mx(y):
 
     return 4*y
 
 def h(y):
-    return MOI_single_cell(y) / (E * Ixx(y))
+    return Mx(y) / (E * MOI_single_cell(y))
 
 
 def dvdy(y):
