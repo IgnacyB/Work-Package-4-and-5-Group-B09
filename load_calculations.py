@@ -39,6 +39,10 @@ def fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t):
     
     return f_dist
 
+#=========LIFT CALCULATIONS=========#
+
+#LIFT DISTRIBUTION (HALF OF SPAN)
+
 #=========PLOTTING WEIGHT AND FUEL DISTRIBUTIONS=========#
 # create distribution function and plot from 0 to b/2
 w_dist = weight_distribution(mass_wing, b, c_r, c_t)
