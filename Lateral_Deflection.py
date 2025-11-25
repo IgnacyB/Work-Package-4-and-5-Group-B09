@@ -16,15 +16,14 @@ from MOI import MOI_single_cell
 #get from 4.1 people
 
 def Mx(y):
+    return 4*y**2
 
-    return 4*y^2
 #yipee
 def h(y):
     return Mx(y) / (E * MOI_single_cell(y))
 
 
 def dvdy(y):
-
     return -1 * sp.integrate.quad(h,0,y)[0]
 
 
