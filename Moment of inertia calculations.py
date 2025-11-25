@@ -2,10 +2,14 @@
 import numpy as np
 import scipy as sp
 
-def MOI(chord,chord_position_front,chord_position_rear,
+def MOI(y,chord_position_front,chord_position_rear,
         thickness,skin_thickness,
         n_stringer, mass_stringer):
     
+    #calculate chord
+    chord = c_r-((c_r-c_t)/(b/2))*y
+
+
     MOI_total = 0
     # code to open the data file for geometry and centroid
 
@@ -102,7 +106,7 @@ def check_even(n):
 
     return even
     
-def find_sparheight(chord_pos):
+###def find_sparheight(chord_pos):
     x_pos_upper = [1.00000, 0.95033, 0.90066, 0.85090, 0.80103, 0.75107, 0.70101, 0.65086, 0.60064, 0.55035, 0.50000,  0.44962, 0.39923, 0.34884, 0.29846, 0.24881, 0.19781, 0.14757, 0.09746, 0.07247, 0.04757, 0.02283, 0.01059, 0.00580, 0.00347, 0.00000]
     x_pos_lower = [0.00000, 0.00653, 0.00920, 0.01441, 0.02717, 0.05243, 0.07753, 0.10254, 0.15243, 0.20219, 0.25189, 0.30154, 0.35116, 0.40077, 0.45038, 0.50000, 0.54965, 0.59936, 0.64914, 0.69899, 0.74893, 0.79897, 0.84910, 0.89934, 0.94967, 1.00000]
     y_pos_upper = [0.00000, 0.00986, 0.01979, 0.02974, 0.03935, 0.04847, 0.05686, 0.06440, 0.07085, 0.07602, 0.07963, 0.08139, 0.08139, 0.07971, 0.07658, 0.07193, 0.06562, 0.05741, 0.04672, 0.04010, 0.03227, 0.02234, 0.01588, 0.01236, 0.01010, 0.00000]
@@ -111,7 +115,7 @@ def find_sparheight(chord_pos):
     y_lower = sp.interpolate.interp1d(x_pos_lower, y_pos_lower, kind="linear", fill_value="extrapolate")
 
     return float(y_upper(chord_pos)), float(y_lower(chord_pos))
-    
+   #### 
 
 value = MOI(2,0.2,0.7,0.02,0.02,8,0.1)
 
