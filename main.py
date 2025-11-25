@@ -14,6 +14,10 @@ Cl = linear_model(fcl0,fcl10,CL10,CL0)
 Cd = linear_model(fcd0,fcd10,CL10,CL0)
 Cm = linear_model(fcm0,fcm10,CL10,CL0)
 
+def alpha(CL):
+    return 10*(CL-CL0)/(CL10-CL0)
+
+
 # Create ranges
 y_vals  = np.linspace(0, max(ylst), 200)
 CL_vals = np.linspace(CL0, CL10, 200)
