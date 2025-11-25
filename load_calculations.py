@@ -65,6 +65,75 @@ def dV(y, CL):
     return -dN(y, CL) + w_dist(y) + f_dist(y)
 def dT(y, CL):
     return -dM_N(y, CL) - dM(y, CL)
+#=========Integration of shear==========#
+from scipy.integrate import cumulative_trapezoid
+
+q_net = dV(y, CL)
+
+
+V_flip = cumulative_trapezoid(np.flip(q_net), np.flip(y), initial=0)
+V = np.flip(V_flip)
+
+point_loads = [ ]
+
+for yp, F in point_loads:
+    V[y <= yp] += F
+
+
+plt.figure()
+plt.plot(y, V, lw=2, color='tab:blue')
+plt.axhline(0, color='k', lw=0.6)
+plt.xlabel("Spanwise coordinate y (m)")
+plt.ylabel("Internal Shear V(y) [N]")
+plt.title("Internal Shear Force along wing span")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+#=========Integration of torque==========#
+q_torque = dT(y, CL)
+
+T_flip = cumulative_trapezoid(np.flip(q_torque), np.flip(y), initial=0)
+T = np.flip(T_flip)
+
+
+point_torque_loads = [ ]
+
+for yp, F in point_torque_loads:
+    T[y <= yp] += F
+
+
+plt.figure()
+plt.plot(y, T, lw=2, color='tab:green')
+plt.axhline(0, color='k', lw=0.6)
+plt.xlabel("Spanwise coordinate y (m)")
+plt.ylabel("Internal Torque T(y) [N*m]")
+plt.title("Internal Torque along wing span")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+#=========Integration of moment==========#
+M_flip = cumulative_trapezoid(np.flip(V), np.flip(y), initial=0)
+M = np.flip(M_flip)
+
+point_moments = [ ]
+
+for yp, F in point_moments:
+    M[y <= yp] += F
+
+
+plt.figure()
+plt.plot(y, M, lw=2, color='tab:orange')
+plt.axhline(0, color='k', lw=0.6)
+plt.xlabel("Spanwise coordinate y (m)")
+plt.ylabel("Bending Moment M(y) [Nm]")
+plt.title("Bending Moment Distribution along wing span")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+
+
 
 
 #=========PLOTTING WEIGHT AND FUEL DISTRIBUTIONS=========#
