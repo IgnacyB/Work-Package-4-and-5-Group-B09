@@ -5,3 +5,5 @@ location_front = 0.20
 location_middle = 0.50
 location_rear = 0.70
 t_skin = 0.05
+n_stringer = 12
+a_stringer =  0.1
