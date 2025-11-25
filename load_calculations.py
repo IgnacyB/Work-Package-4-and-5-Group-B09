@@ -61,10 +61,14 @@ def dM_N(y, CL):
     return dN(y, CL) * distance_lift_centroid(x_bar_c, x_lift, y)
 
 #=========COMPUTING INTERNAL SHEAR FORCE AND BENDING MOMENT=========#
+w_dist = weight_distribution(mass_wing, b, c_r, c_t)
+f_dist = fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t)
+
 def dV(y, CL):
     return -dN(y, CL) + w_dist(y) + f_dist(y)
 def dT(y, CL):
     return -dM_N(y, CL) - dM(y, CL)
+
 #=========Integration of shear==========#
 from scipy.integrate import cumulative_trapezoid
 
@@ -79,16 +83,6 @@ point_loads = [ ]
 for yp, F in point_loads:
     V[y <= yp] += F
 
-
-plt.figure()
-plt.plot(y, V, lw=2, color='tab:blue')
-plt.axhline(0, color='k', lw=0.6)
-plt.xlabel("Spanwise coordinate y (m)")
-plt.ylabel("Internal Shear V(y) [N]")
-plt.title("Internal Shear Force along wing span")
-plt.grid(True)
-plt.tight_layout()
-plt.show()
 #=========Integration of torque==========#
 q_torque = dT(y, CL)
 
@@ -101,17 +95,6 @@ point_torque_loads = [ ]
 for yp, F in point_torque_loads:
     T[y <= yp] += F
 
-
-plt.figure()
-plt.plot(y, T, lw=2, color='tab:green')
-plt.axhline(0, color='k', lw=0.6)
-plt.xlabel("Spanwise coordinate y (m)")
-plt.ylabel("Internal Torque T(y) [N*m]")
-plt.title("Internal Torque along wing span")
-plt.grid(True)
-plt.tight_layout()
-plt.show()
-
 #=========Integration of moment==========#
 M_flip = cumulative_trapezoid(np.flip(V), np.flip(y), initial=0)
 M = np.flip(M_flip)
@@ -122,28 +105,8 @@ for yp, F in point_moments:
     M[y <= yp] += F
 
 
-plt.figure()
-plt.plot(y, M, lw=2, color='tab:orange')
-plt.axhline(0, color='k', lw=0.6)
-plt.xlabel("Spanwise coordinate y (m)")
-plt.ylabel("Bending Moment M(y) [Nm]")
-plt.title("Bending Moment Distribution along wing span")
-plt.grid(True)
-plt.tight_layout()
-plt.show()
-
-
-
-
-
 #=========PLOTTING WEIGHT AND FUEL DISTRIBUTIONS=========#
 # create distribution function and plot from 0 to b/2
-w_dist = weight_distribution(mass_wing, b, c_r, c_t)
-f_dist = fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t)
-
-y = np.linspace(0, b/2, 500)
-w = w_dist(y)
-f = f_dist(y)
 
 plt.figure()
 plt.plot(y, w, lw=2, label="Wing weight w(y)")
