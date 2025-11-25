@@ -3,10 +3,10 @@
 #first import the necessary packages and functions from 
 import numpy as np
 import scipy as sp
-
+#from moment of intertia calculations.py import MOI_total
 
 #import all the information from the other files
-from MOI import *
+#from MOI import *
 from CENTROID import *
 
 
