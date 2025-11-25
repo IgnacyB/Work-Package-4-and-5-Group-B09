@@ -7,7 +7,7 @@ import scipy as sp
 
 #import all the information from the other files
 from material_properties import E
-
+#test
 #get from 4.1 people
 def Mx(y):
     return 4*y ** 2
