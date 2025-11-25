@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 #Importing important constants and functions
 from Wing_geometry import b
 from load_calculations import V, T, M   

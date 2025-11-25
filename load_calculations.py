@@ -69,6 +69,7 @@ def dV(y, CL):
 def dT(y, CL):
     return -dM_N(y, CL) - dM(y, CL)
 
+
 #=========Integration of shear==========#
 from scipy.integrate import cumulative_trapezoid
 
