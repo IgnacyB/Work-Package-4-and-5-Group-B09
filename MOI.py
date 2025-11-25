@@ -103,7 +103,6 @@ def MOI_single_cell(y):
     return MOI_total
 
 
-
 def check_even(n):
     if n % 2 ==0:
         even = True
@@ -113,9 +112,19 @@ def check_even(n):
     return even
 
 
-def MOI_multi_cell(y,chord_position_front,chord_position_middle,chord_position_rear,
-        thickness,skin_thickness,
-        n_stringer, mass_stringer):
+def MOI_multi_cell(y):
+
+    from airfoil_geometry import t_skin as skin_thickness
+    from airfoil_geometry import t_front as thickness
+    from airfoil_geometry import a_stringer as mass_stringer
+    from airfoil_geometry import n_stringer
+    from airfoil_geometry import location_front as chord_position_front
+    from airfoil_geometry import location_rear as chord_position_rear
+    from airfoil_geometry import location_middle as chord_position_middle
+
+    from Wing_geometry import b, c_r, c_t
+    from torsional_stiffness_functions import find_sparheight
+    from MOI import check_even
 
     chord = c_r-((c_r-c_t)/(b/2))*y
 
@@ -172,4 +181,4 @@ def MOI_multi_cell(y,chord_position_front,chord_position_middle,chord_position_r
 
 value = MOI_single_cell(2)
 
-print(value)
+print("This is the calculated value for Ixx",value)
