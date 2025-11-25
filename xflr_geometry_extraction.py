@@ -5,8 +5,8 @@ def wing_geometry(file_path):
     line40_values = lines[39].split()   
     line48_values = lines[47].split()  
 
-    cr = line40_values[3]
-    b = 2*line48_values[1]
-    ct = line48_values[3]
+    cr = float(line40_values[3])
+    b = 2*float(line48_values[1])
+    ct = float(line48_values[3])
 
-    return cr, b, ct
+    return b, cr, ct
