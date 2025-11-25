@@ -16,13 +16,9 @@ def find_sparheight(chord_pos):
     return float(y_upper(chord_pos)), float(y_lower(chord_pos))
 
 
-
-
-#create data files
-from airfoil.py import t_front, t_rear, location_front, location_rear, t_skin
-from planform.py import c_r, c_t, b
-
-
+#import data
+from airfoil_geometry import t_front, t_rear, location_front, location_rear, t_skin
+from Wing_geometry import c_r, c_t, b
 
 
 #torsional constant function for a single-cell wingbox. ALL VALUES IN SI UNITS
@@ -46,47 +42,48 @@ def torsional_constant_singlecell(y):
 
     return J_y
 
+print(torsional_constant_singlecell(6))
 
-#create data files
-from airfoil.py import t_front, t_middle, t_rear, location_front, location_middle, location_rear, t_skin
-from planform.py import c_r, c_t, b
-from material.py import G
+# #create data files
+# from airfoil.py import t_front, t_middle, t_rear, location_front, location_middle, location_rear, t_skin
+# from planform.py import c_r, c_t, b
+# from material.py import G
 
 
-#torsional constant function for a double-cell wingbox
-#assume both closed sections are trapezoidal
-#function is NOT done
+# #torsional constant function for a double-cell wingbox
+# #assume both closed sections are trapezoidal
+# #function is NOT done
 
-def torsional_constant_multicell(y, G):
-    #calculate c as a function of y
-    c = c_r-((c_r-c_t)/(b/2))*y
+# def torsional_constant_multicell(y, G):
+#     #calculate c as a function of y
+#     c = c_r-((c_r-c_t)/(b/2))*y
 
-    #calculate distance to upper and lower surface for 3 spars
-    h_upper_front, h_lower_front = find_sparheight(location_front)
-    h_upper_middle, h_lower_middle = find_sparheight(location_middle)
-    h_upper_rear, h_lower_rear = find_sparheight(location_rear)
+#     #calculate distance to upper and lower surface for 3 spars
+#     h_upper_front, h_lower_front = find_sparheight(location_front)
+#     h_upper_middle, h_lower_middle = find_sparheight(location_middle)
+#     h_upper_rear, h_lower_rear = find_sparheight(location_rear)
 
-    #calculate lenghts of upper and lower wingbox components
-    l_upper_1 = np.sqrt(((location_middle-location_front)*c)**2+((h_upper_middle-h_upper_front)*c)**2)
-    l_lower_1 = np.sqrt(((location_middle-location_front)*c)**2+((h_lower_middle-h_lower_front))**2)
-    l_upper_2 = np.sqrt(((location_rear-location_middle)*c)**2+((h_upper_rear-h_upper_middle)*c)**2)
-    l_lower_2 = np.sqrt(((location_rear-location_middle)*c)**2+((h_lower_rear-h_lower_middle))**2)
+#     #calculate lenghts of upper and lower wingbox components
+#     l_upper_1 = np.sqrt(((location_middle-location_front)*c)**2+((h_upper_middle-h_upper_front)*c)**2)
+#     l_lower_1 = np.sqrt(((location_middle-location_front)*c)**2+((h_lower_middle-h_lower_front))**2)
+#     l_upper_2 = np.sqrt(((location_rear-location_middle)*c)**2+((h_upper_rear-h_upper_middle)*c)**2)
+#     l_lower_2 = np.sqrt(((location_rear-location_middle)*c)**2+((h_lower_rear-h_lower_middle))**2)
 
-    #calculate enclosed areas 
-    A_1 = ((location_middle-location_front)*c*c*((h_upper_front-h_lower_front)+(h_upper_middle-h_lower_middle)))/2
-    A_2 = ((location_rear-location_middle)*c*c*((h_upper_middle-h_lower_middle)+(h_upper_rear-h_lower_rear)))/2
+#     #calculate enclosed areas 
+#     A_1 = ((location_middle-location_front)*c*c*((h_upper_front-h_lower_front)+(h_upper_middle-h_lower_middle)))/2
+#     A_2 = ((location_rear-location_middle)*c*c*((h_upper_middle-h_lower_middle)+(h_upper_rear-h_lower_rear)))/2
 
-    #set up system of equations with variables: q_1, q_2, twist_rate.
-    lefthand_matrix = np.array([[2*A_1, 2*A_2, 0.], [(-1/(2*A_1))*((((h_upper_middle-h_lower_middle)*c)/(G*t_middle))+((l_upper_1)/(G*t_skin))+(((h_upper_front-h_lower_front)*c)/(G*t_front))+((l_lower_1)/(G*t_skin))), (((h_upper_middle-h_lower_middle)*c)/(2*A_1*G*t_middle)), 1], [(((h_upper_middle-h_lower_middle)*c)/(2*A_2*G*t_middle)), ((-1/(2*A_2))*((((h_upper_rear-h_lower_rear)*c)/(G*t_rear))+((l_upper_2)/(G*t_skin))+(((h_upper_middle-h_lower_middle)*c)/(G*t_middle))+((l_lower_2)/(G*t_skin)))), 1]])
-    righthand_matrix = np.array([[1, 0, 0]])
+#     #set up system of equations with variables: q_1, q_2, twist_rate.
+#     lefthand_matrix = np.array([[2*A_1, 2*A_2, 0.], [(-1/(2*A_1))*((((h_upper_middle-h_lower_middle)*c)/(G*t_middle))+((l_upper_1)/(G*t_skin))+(((h_upper_front-h_lower_front)*c)/(G*t_front))+((l_lower_1)/(G*t_skin))), (((h_upper_middle-h_lower_middle)*c)/(2*A_1*G*t_middle)), 1], [(((h_upper_middle-h_lower_middle)*c)/(2*A_2*G*t_middle)), ((-1/(2*A_2))*((((h_upper_rear-h_lower_rear)*c)/(G*t_rear))+((l_upper_2)/(G*t_skin))+(((h_upper_middle-h_lower_middle)*c)/(G*t_middle))+((l_lower_2)/(G*t_skin)))), 1]])
+#     righthand_matrix = np.array([[1, 0, 0]])
 
-    #solve system of equations
-    solution = np.linal.solve(lefthand_matrix, righthand_matrix)
-    twist_rate = solution[2]
+#     #solve system of equations
+#     solution = np.linal.solve(lefthand_matrix, righthand_matrix)
+#     twist_rate = solution[2]
 
-    J_y = 1/(G*twist_rate)
+#     J_y = 1/(G*twist_rate)
 
-    return J_y
+#     return J_y
 
-#test
-# print(torsional_constant_singlecell(0.001, 0.001, 0.2, 0.7, 0.003, 2))
+# #test
+# # print(torsional_constant_singlecell(0.001, 0.001, 0.2, 0.7, 0.003, 2))

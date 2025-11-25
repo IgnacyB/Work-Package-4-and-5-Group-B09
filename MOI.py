@@ -2,14 +2,22 @@
 import numpy as np
 import scipy as sp
 
-def MOI_single_cell(y,chord_position_front,chord_position_rear,
-        thickness,skin_thickness,
-        n_stringer, mass_stringer):
-    
+def MOI_single_cell(y):
+
+    from airfoil_geometry import t_skin as skin_thickness
+    from airfoil_geometry import t_front as thickness
+    from airfoil_geometry import a_stringer as mass_stringer
+    from airfoil_geometry import n_stringer
+    from airfoil_geometry import location_front as chord_position_front
+    from airfoil_geometry import location_rear as chord_position_rear
+
+    from Wing_geometry import b, c_r, c_t
+    from torsional_stiffness_functions import find_sparheight
+    from MOI import check_even
+
     #calculate chord
     chord = c_r-((c_r-c_t)/(b/2))*y
 
-    MOI_total = 0
     # code to open the data file for geometry and centroid
 
     y_top_front_spar_percentage, y_bottom_front_spar_percentage = find_sparheight(chord_position_front)
@@ -19,7 +27,6 @@ def MOI_single_cell(y,chord_position_front,chord_position_rear,
     y_top_rear_spar= y_top_rear_spar_percentage*chord
     y_bottom_front_spar= y_bottom_front_spar_percentage*chord
     y_bottom_rear_spar= y_bottom_rear_spar_percentage*chord
-    print(y_top_front_spar)
     y_centroid = 0
 
     # code to calculate MOI for front and rear spar
@@ -28,9 +35,7 @@ def MOI_single_cell(y,chord_position_front,chord_position_rear,
     y_centroid_rear_spar = (y_top_rear_spar-y_bottom_rear_spar)/2
 
     MOI_front_spar = thickness*np.power((y_top_front_spar-y_bottom_front_spar),3)/12 + np.power(abs(y_centroid_front_spar -y_centroid),2)*(y_top_front_spar - y_bottom_front_spar)*thickness
-    print(MOI_front_spar)
     MOI_rear_spar = thickness*np.power((y_top_rear_spar-y_bottom_rear_spar),3)/12 + np.power(abs(y_centroid_rear_spar -y_centroid),2)*(y_top_rear_spar - y_bottom_rear_spar)*thickness
-    print(MOI_rear_spar)
     # code to calculate MOI for middle spar
 
     MOI_middle_spar = 0
@@ -97,6 +102,7 @@ def MOI_single_cell(y,chord_position_front,chord_position_rear,
 
     return MOI_total
 
+
 def check_even(n):
     if n % 2 ==0:
         even = True
@@ -106,9 +112,19 @@ def check_even(n):
     return even
 
 
-def MOI_multi_cell(y,chord_position_front,chord_position_middle,chord_position_rear,
-        thickness,skin_thickness,
-        n_stringer, mass_stringer):
+def MOI_multi_cell(y):
+
+    from airfoil_geometry import t_skin as skin_thickness
+    from airfoil_geometry import t_front as thickness
+    from airfoil_geometry import a_stringer as mass_stringer
+    from airfoil_geometry import n_stringer
+    from airfoil_geometry import location_front as chord_position_front
+    from airfoil_geometry import location_rear as chord_position_rear
+    from airfoil_geometry import location_middle as chord_position_middle
+
+    from Wing_geometry import b, c_r, c_t
+    from torsional_stiffness_functions import find_sparheight
+    from MOI import check_even
 
     chord = c_r-((c_r-c_t)/(b/2))*y
 
@@ -163,6 +179,6 @@ def MOI_multi_cell(y,chord_position_front,chord_position_middle,chord_position_r
 
     return MOI_total
 
-value = MOI_single_cell(2,0.2,0.7,0.02,0.02,8,0.1)
+value = MOI_single_cell(2)
 
-print(value)
+print("This is the calculated value for Ixx",value)
