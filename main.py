@@ -15,12 +15,18 @@ fcl0,fcd0,fcm0 = interpolate(ylst,cllst,cdlst,cmlst)
 #Define chord distribution function and ask for q
 def c(y):
     return c_r - (c_r - c_t)*(2*y)/b
-q = input("Enter dynamic pressure q in N/m^2:")
+q = float(input("Enter dynamic pressure q in N/m^2: "))
+Cl = linear_model(fcl0,fcl10,CL10,CL0)
+Cd = linear_model(fcd0,fcd10,CL10,CL0)
+Cm = linear_model(fcm0,fcm10,CL10,CL0)
 
 #Apply linear model to get L, D, M per unit span as functions of y and CL
-dL = linear_model(fcl0,fcl10,CL10,CL0,c,q)
-dD = linear_model(fcd0,fcd10,CL10,CL0,c,q)
-dM = linear_model(fcm0,fcm10,CL10,CL0,c,q)
+def dL(y,CL):
+    return Cl(y,CL)*q*c(y)
+def dD(y,CL):
+    return Cd(y,CL)*q*c(y)
+def dM(y,CL):
+    return Cm(y,CL)*q*c(y)
 
 #Define AOA as function of CL
 def alpha(CL):
@@ -38,7 +44,7 @@ CL_vals = np.linspace(CL0, CL10, 200)
 Y, CLgrid = np.meshgrid(y_vals, CL_vals)
 
 # Evaluate your function on the grid
-Z = dD(Y, CLgrid)
+Z = dM(Y, CLgrid)
 
 # Plot
 fig = plt.figure()
@@ -48,7 +54,7 @@ surf = ax.plot_surface(Y, CLgrid, Z)
 
 ax.set_xlabel("y")
 ax.set_ylabel("CL")
-ax.set_zlabel("dD(y, CL)")
+ax.set_zlabel("dL(y, CL)")
 
 plt.show()
 
