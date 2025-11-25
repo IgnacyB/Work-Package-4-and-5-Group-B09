@@ -6,6 +6,8 @@ import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 from Wing_geometry import b, c_r, c_t
 
+#===============Extraction and calculation of aerodynamic force distributions===============#
+
 #Extract Cl,Cd,Cm data from XLFR for AOA=0 and AOA=10
 ylst,cllst,cdlst,cmlst,CL10 = extract_main_wing_data("MainWing_a=10.00_v=10.00ms.txt")
 fcl10,fcd10,fcm10 = interpolate(ylst,cllst,cdlst,cmlst)
@@ -32,9 +34,7 @@ def dM(y,CL):
 def alpha(CL):
     return 10*(CL-CL0)/(CL10-CL0)
 
-
-
-
+'''
 #Plot data for testing
 # Create ranges
 y_vals  = np.linspace(0, max(ylst), 200)
@@ -57,5 +57,14 @@ ax.set_ylabel("CL")
 ax.set_zlabel("dL(y, CL)")
 
 plt.show()
+
+'''
+
+#===============Calculation of wing shear, beding and torque forces===============#
+
+
+
+
+
 
 
