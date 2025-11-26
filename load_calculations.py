@@ -67,7 +67,7 @@ f_dist = fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t)
 def dV(y):
     return -dN(y) + w_dist(y) + f_dist(y)
 def dT(y):
-    return -dM_N(y) - dM(y)
+    return -dM_N(y) - dM(y, CL)
 
 #Internal shear
 def V(y):
