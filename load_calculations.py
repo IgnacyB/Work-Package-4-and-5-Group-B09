@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from constants import g, rho_air
 from Wing_geometry import b, c_r, c_t
 from mass import mass_wing, mass_fuel, n_fuel
-
+from scipy.integrate import cumulative_trapezoid
 #importing functions from other files if needed
 from main import c, dL, dD, dM, alpha
 
@@ -69,18 +69,55 @@ def dV(y):
 def dT(y):
     return -dM_N(y) - dM(y, CL)
 
-#Internal shear
-def V(y):
-    V, error = sp.integrate.quad(dV, b/2, y)
-    return V
+# helper: try to call func on array, fall back to vectorize if needed
+def _call_array(func, y):
+    y_arr = np.asarray(y)
+    # fast path: try direct call
+    try:
+        res = func(y_arr)
+        res = np.asarray(res)
+        if res.shape == y_arr.shape:
+            return res
+    except Exception:
+        pass
+    # fallback: vectorize scalar func
+    vec = np.vectorize(lambda yy: func(float(yy)))
+    return vec(y_arr)
 
-#Internal torque
+# Internal shear/torque/moment: accept scalar or array y
+def V(y):
+    # scalar behavior (keep previous quad-based result)
+    if np.ndim(y) == 0:
+        Vval, error = sp.integrate.quad(dV, b/2, float(y))
+        return Vval
+    # array/vectorized behavior (fast cumulative integration)
+    y_arr = np.asarray(y)
+    dV_arr = _call_array(dV, y_arr)
+    # integrate from tip (b/2) inward so V(b/2)=0
+    V_flip = cumulative_trapezoid(np.flip(dV_arr), np.flip(y_arr), initial=0)
+    V_arr = np.flip(V_flip)
+    return V_arr
+
 def T(y):
-    T, error = sp.integrate.quad(dT, b/2, y)
-    return T
-#Internal bending moment
+    if np.ndim(y) == 0:
+        Tval, error = sp.integrate.quad(dT, b/2, float(y))
+        return Tval
+    y_arr = np.asarray(y)
+    dT_arr = _call_array(dT, y_arr)
+    T_flip = cumulative_trapezoid(np.flip(dT_arr), np.flip(y_arr), initial=0)
+    T_arr = np.flip(T_flip)
+    return T_arr
+
 def M(y):
-    M, error = sp.integrate.quad(V, b/2, y)
-    return -1 * M
+    # scalar: integrate V via quad (keeps previous API)
+    if np.ndim(y) == 0:
+        Mval, error = sp.integrate.quad(lambda s: V(s), b/2, float(y))
+        return -1 * Mval
+    # array: build V array then integrate
+    y_arr = np.asarray(y)
+    V_arr = V(y_arr)  # uses vectorized V above
+    M_flip = cumulative_trapezoid(np.flip(V_arr), np.flip(y_arr), initial=0)
+    M_arr = -1 * np.flip(M_flip)
+    return M_arr
 
 
