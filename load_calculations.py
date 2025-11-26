@@ -50,61 +50,38 @@ def fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t):
 def distance_lift_centroid(x_bar_c, x_lift, y):
     return (x_bar_c - x_lift) * c(y)
 
-def dN(y, CL):
+def dN(y):
     return dL(y, CL) * np.cos(alpha(CL)) + dD(y, CL) * np.sin(alpha(CL))
 
 #=========FORCE AND MOMENT IN CROSS SECTION=========#
 
 #SHIFTING N FROM LIFT TO WINGBOX CENTROID
 #Force is the same since it acts vertically, only the moment changes
-def dM_N(y, CL):
-    return dN(y, CL) * distance_lift_centroid(x_bar_c, x_lift, y)
+def dM_N(y):
+    return dN(y) * distance_lift_centroid(x_bar_c, x_lift, y)
 
 #=========COMPUTING INTERNAL SHEAR FORCE AND BENDING MOMENT=========#
 w_dist = weight_distribution(mass_wing, b, c_r, c_t)
 f_dist = fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t)
 
-def dV(y, CL):
-    return -dN(y, CL) + w_dist(y) + f_dist(y)
-def dT(y, CL):
-    return -dM_N(y, CL) - dM(y, CL)
+def dV(y):
+    return -dN(y) + w_dist(y) + f_dist(y)
+def dT(y):
+    return -dM_N(y) - dM(y)
 
+#Internal shear
+def V(y):
+    V, error = sp.integrate.quad(dV, b/2, y)
+    return V
 
-#=========Integration of shear==========#
-from scipy.integrate import cumulative_trapezoid
-
-q_net = dV(y, CL)
-
-
-V_flip = cumulative_trapezoid(np.flip(q_net), np.flip(y), initial=0)
-V = np.flip(V_flip)
-
-point_loads = [ ]
-
-for yp, F in point_loads:
-    V[y <= yp] += F
-
-#=========Integration of torque==========#
-q_torque = dT(y, CL)
-
-T_flip = cumulative_trapezoid(np.flip(q_torque), np.flip(y), initial=0)
-T = np.flip(T_flip)
-
-
-point_torque_loads = [ ]
-
-for yp, F in point_torque_loads:
-    T[y <= yp] += F
-
-#=========Integration of moment==========#
-M_flip = cumulative_trapezoid(np.flip(V), np.flip(y), initial=0)
-M = np.flip(M_flip)
-
-point_moments = [ ]
-
-for yp, F in point_moments:
-    M[y <= yp] += F
-
+#Internal torque
+def T(y):
+    T, error = sp.integrate.quad(dT, b/2, y)
+    return T
+#Internal bending moment
+def M(y):
+    M, error = sp.integrate.quad(V, b/2, y)
+    return -1 * M
 
 #=========PLOTTING WEIGHT AND FUEL DISTRIBUTIONS=========#
 # create distribution function and plot from 0 to b/2
