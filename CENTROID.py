@@ -9,7 +9,7 @@ import sys  # <-- Added sys for program termination on fatal error
 # We now assume the external function find_sparheight(x_pos) exists in torsion_stiffness_functions.py
 try:
     # Attempt to import the specific function directly
-    from torsion_stiffness_functions import find_sparheight as find_sparheight_func
+    from torsional_stiffness_functions import find_sparheight as find_sparheight_func
 
     print("find_sparheight successfully imported from torsion_stiffness_functions.")
 except ImportError as e:

@@ -14,6 +14,7 @@ def MOI_single_cell(y):
     from Wing_geometry import b, c_r, c_t
     from torsional_stiffness_functions import find_sparheight
     from MOI import check_even
+    from CENTROID import generate_stringer_coordinates
 
     #calculate chord
     chord = c_r-((c_r-c_t)/(b/2))*y
@@ -53,9 +54,48 @@ def MOI_single_cell(y):
 
     MOI_top = skin_thickness*distance_top/12 * (np.power(skin_thickness,2)*np.power(np.cos(alpha_top),2) +np.power(distance_top,2) * np.power(np.sin(alpha_top),2) ) + thickness*distance_top*np.power((y_centroid_top-y_centroid),2)
     MOI_bottom = skin_thickness*distance_bottom/12 * (np.power(skin_thickness,2)*np.power(np.cos(alpha_bottom),2) + np.power(distance_bottom,2) * np.power(np.sin(alpha_bottom),2)) + thickness*distance_bottom*np.power((y_centroid_bottom-y_centroid),2)
+    
     # code to calculate parallel axis for stringer
+    spars = []
 
-    MOI_stringer = np.power(abs(y_top_front_spar - y_centroid),2)*mass_stringer + np.power(abs(y_bottom_front_spar-y_centroid),2)*mass_stringer + np.power(abs(y_top_rear_spar-y_centroid),2)*mass_stringer + np.power(abs(y_bottom_rear_spar - y_centroid),2)*mass_stringer 
+    spar_front = []
+    spar_front_top = []
+    spar_front_bottom = []
+    
+    spar_front_top.append(y_top_front_spar) 
+    spar_front_top.append(chord_position_front)
+    spar_front_bottom.append(y_bottom_front_spar)
+    spar_front_bottom.append(chord_position_front)
+
+    spar_front.append(spar_front_top)
+    spar_front.append(spar_front_top)
+
+    spar_rear =[]
+    spar_rear_top = []
+    spar_rear_bottom = []
+
+    spar_rear_top.append(y_top_rear_spar)
+    spar_rear_top.append(chord_position_rear)
+    spar_rear_bottom.append(y_bottom_rear_spar)
+    spar_rear_bottom.append(chord_position_rear)
+
+    spar_rear.append(spar_rear_top)
+    spar_rear.append(spar_rear_bottom)
+
+    spars.append(spar_front)
+    spars.append(spar_rear)
+
+    stringer_chord = generate_stringer_coordinates(spars,n_stringer)
+    print(stringer_chord)
+
+    MOI_stringer =0
+    MOI_stringer_2=0
+    MOI_total_2 = 0
+
+    for element in stringer_chord:
+        MOI_stringer += np.power((element[0]-y_centroid),2)*mass_stringer
+
+    # old method
 
     if n_stringer > 4:
 
@@ -71,14 +111,14 @@ def MOI_single_cell(y):
 
                 y_new_position_top = y_top_front_spar + slope_step_top*i
 
-                MOI_stringer += abs(y_new_position_top-y_centroid)*mass_stringer
+                MOI_stringer_2 += abs(y_new_position_top-y_centroid)*mass_stringer
 
             for i in range(n_stringer_bottom):
                 slope_step_bottom = (y_bottom_rear_spar-y_bottom_front_spar)/(n_stringer_bottom+1)
 
                 y_new_position_bottom = y_bottom_front_spar + slope_step_bottom*i
 
-                MOI_stringer += abs(y_new_position_bottom-y_centroid)*mass_stringer
+                MOI_stringer_2 += abs(y_new_position_bottom-y_centroid)*mass_stringer
 
         else:
             n_stringer_top  = int(n_stringer_after_corners/2)
@@ -89,19 +129,20 @@ def MOI_single_cell(y):
 
                 y_new_position_top = y_top_front_spar + slope_step_top*i
 
-                MOI_stringer += abs(y_new_position_top-y_centroid)*mass_stringer
+                MOI_stringer_2 += abs(y_new_position_top-y_centroid)*mass_stringer
 
             for i in range(n_stringer_bottom):
                 slope_step_bottom = (y_bottom_rear_spar-y_bottom_front_spar)/n_stringer_bottom
 
                 y_new_position_bottom = y_bottom_front_spar + slope_step_bottom*i
 
-                MOI_stringer += abs(y_new_position_bottom-y_centroid)*mass_stringer
+                MOI_stringer_2 += abs(y_new_position_bottom-y_centroid)*mass_stringer
     # sum all the elements together 
+
     MOI_total = MOI_front_spar + MOI_rear_spar + MOI_stringer + MOI_top + MOI_bottom + MOI_middle_spar
-
-    return MOI_total
-
+    MOI_total_2 = MOI_front_spar + MOI_rear_spar + MOI_stringer_2 + MOI_top + MOI_bottom + MOI_middle_spar
+    
+    return MOI_total, MOI_total_2
 
 def check_even(n):
     if n % 2 ==0:
@@ -179,6 +220,7 @@ def MOI_multi_cell(y):
 
     return MOI_total
 
-value = MOI_single_cell(2)
+value,value_2 = MOI_single_cell(2)
 
-print("This is the calculated value for Ixx",value)
+print("This is the calculated value for Ixx with new method",value)
+print("This is the calculated value for Ixx with old method",value_2)
