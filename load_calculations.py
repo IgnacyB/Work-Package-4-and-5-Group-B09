@@ -61,6 +61,7 @@ def dM_N(y):
     return dN(y) * distance_lift_centroid(x_bar_c, x_lift, y)
 
 #=========COMPUTING INTERNAL SHEAR FORCE AND BENDING MOMENT=========#
+y = np.linspace(0.0, b/2, 500)
 w_dist = weight_distribution(mass_wing, b, c_r, c_t)
 f_dist = fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t)
 
