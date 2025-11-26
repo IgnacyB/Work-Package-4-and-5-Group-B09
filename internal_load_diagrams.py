@@ -4,47 +4,34 @@ import numpy as np
 from Wing_geometry import b
 from load_calculations import V, T, M   
 #Defining y values for plotting
-y = np.linspace(0, b/2, 100)
+if __name__ == "__main__":
+    # create spanwise grid
+    y = np.linspace(0, b/2, 200)
 
+    # ensure V/T/M are arrays (handle callable or already-array)
+    V_arr = V(y) if callable(V) else np.asarray(V)
+    T_arr = T(y) if callable(T) else np.asarray(T)
+    M_arr = M(y) if callable(M) else np.asarray(M)
 
+    fig, axs = plt.subplots(3, 1, figsize=(8, 10), constrained_layout=True)
 
-#Function to plot shear force
-def plot_shear(y, V):
-    plt.figure()
-    plt.plot(y, V, lw=2, color='tab:blue')
-    plt.axhline(0, color='k', lw=0.6)
-    plt.xlabel("Spanwise coordinate y (m)")
-    plt.ylabel("Internal Shear V(y) [N]")
-    plt.title("Internal Shear Force along wing span")
-    plt.grid(True)
-    plt.tight_layout()
+    axs[0].plot(y, V_arr, lw=2, color="tab:blue")
+    axs[0].axhline(0, color="k", lw=0.6)
+    axs[0].set_ylabel("V(y) [N]")
+    axs[0].set_title("Internal Shear Force along wing span")
+    axs[0].grid(True)
+
+    axs[1].plot(y, T_arr, lw=2, color="tab:green")
+    axs[1].axhline(0, color="k", lw=0.6)
+    axs[1].set_ylabel("T(y) [N·m]")
+    axs[1].set_title("Internal Torque along wing span")
+    axs[1].grid(True)
+
+    axs[2].plot(y, M_arr, lw=2, color="tab:red")
+    axs[2].axhline(0, color="k", lw=0.6)
+    axs[2].set_xlabel("Spanwise coordinate y (m)")
+    axs[2].set_ylabel("M(y) [N·m]")
+    axs[2].set_title("Internal Bending Moment along wing span")
+    axs[2].grid(True)
+
     plt.show()
-
-#Function to plot torque
-def plot_torque(y, T):
-    plt.figure()
-    plt.plot(y, T, lw=2, color='tab:green')
-    plt.axhline(0, color='k', lw=0.6)
-    plt.xlabel("Spanwise coordinate y (m)")
-    plt.ylabel("Internal Torque T(y) [N·m]")
-    plt.title("Internal Torque along wing span")
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
-
-#Function to plot bending moment
-def plot_moment(y, M):
-    plt.figure()
-    plt.plot(y, M, lw=2, color='tab:red')
-    plt.axhline(0, color='k', lw=0.6)
-    plt.xlabel("Spanwise coordinate y (m)")
-    plt.ylabel("Internal Bending Moment M(y) [N·m]")
-    plt.title("Internal Bending Moment along wing span")
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
-
-#Calling the plotting functions
-plot_shear(y, V(y))
-plot_torque(y, T(y))
-plot_moment(y, M(y))

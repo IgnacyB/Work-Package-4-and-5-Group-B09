@@ -112,12 +112,12 @@ def M(y):
     # scalar: integrate V via quad (keeps previous API)
     if np.ndim(y) == 0:
         Mval, error = sp.integrate.quad(lambda s: V(s), b/2, float(y))
-        return -1 * Mval
+        return Mval
     # array: build V array then integrate
     y_arr = np.asarray(y)
     V_arr = V(y_arr)  # uses vectorized V above
     M_flip = cumulative_trapezoid(np.flip(V_arr), np.flip(y_arr), initial=0)
-    M_arr = -1 * np.flip(M_flip)
+    M_arr = np.flip(M_flip)
     return M_arr
 
 
