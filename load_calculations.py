@@ -94,9 +94,9 @@ def V(y):
     y_arr = np.asarray(y)
     dV_arr = _call_array(dV, y_arr)
     # integrate from tip (b/2) inward so V(b/2)=0
-    V_flip = cumulative_trapezoid(dV_arr, np.flip(y_arr), initial=0)
+    V_flip = cumulative_trapezoid(np.flip(dV_arr), np.flip(y_arr), initial=0)
     V_arr = np.flip(V_flip)
-    return -1 * V_arr
+    return V_arr
 
 def T(y):
     if np.ndim(y) == 0:
@@ -104,7 +104,7 @@ def T(y):
         return Tval
     y_arr = np.asarray(y)
     dT_arr = _call_array(dT, y_arr)
-    T_flip = cumulative_trapezoid(dT_arr, np.flip(y_arr), initial=0)
+    T_flip = cumulative_trapezoid(np.flip(dT_arr), np.flip(y_arr), initial=0)
     T_arr = np.flip(T_flip)
     return T_arr
 
@@ -116,8 +116,8 @@ def M(y):
     # array: build V array then integrate
     y_arr = np.asarray(y)
     V_arr = V(y_arr)  # uses vectorized V above
-    M_flip = cumulative_trapezoid(V_arr, np.flip(y_arr), initial=0)
+    M_flip = cumulative_trapezoid(np.flip(V_arr), np.flip(y_arr), initial=0)
     M_arr = np.flip(M_flip)
-    return -1 * M_arr
+    return M_arr
 
 
