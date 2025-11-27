@@ -161,7 +161,7 @@ def get_centroid(c, spar_positions_ratios, thickness, stringer_area, total_strin
     auto_stringers = generate_stringer_coordinates(spars, total_stringers)
 
     # 3. Calculate Centroid
-    cx, cy, _ = calculate_wingbox_centroid(
+    cx,cy = calculate_wingbox_centroid(
         spars, auto_stringers, thickness, stringer_area
     )
 
