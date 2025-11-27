@@ -53,7 +53,7 @@ def distance_lift_centroid(x_bar_c, x_lift, y):
     return (x_bar_c - x_lift) * c(y)
 
 def dN(y):
-    return dL(y, CL) * np.cos(alpha(np.radians(CL))) + dD(y, CL) * np.sin(alpha(np.radians(CL)))
+    return dL(y, CL) * np.cos(np.radians(alpha(CL))) + dD(y, CL) * np.sin(np.radians(alpha(CL)))
 
 #=========FORCE AND MOMENT IN CROSS SECTION=========#
 
@@ -105,8 +105,8 @@ def T(y):
         return Tval
     y_arr = np.asarray(y)
     dT_arr = _call_array(dT, y_arr)
-    T_arr = cumulative_trapezoid(dT_arr, y_arr, initial=0)
-    T_arr = T_arr - T_arr[-1]  # shift so T(b/2)=0
+    int_arr = cumulative_trapezoid(dT_arr, y_arr, initial=0)
+    T_arr = -1 * int_arr + int_arr[-1]  # shift so T(b/2)=0
     return T_arr
 
 def M(y):
@@ -170,6 +170,23 @@ def plot_distributed_loads(y=None, n=300):
     plt.tight_layout()
     plt.show()
 
+def plot_dN(y=None, n=300):
+    """Plot the net distributed normal force dN(y) along the half-span."""
+    if y is None:
+        y = np.linspace(0, b/2, n)
+    dN_arr = _call_array(dN, y)
+
+    plt.figure(figsize=(8,4))
+    plt.plot(y, dN_arr, lw=2, color="tab:orange")
+    plt.axhline(0, color="k", lw=0.6)
+    plt.xlabel("Spanwise coordinate y (m)")
+    plt.ylabel("dN(y) [N/m]")
+    plt.title("Net distributed normal force dN(y) along half-span")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
 if __name__ == "__main__":
     plot_internal_loads()
     plot_distributed_loads()
+    plot_dN()
