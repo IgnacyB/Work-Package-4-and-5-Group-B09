@@ -26,8 +26,8 @@ def dL(y,CL):
 def dD(y,CL):
     return Cd(y,CL)*q*c(y)
 def dM(y,CL):
-    return Cm(y,CL)*q*c(y)
-
+    return Cm(y,CL)*q*(c(y))**2
+    
 #Define AOA as function of CL
 def alpha(CL):
     return 10*(CL-CL0)/(CL10-CL0)
@@ -44,7 +44,7 @@ CL_vals = np.linspace(CL0, CL10, 200)
 Y, CLgrid = np.meshgrid(y_vals, CL_vals)
 
 # Evaluate your function on the grid
-Z = dM(Y, CLgrid)
+Z = Cm(Y, CLgrid)
 
 # Plot
 fig = plt.figure()
