@@ -165,7 +165,7 @@ def calculate_wingbox_centroid(spars, stringer_coordinates, t, A_str):
 
     return x_bar, y_bar
 
-
+#ksk
 def run_analysis_and_export(c, num_spars, thickness, stringer_area, total_stringers_desired,
                             file_path="centroid_data.json"):
     """
