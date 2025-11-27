@@ -129,6 +129,7 @@ def V(y):
     y_arr = np.asarray(y)
     dV_arr = _call_array(dV, y_arr)
     V_arr = cumulative_trapezoid(dV_arr, y_arr, initial=0)
+    V_arr = -1 * V_arr
     V_arr = V_arr - V_arr[-1]  # shift so V(b/2)=0
     return V_arr
 
