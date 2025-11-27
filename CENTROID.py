@@ -3,7 +3,7 @@ import numpy as np
 import scipy as sp
 import json
 import matplotlib.pyplot as plt
-#boom
+#boom boom
 
 
 from torsional_stiffness_functions import find_sparheight as find_sparheight_func
@@ -121,7 +121,6 @@ def build_spars_from_positions(c, spar_positions_ratios):
         y_top = y_top*c
         spars.append([[x_pos, y_top], [x_pos, y_bot]])
     return spars
-
 
 # =========================================================
 #  PUBLIC FUNCTIONS (This is what your team will call)
