@@ -1,11 +1,15 @@
 #Importing constants and wing geometry
 from constants import g, rho_air
-from Wing_geometry import b, c_r, c_t
+from Wing_geometry import c
 v = 54 #m/s
 q = 0.5*rho_air*v**2
 #Importing functions from other files
 from Linearmodel import linear_model
 from Interpolation import interpolate
+
+#import modules
+import numpy as np
+import matplotlib.pyplot as plt
 
 def extract_main_wing_data(filepath):
     y_span = []
