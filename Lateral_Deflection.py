@@ -4,28 +4,14 @@
 import numpy as np
 import scipy as sp
 
-
 #import all the information from the other files
 from material_properties import E
 from MOI import MOI_single_cell
+from load_calculations import M
 
 
-
-
-
-
-
-
-
-#test
-#get from 4.1 people
-
-def Mx(y):
-    return 4*y**2
-
-#yipee
 def h(y):
-    return Mx(y) / (E * MOI_single_cell(y))
+    return M(y) / (E * MOI_single_cell(y))
 
 
 def dvdy(y):
