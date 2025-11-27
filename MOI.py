@@ -3,7 +3,7 @@ import numpy as np
 import scipy as sp
 
 def MOI_single_cell(y):
-
+    #import the necessary functions from other
     from airfoil_geometry import t_skin as skin_thickness
     from airfoil_geometry import t_front as thickness
     from airfoil_geometry import a_stringer as mass_stringer
@@ -59,10 +59,13 @@ def MOI_single_cell(y):
     spars.append(spar_front)
     spars.append(spar_rear)
     stringer_chord = generate_stringer_coordinates(spars,n_stringer)
+    print(stringer_chord)
 
     #calculate centroid using Divye's function
-    x_centroid, y_centroid = calculate_wingbox_centroid(spars, stringer_chord, thickness, mass_stringer)
+    x_centroid, y_centroid, element = calculate_wingbox_centroid(spars, stringer_chord, thickness, mass_stringer)
+
     print(y_centroid)
+    print(x_centroid)
     # code to calculate MOI for front and rear spar
 
     y_centroid_front_spar = (y_top_front_spar - y_bottom_front_spar)/2
@@ -91,52 +94,6 @@ def MOI_single_cell(y):
     for element in stringer_chord:
         MOI_stringer += np.power(abs(element[0]-y_centroid),2)*mass_stringer
 
-    # old method
-    """
-    MOI_stringer_2=0
-    MOI_total_2 = 0
-    MOI_stringer_2 = np.power((y_top_front_spar-y_centroid),2)*mass_stringer + np.power((y_top_rear_spar-y_centroid),2)*mass_stringer + np.power((y_bottom_front_spar-y_centroid),2)*mass_stringer + np.power((y_bottom_rear_spar-y_centroid),2)*mass_stringer
-
-    if n_stringer > 4:
-
-        check = check_even(n_stringer)
-        n_stringer_after_corners = n_stringer - 4
-
-        if not check:
-            n_stringer_top  = round(n_stringer_after_corners/2)
-            n_stringer_bottom = n_stringer_top -1
-
-            for i in range(n_stringer_top):
-                slope_step_top = (y_top_rear_spar-y_top_front_spar)/(n_stringer_top+1)
-
-                y_new_position_top = y_top_front_spar + slope_step_top*i
-
-                MOI_stringer_2 += np.power(abs(y_new_position_top-y_centroid),2)*mass_stringer
-
-            for i in range(n_stringer_bottom):
-                slope_step_bottom = (y_bottom_rear_spar-y_bottom_front_spar)/(n_stringer_bottom+1)
-
-                y_new_position_bottom = y_bottom_front_spar + slope_step_bottom*i
-
-                MOI_stringer_2 += np.power(abs(y_new_position_bottom-y_centroid),2)*mass_stringer
-
-        else:
-            n_stringer_top  = int(n_stringer_after_corners/2)
-            n_stringer_bottom = n_stringer_top
-
-            for i in range(n_stringer_top):
-                slope_step_top = (y_top_rear_spar-y_top_front_spar)/n_stringer_top
-
-                y_new_position_top = y_top_front_spar + slope_step_top*i
-
-                MOI_stringer_2 += np.power(abs(y_new_position_top-y_centroid),2)*mass_stringer
-
-            for i in range(n_stringer_bottom):
-                slope_step_bottom = (y_bottom_rear_spar-y_bottom_front_spar)/n_stringer_bottom
-
-                y_new_position_bottom = y_bottom_front_spar + slope_step_bottom*i
-
-                MOI_stringer_2 += np.power(abs(y_new_position_bottom-y_centroid),2)*mass_stringer"""
     # sum all the elements together 
     #MOI_total_2 = MOI_front_spar + MOI_rear_spar + MOI_stringer_2 + MOI_top + MOI_bottom + MOI_middle_spar
 
@@ -274,8 +231,8 @@ def MOI_multi_cell(y):
 
     return MOI_total
 
-value = MOI_single_cell(2)
-value_2 = MOI_multi_cell(2)
+value = MOI_single_cell(0)
+value_2 = MOI_multi_cell(0)
 
 print("This is the calculated value for Ixx with 2 spars method",value)
 print("This is the calculated value for Ixx with 3 spars method",value_2)
