@@ -38,28 +38,28 @@ def alpha(CL):
 
 
 
+if __name__ == "__main__":
+    #Plot data for testing
+    # Create ranges
+    y_vals  = np.linspace(0, max(ylst), 200)
+    CL_vals = np.linspace(CL0, CL10, 200)
 
-#Plot data for testing
-# Create ranges
-y_vals  = np.linspace(0, max(ylst), 200)
-CL_vals = np.linspace(CL0, CL10, 200)
+    # Create grid
+    Y, CLgrid = np.meshgrid(y_vals, CL_vals)
 
-# Create grid
-Y, CLgrid = np.meshgrid(y_vals, CL_vals)
+    # Evaluate your function on the grid
+    Z = dM(Y, CLgrid)
 
-# Evaluate your function on the grid
-Z = dM(Y, CLgrid)
+    # Plot
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
 
-# Plot
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+    surf = ax.plot_surface(Y, CLgrid, Z)
 
-surf = ax.plot_surface(Y, CLgrid, Z)
+    ax.set_xlabel("y")
+    ax.set_ylabel("CL")
+    ax.set_zlabel("dL(y, CL)")
 
-ax.set_xlabel("y")
-ax.set_ylabel("CL")
-ax.set_zlabel("dL(y, CL)")
-
-plt.show()
+    plt.show()
 
 
