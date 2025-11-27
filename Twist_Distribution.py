@@ -15,4 +15,4 @@ def dthetady(y):
 def twist(y):
     return sp.integrate.quad(dthetady,0,float(y))[0]
 
-print(twist)
+print(twist(5))
