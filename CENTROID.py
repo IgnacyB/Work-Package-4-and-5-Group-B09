@@ -246,6 +246,7 @@ def plot_wingbox(elements, cx, cy, c, num_spars):
     plt.grid(True, linestyle='--', alpha=0.6)
     plt.legend()
     plt.show()
+    #jj
 
 
 if __name__ == '__main__':
