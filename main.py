@@ -30,7 +30,7 @@ def dL(y,CL):
 def dD(y,CL):
     return Cd(y,CL)*q*c(y)
 def dM(y,CL):
-    return Cm(y,CL)*q*c(y)
+    return Cm(y,CL)*q*c(y) #Should it be c^2 to get a moment???
 
 #Define AOA as function of CL
 def alpha(CL):

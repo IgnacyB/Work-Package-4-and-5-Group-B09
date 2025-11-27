@@ -128,9 +128,8 @@ def V(y):
     # array/vectorized behavior (fast cumulative integration)
     y_arr = np.asarray(y)
     dV_arr = _call_array(dV, y_arr)
-    V_arr = cumulative_trapezoid(dV_arr, y_arr, initial=0)
-    V_arr = -1 * V_arr
-    V_arr = V_arr - V_arr[-1]  # shift so V(b/2)=0
+    int_arr = cumulative_trapezoid(dV_arr, y_arr, initial=0)
+    V_arr = -1 * int_arr + int_arr[-1]  # shift so V(b/2)=0
     return V_arr
 
 def T(y):
@@ -154,3 +153,56 @@ def M(y):
     M_arr = cumulative_trapezoid(V_arr, y_arr, initial=0)
     M_arr = M_arr - M_arr[-1]  # shift so M(b/2)=0
     return M_arr
+
+def plot_internal_loads(y=None, n=200):
+    if y is None:
+        y = np.linspace(0, b/2, n)
+    V_arr = V(y) if callable(V) else np.asarray(V)
+    T_arr = T(y) if callable(T) else np.asarray(T)
+    M_arr = M(y) if callable(M) else np.asarray(M)
+
+    fig, axs = plt.subplots(3, 1, figsize=(8, 10), constrained_layout=True)
+
+    axs[0].plot(y, V_arr, lw=2, color="tab:blue")
+    axs[0].axhline(0, color="k", lw=0.6)
+    axs[0].set_ylabel("V(y) [N]")
+    axs[0].set_title("Internal Shear Force along wing span")
+    axs[0].grid(True)
+
+    axs[1].plot(y, T_arr, lw=2, color="tab:green")
+    axs[1].axhline(0, color="k", lw=0.6)
+    axs[1].set_ylabel("T(y) [N·m]")
+    axs[1].set_title("Internal Torque along wing span")
+    axs[1].grid(True)
+
+    axs[2].plot(y, M_arr, lw=2, color="tab:red")
+    axs[2].axhline(0, color="k", lw=0.6)
+    axs[2].set_xlabel("Spanwise coordinate y (m)")
+    axs[2].set_ylabel("M(y) [N·m]")
+    axs[2].set_title("Internal Bending Moment along wing span")
+    axs[2].grid(True)
+
+    plt.show()
+
+def plot_distributed_loads(y=None, n=300):
+    if y is None:
+        y = np.linspace(0, b/2, n)
+    # use existing helper to evaluate funcs on arrays
+    dV_arr = _call_array(dV, y)
+    dT_arr = _call_array(dT, y)
+
+    plt.figure(figsize=(8,5))
+    plt.plot(y, dV_arr, lw=2, label="dV/dy (q(y))", color="tab:orange")
+    plt.plot(y, dT_arr, lw=2, linestyle="--", label="dT/dy", color="tab:purple")
+    plt.axhline(0, color="k", lw=0.6)
+    plt.xlabel("Spanwise coordinate y (m)")
+    plt.ylabel("Distributed loads")
+    plt.title("Distributed loads along half-span: dV/dy and dT/dy")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+if __name__ == "__main__":
+    plot_internal_loads()
+    plot_distributed_loads()
