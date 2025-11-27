@@ -20,7 +20,7 @@ def lateral_deflection_graph():
 
     plt.plot(spanpos, lateral_dist)
     plt.xlabel("Spanwise position [m]")
-    plt.ylabel("Lateral deflection [UNIT]")
+    plt.ylabel("Lateral deflection [m]")
     plt.show
 
 
