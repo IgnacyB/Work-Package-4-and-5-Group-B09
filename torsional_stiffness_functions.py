@@ -18,7 +18,7 @@ def find_sparheight(chord_pos):
 
 #import data
 from airfoil_geometry import *
-from Wing_geometry import c_r, c_t, b
+from Aircraft_parameters import c_r, c_t, b
 from material_properties import G
 
 

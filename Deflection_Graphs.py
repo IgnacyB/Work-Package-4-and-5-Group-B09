@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import math
 
-from Wing_geometry import b
+from Aircraft_parameters import b
 from Twist_Distribution import twist
 from Lateral_Deflection import lateral_deflection
 
