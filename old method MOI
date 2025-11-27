@@ -1,0 +1,46 @@
+# old method
+"""
+    MOI_stringer_2=0
+    MOI_total_2 = 0
+    MOI_stringer_2 = np.power((y_top_front_spar-y_centroid),2)*mass_stringer + np.power((y_top_rear_spar-y_centroid),2)*mass_stringer + np.power((y_bottom_front_spar-y_centroid),2)*mass_stringer + np.power((y_bottom_rear_spar-y_centroid),2)*mass_stringer
+
+    if n_stringer > 4:
+
+        check = check_even(n_stringer)
+        n_stringer_after_corners = n_stringer - 4
+
+        if not check:
+            n_stringer_top  = round(n_stringer_after_corners/2)
+            n_stringer_bottom = n_stringer_top -1
+
+            for i in range(n_stringer_top):
+                slope_step_top = (y_top_rear_spar-y_top_front_spar)/(n_stringer_top+1)
+
+                y_new_position_top = y_top_front_spar + slope_step_top*i
+
+                MOI_stringer_2 += np.power(abs(y_new_position_top-y_centroid),2)*mass_stringer
+
+            for i in range(n_stringer_bottom):
+                slope_step_bottom = (y_bottom_rear_spar-y_bottom_front_spar)/(n_stringer_bottom+1)
+
+                y_new_position_bottom = y_bottom_front_spar + slope_step_bottom*i
+
+                MOI_stringer_2 += np.power(abs(y_new_position_bottom-y_centroid),2)*mass_stringer
+
+        else:
+            n_stringer_top  = int(n_stringer_after_corners/2)
+            n_stringer_bottom = n_stringer_top
+
+            for i in range(n_stringer_top):
+                slope_step_top = (y_top_rear_spar-y_top_front_spar)/n_stringer_top
+
+                y_new_position_top = y_top_front_spar + slope_step_top*i
+
+                MOI_stringer_2 += np.power(abs(y_new_position_top-y_centroid),2)*mass_stringer
+
+            for i in range(n_stringer_bottom):
+                slope_step_bottom = (y_bottom_rear_spar-y_bottom_front_spar)/n_stringer_bottom
+
+                y_new_position_bottom = y_bottom_front_spar + slope_step_bottom*i
+
+                MOI_stringer_2 += np.power(abs(y_new_position_bottom-y_centroid),2)*mass_stringer"""

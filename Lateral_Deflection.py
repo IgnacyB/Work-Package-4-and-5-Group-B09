@@ -4,45 +4,22 @@
 import numpy as np
 import scipy as sp
 
-
 #import all the information from the other files
-from MOI import *
-from CENTROID import *
+from material_properties import E
+from MOI import MOI_single_cell
+from load_calculations import M
 
-
-
-
-
-def Mx(y):
-    return 4*y ** 2
-
-def Ixx(y):
-    return 4*y
 
 def h(y):
-    return Mx(y) / (E * Ixx(y))
+    return M(y) / (E * MOI_single_cell(y))
 
 
 def dvdy(y):
-
-
-
-
-
-
-
     return -1 * sp.integrate.quad(h,0,y)[0]
 
+#y_pos = float(input("spanwise location: "))
+def lateral_deflection(y):
+    return sp.integrate.quad(dvdy,0,y)[0]
 
-# Now that all calculating functions have been defined the code beneath does the actual calculations
-
-#input the material the wingbox is made of:
-E = float(input("Material Young's Modulus: "))
-#input the position along the wing span, so this is how far we integrate over the wing
-y_pos = input("spanwise location: ")
-
-
-lateral_deflection , error2 = sp.integrate.quad(dvdy,0,float(y_pos))
-
-print(lateral_deflection)
+print(lateral_deflection(5))
 
