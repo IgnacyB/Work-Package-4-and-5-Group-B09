@@ -14,3 +14,7 @@ taper_ratio = c_t / c_r  # Taper ratio
 sweep_LE = 15  # Leading edge sweep angle in degrees
 sweep_quarter = 10  # Quarter-chord sweep angle in degrees
 dihedral = 5  # Dihedral angle in degrees
+
+# Chord distribution function
+def c(y):
+    return c_r - (c_r - c_t)*(2*y)/b
