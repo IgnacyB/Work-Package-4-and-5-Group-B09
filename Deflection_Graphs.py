@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import math
 
 from Wing_geometry import b
 from Twist_Distribution import twist
@@ -32,10 +33,11 @@ def twist_distribution_graph():
 
     while y_position <= b/2:
         spanpos.append(y_position)
-        twist_dist.append(twist(y_position))
+        twist_dist.append(twist(y_position)*180/math.pi)
         y_position += 0.5
 
     plt.plot(spanpos, twist_dist)
     plt.xlabel("Spanwise position [m]")
-    plt.ylabel("Angle of twist [UNIT]")
+    plt.ylabel("Angle of twist [degree]")
     plt.show
+
