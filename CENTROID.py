@@ -3,13 +3,8 @@ import numpy as np
 import scipy as sp
 import json
 import matplotlib.pyplot as plt
-#boom
-
 
 from torsional_stiffness_functions import find_sparheight as find_sparheight_func
-
-# --- END OF IMPORT BLOCK ---
-
 
 def generate_stringer_coordinates(spars, total_stringers):
     """
@@ -106,7 +101,7 @@ def calculate_wingbox_centroid(spars, stringer_coordinates, t, A_str):
     x_bar = sum_Mx / sum_Area
     y_bar = sum_My / sum_Area
 
-    return x_bar, y_bar, elements
+    return x_bar, y_bar
 
 
 def build_spars_from_positions(c, spar_positions_ratios):
@@ -116,7 +111,9 @@ def build_spars_from_positions(c, spar_positions_ratios):
     spars = []
     for ratio in spar_positions_ratios:
         x_pos = ratio * c
-        y_top, y_bot = find_sparheight_func(x_pos)
+        y_top, y_bot = find_sparheight_func(ratio)
+        y_top = c*y_top
+        y_bot = c*y_bot
         spars.append([[x_pos, y_top], [x_pos, y_bot]])
     return spars
 
@@ -161,7 +158,7 @@ def get_centroid(c, spar_positions_ratios, thickness, stringer_area, total_strin
     auto_stringers = generate_stringer_coordinates(spars, total_stringers)
 
     # 3. Calculate Centroid
-    cx, cy, _ = calculate_wingbox_centroid(
+    cx,cy = calculate_wingbox_centroid(
         spars, auto_stringers, thickness, stringer_area
     )
 

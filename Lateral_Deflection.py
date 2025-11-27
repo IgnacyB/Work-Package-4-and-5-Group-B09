@@ -17,13 +17,6 @@ def h(y):
 def dvdy(y):
     return -1 * sp.integrate.quad(h,0,y)[0]
 
-
-# Now that all calculating functions have been defined the code beneath does the actual calculations
-
-#input the material the wingbox is made of:
-#input the position along the wing span, so this is how far we integrate over the wing
-
-
 #y_pos = float(input("spanwise location: "))
 def lateral_deflection(y):
     return sp.integrate.quad(dvdy,0,y)[0]

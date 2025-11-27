@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 #Importing important constants and functions
-from Wing_geometry import b
+from Aircraft_parameters import b
 from load_calculations import V, T, M   
 #Defining y values for plotting
 def plot_internal_loads(y=None, n=200):

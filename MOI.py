@@ -15,7 +15,7 @@ def MOI_single_cell(y):
     from torsional_stiffness_functions import find_sparheight
     from MOI import check_even
     from CENTROID import get_stringer_coordinates_only
-    from CENTROID import calculate_wingbox_centroid
+    from CENTROID import get_centroid
 
     #calculate chord
     chord = c_r-((c_r-c_t)/(b/2))*y
@@ -33,43 +33,15 @@ def MOI_single_cell(y):
     spars = []
     spars.append(chord_position_front)
     spars.append(chord_position_rear)
-    """
-    spar_front = []
-    spar_front_top = []
-    spar_front_bottom = []
-    
-    spar_front_top.append(y_top_front_spar) 
-    spar_front_top.append(chord_position_front)
-    spar_front_bottom.append(y_bottom_front_spar)
-    spar_front_bottom.append(chord_position_front)
 
-    spar_front.append(spar_front_top)
-    spar_front.append(spar_front_top)
+    x_centroid, y_centroid = get_centroid(chord,spars, thickness,mass_stringer,n_stringer)
+    print("X_centroid ",x_centroid)
+    print("Y_centroid",y_centroid)
 
-    spar_rear =[]
-    spar_rear_top = []
-    spar_rear_bottom = []
-
-    spar_rear_top.append(y_top_rear_spar)
-    spar_rear_top.append(chord_position_rear)
-    spar_rear_bottom.append(y_bottom_rear_spar)
-    spar_rear_bottom.append(chord_position_rear)
-
-    spar_rear.append(spar_rear_top)
-    spar_rear.append(spar_rear_bottom)
-
-    spars.append(spar_front)
-    spars.append(spar_rear)"""
-
-    stringer_chord = get_stringer_coordinates_only(y,spars,n_stringer)
+    stringer_chord = get_stringer_coordinates_only(chord,spars,n_stringer)
 
     print(stringer_chord)
 
-    #calculate centroid using Divye's function
-    x_centroid, y_centroid, element = calculate_wingbox_centroid(spars, stringer_chord, thickness, mass_stringer)
-
-    print(y_centroid)
-    print(x_centroid)
     # code to calculate MOI for front and rear spar
 
     y_centroid_front_spar = (y_top_front_spar - y_bottom_front_spar)/2
@@ -96,7 +68,7 @@ def MOI_single_cell(y):
     MOI_stringer =0
 
     for element in stringer_chord:
-        MOI_stringer += np.power(abs(element[0]-y_centroid),2)*mass_stringer
+        MOI_stringer += np.power(abs(element[1]-y_centroid),2)*mass_stringer
 
     # sum all the elements together 
     #MOI_total_2 = MOI_front_spar + MOI_rear_spar + MOI_stringer_2 + MOI_top + MOI_bottom + MOI_middle_spar
@@ -235,7 +207,7 @@ def MOI_multi_cell(y):
 
     return MOI_total
 
-value = MOI_single_cell(0)
+value = MOI_single_cell(2)
 value_2 = MOI_multi_cell(0)
 
 print("This is the calculated value for Ixx with 2 spars method",value)
