@@ -10,7 +10,7 @@ from mass import mass_wing, n_fuel
 from scipy.integrate import cumulative_trapezoid
 #importing functions from other files if needed
 from XFLRextraction import dL, dD, dM, alpha
-from Wing_geometry import c
+from Wing_geometry import c, S_w
 
 #Importing user inputs from main.py
 from Load_cases import mass_aircraft, v_cruise, rho_cruise, mass_fuel
