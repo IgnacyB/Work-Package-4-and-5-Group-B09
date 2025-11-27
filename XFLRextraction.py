@@ -1,6 +1,6 @@
 #Importing constants and wing geometry
 from constants import g, rho_air
-from Wing_geometry import c
+from Aircraft_parameters import b, c_r, c_t, c, S_w
 v = 54 #m/s
 q = 0.5*rho_air*v**2
 #Importing functions from other files
