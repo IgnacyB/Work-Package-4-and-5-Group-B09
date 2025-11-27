@@ -5,42 +5,21 @@ import matplotlib.pyplot as plt
 
 #Importing necessary constants
 from constants import g, rho_air
-from Wing_geometry import b, c_r, c_t, S_w
+from Wing_geometry import b, c_r, c_t
 from mass import mass_wing, n_fuel
 from scipy.integrate import cumulative_trapezoid
 #importing functions from other files if needed
 from XFLRextraction import dL, dD, dM, alpha
 from Wing_geometry import c
 
-# runtime inputs (set by main at runtime)
-v_cruise = None
-mass_aircraft = None
-rho_air = None
-mass_fuel = None
-mass_wing = None
-
-# derived quantities placeholder
-CL = None
-
-def set_runtime_inputs(vc, ma, rho_a, mf, mw):
-    """
-    Call this from main after collecting user inputs.
-    This sets module-level inputs and recomputes derived values (e.g. CL).
-    """
-    global v_cruise, mass_aircraft, rho_air, mass_fuel, mass_wing, CL
-    v_cruise = vc
-    mass_aircraft = ma
-    rho_air = rho_a
-    mass_fuel = mf
-    mass_wing = mw
-    # recompute derived values that depend on inputs:
-    CL = 2 * mass_aircraft * g / (rho_air * v_cruise**2 * S_w)
+#Importing user inputs from main.py
+from Load_cases import mass_aircraft, v_cruise, rho_cruise, mass_fuel
 
 #Assumptions
 #The wing and fuel weight force act in the centroid of the wingbox
 x_bar_c = 1/2 #location of centroid of wing box assumed to be at half the chord (Should be update with more accurate data!!!)
 x_lift = 1/4 #location of aerodynamic lift assumed to be at quarter chord
-
+CL = 2 * mass_aircraft * g / (rho_cruise * v_cruise**2 * S_w) # Calculating the required CL for level flight
 
 #=========WEIGHT CALCULATIONS=========#
 
