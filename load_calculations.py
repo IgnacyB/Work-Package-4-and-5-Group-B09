@@ -9,7 +9,8 @@ from Wing_geometry import b, c_r, c_t
 from mass import mass_wing, mass_fuel, n_fuel
 from scipy.integrate import cumulative_trapezoid
 #importing functions from other files if needed
-from main import c, dL, dD, dM, alpha
+from XFLRextraction import dL, dD, dM, alpha
+from Wing_geometry import c
 
 #Assumptions
 #The wing and fuel weight force act in the centroid of the wingbox
