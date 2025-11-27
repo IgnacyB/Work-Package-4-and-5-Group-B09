@@ -5,12 +5,10 @@ import matplotlib.pyplot as plt
 
 #Importing necessary constants
 from constants import g, rho_air
-from Wing_geometry import b, c_r, c_t
-from mass import mass_wing, n_fuel
+from Aircraft_parameters import mass_aircraft, mass_fuel, mass_wing, n_fuel ,b, c_r, c_t, c, S_w
 from scipy.integrate import cumulative_trapezoid
 #importing functions from other files if needed
 from XFLRextraction import dL, dD, dM, alpha
-from Wing_geometry import c, S_w
 
 #Importing user inputs from main.py
 from Load_cases import mass_aircraft, v_cruise, rho_cruise, mass_fuel
