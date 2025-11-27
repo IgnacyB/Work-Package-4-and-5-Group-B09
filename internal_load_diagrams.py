@@ -4,11 +4,9 @@ import numpy as np
 from Wing_geometry import b
 from load_calculations import V, T, M   
 #Defining y values for plotting
-if __name__ == "__main__":
-    # create spanwise grid
-    y = np.linspace(0, b/2, 200)
-
-    # ensure V/T/M are arrays (handle callable or already-array)
+def plot_internal_loads(y=None, n=200):
+    if y is None:
+        y = np.linspace(0, b/2, n)
     V_arr = V(y) if callable(V) else np.asarray(V)
     T_arr = T(y) if callable(T) else np.asarray(T)
     M_arr = M(y) if callable(M) else np.asarray(M)
@@ -35,3 +33,6 @@ if __name__ == "__main__":
     axs[2].grid(True)
 
     plt.show()
+
+if __name__ == "__main__":
+    plot_internal_loads()
