@@ -9,9 +9,9 @@ from Wing_geometry import b, c_r, c_t
 #===============Extraction and calculation of aerodynamic force distributions===============#
 
 #Extract Cl,Cd,Cm data from XLFR for AOA=0 and AOA=10
-ylst,cllst,cdlst,cmlst,CL10 = extract_main_wing_data("MainWing_a=10.00_v=10.00ms.txt")
+ylst,cllst,cdlst,cmlst,CL10 = extract_main_wing_data("/Users/zorkafischer/PycharmProjects/Work-Package-4-and-5-Group-B09/MainWing_a=10.00_v=10.00ms.txt")
 fcl10,fcd10,fcm10 = interpolate(ylst,cllst,cdlst,cmlst)
-ylst,cllst,cdlst,cmlst,CL0 = extract_main_wing_data("MainWing_a=0.00_v=10.00ms.txt")
+ylst,cllst,cdlst,cmlst,CL0 = extract_main_wing_data("/Users/zorkafischer/PycharmProjects/Work-Package-4-and-5-Group-B09/MainWing_a=0.00_v=10.00ms.txt")
 fcl0,fcd0,fcm0 = interpolate(ylst,cllst,cdlst,cmlst)
 
 #Constants
