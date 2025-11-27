@@ -13,6 +13,7 @@ from load_calculations import M
 def h(y):
     return M(y) / (E * MOI_single_cell(y))
 
+print(h(5))
 
 def dvdy(y):
     return -1 * sp.integrate.quad(h,0,y)[0]
