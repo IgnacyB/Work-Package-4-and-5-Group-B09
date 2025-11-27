@@ -3,17 +3,14 @@ import scipy as sp
 
 #importing variables/functions from other files
 from material_properties import G
-
+from torsional_stiffness_functions import torsional_constant_singlecell
 
 
 def T(y):
     return y
 
-def J(y):
-    return 2*y
-
 def dthetady(y):
-    return T(y) / (G * J(y))
+    return T(y) / (G * torsional_constant_singlecell(y))
 
 y_pos = int(input("Spanwise location: "))
 
