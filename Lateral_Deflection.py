@@ -9,7 +9,6 @@ from material_properties import E
 from MOI import MOI_single_cell
 from load_calculations import M
 
-
 def h(y):
     return M(y) / (E * MOI_single_cell(y))
 
@@ -24,5 +23,5 @@ print(dvdy(5))
 def lateral_deflection(y):
     return sp.integrate.quad(dvdy,0,y)[0]
 
-print(lateral_deflection(5))
+print(lateral_deflection(0.1))
 
