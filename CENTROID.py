@@ -106,7 +106,7 @@ def calculate_wingbox_centroid(spars, stringer_coordinates, t, A_str):
     x_bar = sum_Mx / sum_Area
     y_bar = sum_My / sum_Area
 
-    return x_bar, y_bar
+    return x_bar, y_bar, elements
 
 
 def build_spars_from_positions(c, spar_positions_ratios):
@@ -117,8 +117,6 @@ def build_spars_from_positions(c, spar_positions_ratios):
     for ratio in spar_positions_ratios:
         x_pos = ratio * c
         y_top, y_bot = find_sparheight_func(ratio)
-        y_top=c*y_top
-        y_bot=c*y_bot
         spars.append([[x_pos, y_top], [x_pos, y_bot]])
     return spars
 
