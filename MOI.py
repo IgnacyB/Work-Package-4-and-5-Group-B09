@@ -66,10 +66,9 @@ def MOI_single_cell(y):
     print(stringer_chord)
 
     #calculate centroid using Divye's function
-    x_centroid, y_centroid, element = calculate_wingbox_centroid(spars, stringer_chord, thickness, mass_stringer)
 
-    print(y_centroid)
-    print(x_centroid)
+    #calculate_wingbox_centroid(spars, stringer_chord, thickness, mass_stringer)
+    y_centroid = 0
     # code to calculate MOI for front and rear spar
 
     y_centroid_front_spar = (y_top_front_spar - y_bottom_front_spar)/2
