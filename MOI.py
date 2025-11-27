@@ -11,7 +11,7 @@ def MOI_single_cell(y):
     from airfoil_geometry import location_front as chord_position_front
     from airfoil_geometry import location_rear as chord_position_rear
 
-    from Wing_geometry import b, c_r, c_t
+    from Aircraft_parameters import b, c_r, c_t
     from torsional_stiffness_functions import find_sparheight
     from MOI import check_even
     from CENTROID import get_stringer_coordinates_only
@@ -97,7 +97,7 @@ def MOI_multi_cell(y):
     from airfoil_geometry import location_rear as chord_position_rear
     from airfoil_geometry import location_middle as chord_position_middle
 
-    from Wing_geometry import b, c_r, c_t
+    from Aircraft_parameters import b, c_r, c_t
     from torsional_stiffness_functions import find_sparheight
     from MOI import check_even
     from CENTROID import generate_stringer_coordinates
