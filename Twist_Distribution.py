@@ -1,18 +1,20 @@
 
 import scipy as sp
 
-#importing variables/functions from other files
-from material_properties import G
-from torsional_stiffness_functions import torsional_constant_singlecell
-from load_calculations import T
 
+G = int(input("Material G Modulus: "))
+
+def T(y):
+    return y
+
+def J(y):
+    return 2*y
 
 def dthetady(y):
-    return T(y) / (G * torsional_constant_singlecell(y))
+    return T(y) / (G * J(y))
 
-#y_pos = int(input("Spanwise location: "))
+y_pos = int(input("Spanwise location: "))
 
-def twist(y):
-    return sp.integrate.quad(dthetady,0,float(y))[0]
+twist = sp.integrate.quad(dthetady,0,float(y_pos))[0]
 
-print(twist(5))
+print(twist)
