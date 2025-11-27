@@ -35,12 +35,12 @@ def MOI_single_cell(y):
     spars.append(chord_position_rear)
 
     x_centroid, y_centroid = get_centroid(chord,spars, thickness,mass_stringer,n_stringer)
-    print("X_centroid ",x_centroid)
-    print("Y_centroid",y_centroid)
+    #print("X_centroid ",x_centroid)
+    #print("Y_centroid",y_centroid)
 
     stringer_chord = get_stringer_coordinates_only(chord,spars,n_stringer)
 
-    print(stringer_chord)
+    #print(stringer_chord)
 
     # code to calculate MOI for front and rear spar
 
