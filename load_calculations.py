@@ -9,7 +9,8 @@ import matplotlib.pyplot as plt
 from constants import g, rho_air
 from Wing_geometry import b, c_r, c_t
 from mass import mass_wing, mass_fuel, n_fuel
-from Aircraft_parameters import mass_aircraft, mass_fuel, n_fuel, mass_wing, rho_cruise
+from Aircraft_parameters import mass_aircraft, mass_fuel, n_fuel, mass_wing, S_w
+from Load_cases import rho_cruise, v_cruise
 from scipy.integrate import cumulative_trapezoid
 #importing functions from other files if needed
 from main import c, dL, dD, dM, alpha
