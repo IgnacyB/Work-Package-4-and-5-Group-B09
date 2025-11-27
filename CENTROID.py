@@ -3,13 +3,8 @@ import numpy as np
 import scipy as sp
 import json
 import matplotlib.pyplot as plt
-#boom
-
 
 from torsional_stiffness_functions import find_sparheight as find_sparheight_func
-
-# --- END OF IMPORT BLOCK ---
-
 
 def generate_stringer_coordinates(spars, total_stringers):
     """
