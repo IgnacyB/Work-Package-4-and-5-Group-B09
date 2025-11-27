@@ -5,13 +5,11 @@ import matplotlib.pyplot as plt
 
 #Importing necessary constants
 from constants import g, rho_air
-from Aircraft_parameters import mass_aircraft, mass_fuel, mass_wing, n_fuel ,b, c_r, c_t, c, S_w
+from Wing_geometry import b, c_r, c_t
+from mass import mass_wing, mass_fuel, n_fuel
 from scipy.integrate import cumulative_trapezoid
 #importing functions from other files if needed
-from XFLRextraction import dL, dD, dM, alpha
-
-#Importing user inputs from main.py
-from Load_cases import mass_aircraft, v_cruise, rho_cruise, mass_fuel
+from main import c, dL, dD, dM, alpha
 
 #Assumptions
 #The wing and fuel weight force act in the centroid of the wingbox
@@ -67,7 +65,7 @@ w_dist = weight_distribution(mass_wing, b, c_r, c_t)
 f_dist = fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t)
 
 def dV(y):
-    return -dN(y) + w_dist(y) + f_dist(y)
+    return -1 * dN(y) + w_dist(y) + f_dist(y)
 def dT(y):
     return -dM_N(y) - dM(y, CL)
 
@@ -95,8 +93,9 @@ def V(y):
     # array/vectorized behavior (fast cumulative integration)
     y_arr = np.asarray(y)
     dV_arr = _call_array(dV, y_arr)
-    int_arr = cumulative_trapezoid(dV_arr, y_arr, initial=0)
-    V_arr = -1 * int_arr + int_arr[-1]  # shift so V(b/2)=0
+    # integrate from tip (b/2) inward so V(b/2)=0
+    V_flip = cumulative_trapezoid(np.flip(dV_arr), np.flip(y_arr), initial=0)
+    V_arr = -1 * np.flip(V_flip)
     return V_arr
 
 def T(y):
@@ -105,8 +104,8 @@ def T(y):
         return Tval
     y_arr = np.asarray(y)
     dT_arr = _call_array(dT, y_arr)
-    int_arr = cumulative_trapezoid(dT_arr, y_arr, initial=0)
-    T_arr = -1 * int_arr + int_arr[-1]  # shift so T(b/2)=0
+    T_flip = cumulative_trapezoid(np.flip(dT_arr), np.flip(y_arr), initial=0)
+    T_arr = -1 * np.flip(T_flip)
     return T_arr
 
 def M(y):
@@ -117,8 +116,8 @@ def M(y):
     # array: build V array then integrate
     y_arr = np.asarray(y)
     V_arr = V(y_arr)  # uses vectorized V above
-    M_arr = cumulative_trapezoid(V_arr, y_arr, initial=0)
-    M_arr = M_arr - M_arr[-1]  # shift so M(b/2)=0
+    M_flip = cumulative_trapezoid(np.flip(V_arr), np.flip(y_arr), initial=0)
+    M_arr = np.flip(M_flip)
     return M_arr
 
 def plot_internal_loads(y=None, n=200):
