@@ -10,8 +10,9 @@ from load_calculations import T
 def dthetady(y):
     return T(y) / (G * torsional_constant_singlecell(y))
 
-y_pos = int(input("Spanwise location: "))
+#y_pos = int(input("Spanwise location: "))
 
-twist = sp.integrate.quad(dthetady,0,float(y_pos))[0]
+def twist(y):
+    return sp.integrate.quad(dthetady,0,float(y))[0]
 
 print(twist)
