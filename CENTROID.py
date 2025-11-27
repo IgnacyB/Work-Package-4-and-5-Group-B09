@@ -1,22 +1,12 @@
 import math
 import numpy as np
+import scipy as sp
 import json
-import sys
 import matplotlib.pyplot as plt
+#boom
 
-# --- START OF IMPORT BLOCK ---
-try:
-    from torsional_stiffness_functions import find_sparheight as find_sparheight_func
 
-    print("find_sparheight successfully imported.")
-except ImportError as e:
-    print("-" * 50)
-    print(f"FATAL ERROR: Could not import 'find_sparheight'.")
-    print(f"Details: {e}")
-    print("Program terminating.")
-    print("-" * 50)
-    sys.exit(1)
-
+from torsional_stiffness_functions import find_sparheight as find_sparheight_func
 
 # --- END OF IMPORT BLOCK ---
 
