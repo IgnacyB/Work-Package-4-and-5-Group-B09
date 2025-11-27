@@ -5,18 +5,21 @@ import matplotlib.pyplot as plt
 
 #Importing necessary constants
 from constants import g, rho_air
-from Wing_geometry import b, c_r, c_t
-from mass import mass_wing, mass_fuel, n_fuel
+from Wing_geometry import b, c_r, c_t, S_w
+from mass import mass_wing, n_fuel
 from scipy.integrate import cumulative_trapezoid
 #importing functions from other files if needed
 from XFLRextraction import dL, dD, dM, alpha
 from Wing_geometry import c
 
+#Importing user inputs from main.py
+from main import V, mass_aircraft, rho_air, mass_fuel, mass_wing
+
 #Assumptions
 #The wing and fuel weight force act in the centroid of the wingbox
 x_bar_c = 1/2 #location of centroid of wing box assumed to be at half the chord (Should be update with more accurate data!!!)
 x_lift = 1/4 #location of aerodynamic lift assumed to be at quarter chord
-CL = 0.5 #Assumed CL for load calculations (Should be updated with actual flight conditions)
+CL = 2 * mass_aircraft * g / (rho_air * V**2 * S_w) #Calculating CL based on level flight condition
 
 #=========WEIGHT CALCULATIONS=========#
 
