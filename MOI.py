@@ -26,6 +26,7 @@ def MOI_single_cell(y):
     y_top_rear_spar_percentage, y_bottom_rear_spar_percentage = find_sparheight(chord_position_rear)
 
     y_top_front_spar= y_top_front_spar_percentage*chord
+    print(y_top_front_spar)
     y_top_rear_spar= y_top_rear_spar_percentage*chord
     y_bottom_front_spar= y_bottom_front_spar_percentage*chord
     y_bottom_rear_spar= y_bottom_rear_spar_percentage*chord
@@ -61,7 +62,7 @@ def MOI_single_cell(y):
     spars.append(spar_front)
     spars.append(spar_rear)"""
 
-    stringer_chord = get_stringer_coordinates_only(y,spars,n_stringer)
+    stringer_chord = get_stringer_coordinates_only(chord,spars,n_stringer)
 
     print(stringer_chord)
 
@@ -95,7 +96,7 @@ def MOI_single_cell(y):
     MOI_stringer =0
 
     for element in stringer_chord:
-        MOI_stringer += np.power(abs(element[0]-y_centroid),2)*mass_stringer
+        MOI_stringer += np.power(abs(element[1]-y_centroid),2)*mass_stringer
 
     # sum all the elements together 
     #MOI_total_2 = MOI_front_spar + MOI_rear_spar + MOI_stringer_2 + MOI_top + MOI_bottom + MOI_middle_spar
@@ -234,7 +235,7 @@ def MOI_multi_cell(y):
 
     return MOI_total
 
-value = MOI_single_cell(0)
+value = MOI_single_cell(2)
 value_2 = MOI_multi_cell(0)
 
 print("This is the calculated value for Ixx with 2 spars method",value)

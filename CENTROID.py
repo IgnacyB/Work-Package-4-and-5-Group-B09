@@ -116,7 +116,7 @@ def build_spars_from_positions(c, spar_positions_ratios):
     spars = []
     for ratio in spar_positions_ratios:
         x_pos = ratio * c
-        y_top, y_bot = find_sparheight_func(x_pos)
+        y_top, y_bot = find_sparheight_func(ratio)
         spars.append([[x_pos, y_top], [x_pos, y_bot]])
     return spars
 
