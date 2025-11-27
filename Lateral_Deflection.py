@@ -18,6 +18,8 @@ print(h(5))
 def dvdy(y):
     return -1 * sp.integrate.quad(h,0,y)[0]
 
+print(dvdy(5))
+
 #y_pos = float(input("spanwise location: "))
 def lateral_deflection(y):
     return sp.integrate.quad(dvdy,0,y)[0]
