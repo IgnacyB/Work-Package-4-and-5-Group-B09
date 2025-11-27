@@ -163,7 +163,7 @@ def calculate_wingbox_centroid(spars, stringer_coordinates, t, A_str):
     x_bar = sum_Mx / sum_Area
     y_bar = sum_My / sum_Area
 
-    return x_bar, y_bar, elements
+    return x_bar, y_bar
 
 
 def run_analysis_and_export(c, num_spars, thickness, stringer_area, total_stringers_desired,
