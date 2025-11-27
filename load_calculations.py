@@ -5,19 +5,17 @@ import matplotlib.pyplot as plt
 
 #Importing necessary constants
 from constants import g, rho_air
-from Aircraft_parameters import mass_aircraft, mass_fuel, mass_wing, n_fuel ,b, c_r, c_t, c, S_w
+from Wing_geometry import b, c_r, c_t
+from mass import mass_wing, mass_fuel, n_fuel
 from scipy.integrate import cumulative_trapezoid
 #importing functions from other files if needed
-from XFLRextraction import dL, dD, dM, alpha
-
-#Importing user inputs from main.py
-from Load_cases import mass_aircraft, v_cruise, rho_cruise, mass_fuel
+from main import c, dL, dD, dM, alpha
 
 #Assumptions
 #The wing and fuel weight force act in the centroid of the wingbox
 x_bar_c = 1/2 #location of centroid of wing box assumed to be at half the chord (Should be update with more accurate data!!!)
 x_lift = 1/4 #location of aerodynamic lift assumed to be at quarter chord
-CL = 2 * mass_aircraft * g / (rho_cruise * v_cruise**2 * S_w) # Calculating the required CL for level flight
+CL = 0.5 #Assumed CL for load calculations (Should be updated with actual flight conditions)
 
 #=========WEIGHT CALCULATIONS=========#
 
@@ -87,6 +85,41 @@ def _call_array(func, y):
     return vec(y_arr)
 
 # Internal shear/torque/moment: accept scalar or array y
+'''def V(y):
+    # scalar behavior (keep previous quad-based result)
+    if np.ndim(y) == 0:
+        Vval, error = sp.integrate.quad(dV, b/2, float(y))
+        return Vval
+    # array/vectorized behavior (fast cumulative integration)
+    y_arr = np.asarray(y)
+    dV_arr = _call_array(dV, y_arr)
+    # integrate from tip (b/2) inward so V(b/2)=0
+    V_flip = cumulative_trapezoid(np.flip(dV_arr), np.flip(y_arr), initial=0)
+    V_arr = np.flip(V_flip)
+    return V_arr'''
+
+'''def T(y):
+    if np.ndim(y) == 0:
+        Tval, error = sp.integrate.quad(dT, b/2, float(y))
+        return Tval
+    y_arr = np.asarray(y)
+    dT_arr = _call_array(dT, y_arr)
+    T_flip = cumulative_trapezoid(np.flip(dT_arr), np.flip(y_arr), initial=0)
+    T_arr = np.flip(T_flip)
+    return T_arr'''
+
+'''def M(y):
+    # scalar: integrate V via quad (keeps previous API)
+    if np.ndim(y) == 0:
+        Mval, error = sp.integrate.quad(lambda s: V(s), b/2, float(y))
+        return Mval
+    # array: build V array then integrate
+    y_arr = np.asarray(y)
+    V_arr = V(y_arr)  # uses vectorized V above
+    M_flip = cumulative_trapezoid(np.flip(V_arr), np.flip(y_arr), initial=0)
+    M_arr = np.flip(M_flip)
+    return M_arr'''
+
 def V(y):
     # scalar behavior (keep previous quad-based result)
     if np.ndim(y) == 0:
