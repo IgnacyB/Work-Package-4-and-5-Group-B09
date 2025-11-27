@@ -14,7 +14,7 @@ def MOI_single_cell(y):
     from Wing_geometry import b, c_r, c_t
     from torsional_stiffness_functions import find_sparheight
     from MOI import check_even
-    from CENTROID import generate_stringer_coordinates
+    from CENTROID import get_stringer_coordinates_only
     from CENTROID import calculate_wingbox_centroid
 
     #calculate chord
@@ -31,7 +31,9 @@ def MOI_single_cell(y):
     y_bottom_rear_spar= y_bottom_rear_spar_percentage*chord
 
     spars = []
-
+    spars.append(chord_position_front)
+    spars.append(chord_position_rear)
+    """
     spar_front = []
     spar_front_top = []
     spar_front_bottom = []
@@ -57,8 +59,10 @@ def MOI_single_cell(y):
     spar_rear.append(spar_rear_bottom)
 
     spars.append(spar_front)
-    spars.append(spar_rear)
-    stringer_chord = generate_stringer_coordinates(spars,n_stringer)
+    spars.append(spar_rear)"""
+
+    stringer_chord = get_stringer_coordinates_only(y,spars,n_stringer)
+
     print(stringer_chord)
 
     #calculate centroid using Divye's function
