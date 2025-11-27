@@ -51,7 +51,7 @@ def distance_lift_centroid(x_bar_c, x_lift, y):
     return (x_bar_c - x_lift) * c(y)
 
 def dN(y):
-    return dL(y, CL) * np.cos(alpha(CL)) + dD(y, CL) * np.sin(alpha(CL))
+    return dL(y, CL) * np.cos(np.radians(alpha(CL))) + dD(y, CL) * np.sin(np.radians(alpha(CL)))
 
 #=========FORCE AND MOMENT IN CROSS SECTION=========#
 
@@ -65,7 +65,7 @@ w_dist = weight_distribution(mass_wing, b, c_r, c_t)
 f_dist = fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t)
 
 def dV(y):
-    return -dN(y) + w_dist(y) + f_dist(y)
+    return -1 * dN(y) + w_dist(y) + f_dist(y)
 def dT(y):
     return -dM_N(y) - dM(y, CL)
 
@@ -138,8 +138,8 @@ def T(y):
         return Tval
     y_arr = np.asarray(y)
     dT_arr = _call_array(dT, y_arr)
-    T_arr = cumulative_trapezoid(dT_arr, y_arr, initial=0)
-    T_arr = T_arr - T_arr[-1]  # shift so T(b/2)=0
+    int_arr = cumulative_trapezoid(dT_arr, y_arr, initial=0)
+    T_arr = -1 * int_arr + int_arr[-1]  # shift so T(b/2)=0
     return T_arr
 
 def M(y):
@@ -203,6 +203,40 @@ def plot_distributed_loads(y=None, n=300):
     plt.tight_layout()
     plt.show()
 
+def plot_dN(y=None, n=300):
+    if y is None:
+        y = np.linspace(0, b/2, n)
+    dN_arr = _call_array(dN, y)
+
+    plt.figure(figsize=(8,4))
+    plt.plot(y, dN_arr, lw=2, color="tab:orange")
+    plt.axhline(0, color="k", lw=0.6)
+    plt.xlabel("Spanwise coordinate y (m)")
+    plt.ylabel("dN(y) [N/m]")
+    plt.title("Net distributed normal force dN(y) along half-span")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+def plot_dL(y=None, n=300):
+    if y is None:
+        y = np.linspace(0, b/2, n)
+    # dL from main expects (y, CL)
+    dL_arr = _call_array(lambda yy: dL(yy, CL), y)
+
+    plt.figure(figsize=(8,4))
+    plt.plot(y, dL_arr, lw=2, color="tab:blue")
+    plt.axhline(0, color="k", lw=0.6)
+    plt.xlabel("Spanwise coordinate y (m)")
+    plt.ylabel("dL(y) [N/m]")
+    plt.title("Aerodynamic lift distribution dL(y) along half-span")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+print(alpha(CL))
 if __name__ == "__main__":
     plot_internal_loads()
     plot_distributed_loads()
+    plot_dN()
+    plot_dL()
