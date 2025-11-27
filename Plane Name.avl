@@ -1,0 +1,55 @@
+# 
+# Note : check consistency of area unit and length units in this file
+# Note : check consistency with inertia units of the .mass file
+# 
+# 
+WP4 wing
+0.0                                 | Mach
+0     0     0.0                     | iYsym  iZsym  Zsym
+ 31.96875     2.01111    17.05000   | Sref   Cref   Bref
+  0.00000     0.00000     0.00000   | Xref   Yref   Zref
+ 0.00                               | CDp  (optional)
+
+
+
+#========TODO: REMOVE OR MODIFY MANUALLY DUPLICATE SECTIONS IN SURFACE DEFINITION=========
+SURFACE                      | (keyword)
+Main Wing
+#Nchord    Cspace   [ Nspan Sspace ]
+20        1.0
+
+INDEX                        | (keyword)
+9756                         | Lsurf
+
+YDUPLICATE
+0.0
+
+SCALE
+1.0  1.0  1.0
+
+TRANSLATE
+0.0  0.0  0.0
+
+ANGLE
+   0.000                         | dAinc
+
+
+#____PANEL 1_______
+#______________
+SECTION                                                     |  (keyword)
+   0.0000    0.0000    0.0000    2.7500   0.000   20    3   | Xle Yle Zle   Chord Ainc   [ Nspan Sspace ]
+
+AFIL 0.0 1.0
+NACA 65(1)-412.dat
+
+
+#______________
+SECTION                                                     |  (keyword)
+   2.4650    8.5053    0.5798    1.0000   0.000   20    3   | Xle Yle Zle   Chord Ainc   [ Nspan Sspace ]
+
+AFIL 0.0 1.0
+NACA 65(1)-412.dat
+
+
+
+
