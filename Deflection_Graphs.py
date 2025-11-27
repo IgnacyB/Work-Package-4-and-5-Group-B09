@@ -3,7 +3,7 @@ import math
 
 from Wing_geometry import b
 from Twist_Distribution import twist
-# from Lateral_Deflection import
+from Lateral_Deflection import lateral_deflection
 
 
 #lateral deflection graph
@@ -15,7 +15,7 @@ def lateral_deflection_graph():
 
     while y_position <= b/2:
         spanpos.append(y_position)
-        lateral_dist.append()
+        lateral_dist.append(lateral_deflection(y_position))
         y_position += 0.5
 
     plt.plot(spanpos, lateral_dist)
