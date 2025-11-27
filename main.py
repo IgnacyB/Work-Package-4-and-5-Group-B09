@@ -50,7 +50,7 @@ if __name__ == "__main__":
     Y, CLgrid = np.meshgrid(y_vals, CL_vals)
 
     # Evaluate your function on the grid
-    Z = dM(Y, CLgrid)
+    Z = dL(Y, CLgrid)
 
     # Plot
     fig = plt.figure()
@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
     plt.show()
 
-'''
+
 
 #===============Calculation of wing shear, beding and torque forces===============#
 
