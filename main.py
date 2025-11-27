@@ -64,9 +64,6 @@ if __name__ == "__main__":
 
     plt.show()
 
-'''
-
-#===============Calculation of wing shear, beding and torque forces===============#
 
 
 
