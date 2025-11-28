@@ -19,7 +19,6 @@ from Load_cases import mass_aircraft, v_cruise, rho_cruise, mass_fuel
 x_bar_c = 1/2 #location of centroid of wing box assumed to be at half the chord (Should be update with more accurate data!!!)
 x_lift = 1/4 #location of aerodynamic lift assumed to be at quarter chord
 CL = 2 * mass_aircraft * g / (rho_cruise * v_cruise**2 * S_w) # Calculating the required CL for level flight
-print(CL)
 #=========WEIGHT CALCULATIONS=========#
 
 #WEIGHT DISTRIBUTION (HALF OF SPAN)
