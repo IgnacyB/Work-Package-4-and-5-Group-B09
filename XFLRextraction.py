@@ -1,7 +1,7 @@
 #Importing constants and wing geometry
 from Aircraft_parameters import b, c_r, c_t, c, S_w
 from Load_cases import v_cruise, rho_cruise
-q = 0.5*rho_cruise*v_cruise**2
+
 #Importing functions from other files
 from Linearmodel import linear_model
 from Interpolation import interpolate
@@ -9,6 +9,9 @@ from Interpolation import interpolate
 #import modules
 import numpy as np
 import matplotlib.pyplot as plt
+
+#Calculating dynamic pressure at cruise
+q = 0.5*rho_cruise*v_cruise**2
 
 def extract_main_wing_data(filepath):
     y_span = []
