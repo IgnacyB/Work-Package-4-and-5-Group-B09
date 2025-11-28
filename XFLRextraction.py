@@ -1,8 +1,7 @@
 #Importing constants and wing geometry
-from constants import g, rho_air
 from Aircraft_parameters import b, c_r, c_t, c, S_w
-from Load_cases import v_cruise
-q = 0.5*rho_air*v_cruise**2
+from Load_cases import v_cruise, rho_cruise
+q = 0.5*rho_cruise*v_cruise**2
 #Importing functions from other files
 from Linearmodel import linear_model
 from Interpolation import interpolate
