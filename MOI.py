@@ -35,12 +35,12 @@ def MOI_single_cell(y):
     spars.append(chord_position_rear)
 
     x_centroid, y_centroid = get_centroid(chord,spars, thickness,mass_stringer,n_stringer)
-    print("X_centroid ",x_centroid)
-    print("Y_centroid",y_centroid)
+    #print("X_centroid ",x_centroid)
+    #print("Y_centroid",y_centroid)
 
     stringer_chord = get_stringer_coordinates_only(chord,spars,n_stringer)
 
-    print(stringer_chord)
+    #print(stringer_chord)
 
     # code to calculate MOI for front and rear spar
 
@@ -97,7 +97,7 @@ def MOI_multi_cell(y):
     from airfoil_geometry import location_rear as chord_position_rear
     from airfoil_geometry import location_middle as chord_position_middle
 
-    from Wing_geometry import b, c_r, c_t
+    from Aircraft_parameters import b, c_r, c_t
     from torsional_stiffness_functions import find_sparheight
     from MOI import check_even
     from CENTROID import generate_stringer_coordinates
@@ -210,5 +210,5 @@ def MOI_multi_cell(y):
 value = MOI_single_cell(2)
 value_2 = MOI_multi_cell(0)
 
-print("This is the calculated value for Ixx with 2 spars method",value)
-print("This is the calculated value for Ixx with 3 spars method",value_2)
+#print("This is the calculated value for Ixx with 2 spars method",value)
+#print("This is the calculated value for Ixx with 3 spars method",value_2)
