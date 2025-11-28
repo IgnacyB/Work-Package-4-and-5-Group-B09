@@ -16,13 +16,10 @@ def find_sparheight(chord_pos):
     return float(y_upper(chord_pos)), float(y_lower(chord_pos))
 
 
-
-
-#create data files
-from airfoil.py import t_front, t_rear, location_front, location_rear, t_skin
-from planform.py import c_r, c_t, b
-
-
+#import data
+from airfoil_geometry import *
+from Wing_geometry import c_r, c_t, b
+from material_properties import G
 
 
 #torsional constant function for a single-cell wingbox. ALL VALUES IN SI UNITS
@@ -47,17 +44,11 @@ def torsional_constant_singlecell(y):
     return J_y
 
 
-#create data files
-from airfoil.py import t_front, t_middle, t_rear, location_front, location_middle, location_rear, t_skin
-from planform.py import c_r, c_t, b
-from material.py import G
-
-
 #torsional constant function for a double-cell wingbox
 #assume both closed sections are trapezoidal
-#function is NOT done
+#function is done
 
-def torsional_constant_multicell(y, G):
+def torsional_constant_multicell(y):
     #calculate c as a function of y
     c = c_r-((c_r-c_t)/(b/2))*y
 
