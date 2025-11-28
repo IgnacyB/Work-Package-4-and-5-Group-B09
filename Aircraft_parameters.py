@@ -1,4 +1,4 @@
-     #Here put all relevant aircraft parameters
+#Here put all relevant aircraft parameters
 
 #============WING GEOMETRY PARAMETERS=========#
 from xflr_geometry_extraction import wing_geometry
