@@ -188,6 +188,24 @@ def plot_dN(y=None, n=300):
     plt.tight_layout()
     plt.show()
 
+def plot_dL(y=None, n=300):
+    """Plot sectional lift distribution dL(y, CL) along the half-span."""
+    if y is None:
+        y = np.linspace(0, b/2, n)
+
+    # dL in XFLRextraction expects (y, CL)
+    dL_arr = _call_array(lambda yy: dL(yy, CL), y)
+
+    plt.figure(figsize=(8,4))
+    plt.plot(y, dL_arr, lw=2, color="tab:blue")
+    plt.axhline(0, color="k", lw=0.6)
+    plt.xlabel("Spanwise coordinate y (m)")
+    plt.ylabel("dL(y) [N/m]")
+    plt.title("Sectional lift distribution dL(y) along half-span")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
 def plot_wing_and_fuel_distributions(y=None, n=300):
     """Plot wing weight distribution w(y) and fuel distribution f(y) along half-span."""
     if y is None:
@@ -211,9 +229,52 @@ def plot_wing_and_fuel_distributions(y=None, n=300):
     plt.tight_layout()
     plt.show()
 
+def _integrate_from_tip(func, y):
+    """Integrate `func` from tip (b/2) to y. Accepts scalar or array y."""
+    # scalar behavior
+    if np.ndim(y) == 0:
+        val, err = sp.integrate.quad(func, b/2, float(y))
+        return val
+    # array/vectorized behavior: integrate from tip inward so integral(b/2)=0
+    y_arr = np.asarray(y)
+    f_arr = _call_array(func, y_arr)
+    # integrate on flipped arrays then flip back (consistent with V/T implementation)
+    integral_flip = cumulative_trapezoid(np.flip(f_arr), np.flip(y_arr), initial=0)
+    integral_arr = -1 * np.flip(integral_flip)
+    return integral_arr
+
+def plot_integrated_distributions(y=None, n=300):
+    """Compute and plot cumulative integrals (from tip b/2 to y) of dN, wing weight and fuel distributions."""
+    if y is None:
+        y = np.linspace(0, b/2, n)
+
+    # get distribution functions
+    w_func = weight_distribution(mass_wing, b, c_r, c_t)
+    f_func = fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t)
+
+    # compute cumulative integrals from tip to each y
+    dN_int = _integrate_from_tip(dN, y)
+    w_int  = _integrate_from_tip(w_func, y)
+    f_int  = _integrate_from_tip(f_func, y)
+
+    plt.figure(figsize=(8,5))
+    plt.plot(y, dN_int, lw=2, label="Integrated dN (from tip) [N]", color="tab:orange")
+    plt.plot(y, w_int, lw=2, label="Integrated wing weight (from tip) [N]", color="tab:blue")
+    plt.plot(y, f_int, lw=2, linestyle="--", label="Integrated fuel (from tip) [N]", color="tab:green")
+    plt.axhline(0, color="k", lw=0.6)
+    plt.xlabel("Spanwise coordinate y (m)")
+    plt.ylabel("Cumulative force from tip to y [N]")
+    plt.title("Cumulative integrals of dN, wing weight and fuel along half-span")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
 if __name__ == "__main__":
     plot_internal_loads()
     plot_distributed_loads()
     plot_dN()
+    plot_dL()
     plot_wing_and_fuel_distributions()
+    plot_integrated_distributions()
 
