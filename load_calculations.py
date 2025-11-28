@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-=======
+
 #Importing necessary libraries
 import numpy as np
 import scipy as sp
@@ -97,8 +96,9 @@ def V(y):
     # array/vectorized behavior (fast cumulative integration)
     y_arr = np.asarray(y)
     dV_arr = _call_array(dV, y_arr)
-    int_arr = cumulative_trapezoid(dV_arr, y_arr, initial=0)
-    V_arr = -1 * int_arr + int_arr[-1]  # shift so V(b/2)=0
+    # integrate from tip (b/2) inward so V(b/2)=0
+    V_flip = cumulative_trapezoid(np.flip(dV_arr), np.flip(y_arr), initial=0)
+    V_arr = -1 * np.flip(V_flip)
     return V_arr
 
 def T(y):
@@ -107,8 +107,8 @@ def T(y):
         return Tval
     y_arr = np.asarray(y)
     dT_arr = _call_array(dT, y_arr)
-    int_arr = cumulative_trapezoid(dT_arr, y_arr, initial=0)
-    T_arr = -1 * int_arr + int_arr[-1]  # shift so T(b/2)=0
+    T_flip = cumulative_trapezoid(np.flip(dT_arr), np.flip(y_arr), initial=0)
+    T_arr = -1 * np.flip(T_flip)
     return T_arr
 
 def M(y):
@@ -119,8 +119,8 @@ def M(y):
     # array: build V array then integrate
     y_arr = np.asarray(y)
     V_arr = V(y_arr)  # uses vectorized V above
-    M_arr = cumulative_trapezoid(V_arr, y_arr, initial=0)
-    M_arr = M_arr - M_arr[-1]  # shift so M(b/2)=0
+    M_flip = cumulative_trapezoid(np.flip(V_arr), np.flip(y_arr), initial=0)
+    M_arr = np.flip(M_flip)
     return M_arr
 
 def plot_internal_loads(y=None, n=200):
@@ -188,8 +188,32 @@ def plot_dN(y=None, n=300):
     plt.tight_layout()
     plt.show()
 
+def plot_wing_and_fuel_distributions(y=None, n=300):
+    """Plot wing weight distribution w(y) and fuel distribution f(y) along half-span."""
+    if y is None:
+        y = np.linspace(0, b/2, n)
+
+    w_func = weight_distribution(mass_wing, b, c_r, c_t)
+    f_func = fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t)
+
+    w_arr = _call_array(w_func, y)
+    f_arr = _call_array(f_func, y)
+
+    plt.figure(figsize=(8,5))
+    plt.plot(y, w_arr, lw=2, label="Wing weight distribution w(y) [N/m]", color="tab:blue")
+    plt.plot(y, f_arr, lw=2, linestyle="--", label="Fuel distribution f(y) [N/m]", color="tab:green")
+    plt.axhline(0, color="k", lw=0.6)
+    plt.xlabel("Spanwise coordinate y (m)")
+    plt.ylabel("Distributed load [N/m]")
+    plt.title("Wing weight and fuel distributions along half-span")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
 if __name__ == "__main__":
     plot_internal_loads()
     plot_distributed_loads()
     plot_dN()
->>>>>>> parent of 60a04ba (Merge pull request #26 from IgnacyB/Task-4.1)
+    plot_wing_and_fuel_distributions()
+
