@@ -27,7 +27,7 @@ def weight_distribution(mass_wing, b, c_r, c_t):
 
     y_0 = b / 2 * c_r / (c_r - c_t) #location where the load distribution becomes zero
 
-    A = 3 / 2 * mass_wing*g / 2 / (y_0**3-(y_0 - b/2)**3)
+    A = 3 / 2 * mass_wing*g / (y_0**3-(y_0 - b/2)**3) #It is divided by 2 since we are only considering half the span and thus half of the weight
     def w_dist(y):
         return A * (y_0 - y)**2
     
@@ -41,7 +41,7 @@ def fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t):
 
     y_0 = b / 2 * c_r / (c_r - c_t) #location where the load distribution becomes zero
 
-    A = 3 / 2 * n_fuel * mass_fuel*g / 2 / (y_0**3-(y_0 - b/2)**3)
+    A = 3 / 2 * n_fuel * mass_fuel*g / (y_0**3-(y_0 - b/2)**3) #It is divided by 2 since we are only considering half the span and thus half of the weight
     def f_dist(y):
         return A * (y_0 - y)**2
     
