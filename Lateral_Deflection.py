@@ -3,29 +3,67 @@
 #first import the necessary packages and functions from 
 import numpy as np
 import scipy as sp
-from scipy.integrate import cumtrapz
+from scipy.integrate import cumulative_trapezoid
+from scipy.interpolate import interp1d
 
-#import all the information from the other files
+#import constants from other files
 from material_properties import E
 from MOI import MOI_single_cell
 from load_calculations import M
+from Aircraft_parameters import b
 
+#alternative integration:
+n = 3000
+y_max = b/2
+y_grid = np.linspace(0, y_max, n)
 
-def h(y):
-    return M(y) / (E * MOI_single_cell(y))
+MOI_vec = np.vectorize(MOI_single_cell)
+MOI_grid = MOI_vec(y_grid)
 
+M_grid = M(y_grid)
+
+h_grid = M_grid / (E * MOI_grid)
+
+dvdy_grid = -1 * cumulative_trapezoid(h_grid, y_grid, initial=0)
+
+v_grid = cumulative_trapezoid(dvdy_grid, y_grid, initial = 0)
+
+h = interp1d(y_grid, h_grid, fill_value = "extrapolate")
+dvdy = interp1d(y_grid, dvdy_grid, fill_value = "extrapolate")
+lateral_deflection = interp1d(y_grid, v_grid, fill_value = "extrapolate")
+
+#test
 print(h(5))
-
-def dvdy(y):
-    return -1 * sp.integrate.quad(np.vectorize(h),0,y)[0]
-
 print(dvdy(5))
+print(lateral_deflection(b/2))
 
-#y_pos = float(input("spanwise location: "))
-def lateral_deflection(y):
-    return sp.integrate.quad(dvdy,0,y)[0]
 
-print(lateral_deflection(0.1))
+
+
+
+
+# def h(y):
+#     return M(y) / (E * MOI_single_cell(y))
+
+# print(h(5))
+
+# def dvdy(y):
+#     return -1 * sp.integrate.quad(np.vectorize(h),0,y)[0]
+
+# print(dvdy(5))
+
+# #y_pos = float(input("spanwise location: "))
+# def lateral_deflection(y):
+#     return sp.integrate.quad(dvdy,0,y)[0]
+
+# print(lateral_deflection(0.1))
+
+
+
+
+
+
+
 
 # import numpy as np
 # from scipy.integrate import cumulative_trapezoid as cumtrapz
