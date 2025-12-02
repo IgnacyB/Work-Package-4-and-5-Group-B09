@@ -35,10 +35,10 @@ dvdy = interp1d(y_grid, dvdy_grid, fill_value = "extrapolate")
 lateral_deflection = interp1d(y_grid, v_grid, fill_value = "extrapolate")
 
 #test
-print(h(5))
-print(dvdy(5))
-print(M(b/2))
-print(lateral_deflection(b/2))
+
+#
+print(lateral_deflection(b/2),"m")
+print(lateral_deflection(b/2)*100,"mm")
 
 
 

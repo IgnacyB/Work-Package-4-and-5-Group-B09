@@ -30,7 +30,7 @@ twist_grid = cumulative_trapezoid(dthetady_grid, y_grid, initial = 0)
 #make function callable
 twist = interp1d(y_grid, twist_grid, fill_value = "extrapolate")
 
-print(twist(b/2))
+print(twist(b/2),"rad")
 
 
 
