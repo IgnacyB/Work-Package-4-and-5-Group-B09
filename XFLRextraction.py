@@ -92,6 +92,26 @@ def dM(y,CL):
 def alpha(CL):
     return 10*(CL-CL0)/(CL10-CL0)
 
+def plot_Cm_surface(y_steps=200, CL_steps=200):
+    """Plot Cm(y, CL) as a 3D surface (same style as the dL surface plot)."""
+    y_vals  = np.linspace(0, max(ylst), y_steps)
+    CL_vals = np.linspace(CL0, CL10, CL_steps)
+
+    Y, CLgrid = np.meshgrid(y_vals, CL_vals)
+    Z = Cm(Y, CLgrid)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    surf = ax.plot_surface(Y, CLgrid, Z, cmap="viridis", edgecolor='none')
+
+    ax.set_xlabel("y")
+    ax.set_ylabel("CL")
+    ax.set_zlabel("Cm(y, CL)")
+    fig.colorbar(surf, shrink=0.6, label="Cm")
+
+    plt.title("Sectional pitching moment coefficient Cm(y, CL)")
+    plt.show()
+    
 if __name__ == "__main__":
     #Plot data for testing
     # Create ranges
@@ -115,3 +135,6 @@ if __name__ == "__main__":
     ax.set_zlabel("dL(y, CL)")
 
     plt.show()
+
+    # also show Cm surface (same style)
+    plot_Cm_surface()
