@@ -57,7 +57,7 @@ def generate_stringer_coordinates(spars, total_stringers):
     return stringer_coords
 
 
-def calculate_wingbox_centroid(spars, stringer_coordinates, t, A_str):
+def calculate_wingbox_centroid(spars, stringer_coordinates, tfront, tmiddle, trear,tskin, A_str):
     """
     Calculates the centroid based on PRE-CALCULATED geometry.
     This keeps the math separate from the geometry generation.
