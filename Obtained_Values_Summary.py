@@ -1,7 +1,6 @@
 import math
 
 from MOI import value
-
 from CENTROID import get_centroid
 from Lateral_Deflection import lateral_deflection_at_tip
 from Twist_Distribution import twist_at_tip
@@ -12,8 +11,8 @@ from airfoil_geometry import n_stringer, a_stringer, location_front, location_re
 ## Centroid ##
 
 
-x_centroid, y_centroid = get_centroid(chord_at_tip, spar_positions_ratios, thickness, a_stringer, n_stringer)
-print(x_centroid,y_centroid)
+#x_centroid, y_centroid = get_centroid(chord_at_tip, spar_positions_ratios, thickness, a_stringer, n_stringer)
+#print(x_centroid,y_centroid)
 ## Moment of Inertia ##
 
 print("For two spars, the moment of inertia is {}m^4 = {}mm^4".format(value,value*1000))
