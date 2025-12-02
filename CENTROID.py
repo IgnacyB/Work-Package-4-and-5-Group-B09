@@ -4,7 +4,7 @@ import scipy as sp
 import matplotlib.pyplot as plt
 
 import airfoil_geometry
-from airfoil_geometry import t_front
+
 from torsional_stiffness_functions import find_sparheight as find_sparheight_func
 import airfoil_geometry as ag
 
