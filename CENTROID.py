@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 
 
 from torsional_stiffness_functions import find_sparheight as find_sparheight_func
+import airfoil_geometry as ag
 
 # --- END OF IMPORT BLOCK ---
 
