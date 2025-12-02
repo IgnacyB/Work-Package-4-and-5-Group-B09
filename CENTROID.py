@@ -166,7 +166,6 @@ def get_centroid(c, spar_positions_ratios, t_front, t_mid, t_rear, t_skin, strin
     return cx, cy
 
 
-
 def run_analysis(c, spar_positions_ratios, t_front, t_mid, t_rear, t_skin, stringer_area, total_stringers,
                  show_plot=True):
     # 1. Build Spars
@@ -186,14 +185,14 @@ def run_analysis(c, spar_positions_ratios, t_front, t_mid, t_rear, t_skin, strin
         t_skin,
         stringer_area
     )
-    """"
+
     print(f"\n--- ANALYSIS COMPLETE ---")
     print(f"Chord: {c}")
     print(f"Spars: Front={t_front}, Mid={t_mid}, Rear={t_rear}")
     print(f"Centroid: ({cx:.4f}, {cy:.4f})")
 
     if show_plot:
-        plot_wingbox(final_elements, cx, cy, c, len(spars))"""
+        plot_wingbox(final_elements, cx, cy, c, len(spars))
 
     return cx, cy
 
@@ -214,7 +213,7 @@ def plot_wingbox(elements, cx, cy, c, num_spars):
     plt.scatter(str_x, str_y, c='green', s=40, zorder=5, label='Stringers')
     plt.scatter(cx, cy, c='red', marker='x', s=100, zorder=10, label='Centroid')
 
-    plt.title(f"Wing Box Cross-Section (c={c}, Spars={num_spars})")
+    plt.title(f"Wing Box Cross-Section (chord lenght={c}, Spars={num_spars},number of stringers={ag.n_stringer})")
     plt.xlabel("Chordwise Position (x)")
     plt.ylabel("Height (y)")
     plt.axis('equal')
@@ -227,7 +226,7 @@ def plot_wingbox(elements, cx, cy, c, num_spars):
 
 
 
-run_analysis(9,[ag.location_front,ag.location_middle,ag.location_rear],ag.t_front,ag.t_middle,ag.t_rear,ag.t_skin,ag.a_stringer,ag.n_stringer)
+run_analysis(9,[ag.location_front,ag.location_middle,ag.location_rear],ag.t_front,ag.t_middle,ag.t_rear,ag.t_skin,ag.a_stringer,ag.n_stringer,show_plot=True)
 
 '''cx, cy = run_analysis(
     C_TEST,

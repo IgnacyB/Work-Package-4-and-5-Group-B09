@@ -1,7 +1,7 @@
 # Moment of inertia calculations
 import numpy as np
 import scipy as sp
-
+from Aircraft_parameters import b
 def MOI_single_cell(y):
     #import the necessary functions from other
     from airfoil_geometry import t_skin as skin_thickness
@@ -214,6 +214,7 @@ def MOI_multi_cell(y):
 
     return MOI_total
 
+MOI_at_tip = MOI_single_cell(b/2)
 value = MOI_single_cell(2)
 value_2 = MOI_multi_cell(0)
 print(value)

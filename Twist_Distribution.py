@@ -13,7 +13,7 @@ from torsional_stiffness_functions import torsional_constant_singlecell
 from load_calculations import T
 from Aircraft_parameters import b
 
-def twist_function(y):
+def twist_function():
     n = 3000
     y_max = b/2
     y_grid = np.linspace(0, y_max, n)
@@ -32,9 +32,9 @@ def twist_function(y):
     #make function callable
     twist = interp1d(y_grid, twist_grid, fill_value = "extrapolate")
 
-    return twist(y)
+    return(y_grid, twist_grid)
 
-twist_at_tip = twist_function(b/2)
+twist_at_tip = twist_function()[1][-1]
 #print("The twist angle is {} rad or {} degrees".format(twist_function(b/2),twist_function(b/2)*180/math.pi))
 
 
