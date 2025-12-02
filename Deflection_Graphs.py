@@ -22,7 +22,7 @@ plot_lateral_deflection()
 def plot_twist_distribution():
     y_grid, twist_grid = twist_function()
 
-    plt.plot(y_grid, twist_grid, lw = 2, color = "tab:blue")
+    plt.plot(y_grid, twist_grid*180/math.pi, lw = 2, color = "tab:blue")
     plt.xlabel("Spanwise position [m]")
     plt.ylabel("Angle of twist [degree]")
     plt.show()
