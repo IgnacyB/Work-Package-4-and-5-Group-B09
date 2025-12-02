@@ -57,10 +57,14 @@ def generate_stringer_coordinates(spars, total_stringers):
     return stringer_coords
 
 
-def calculate_wingbox_centroid(spars, stringer_coordinates, tfront, tmiddle, trear,tskin, A_str):
+def calculate_wingbox_centroid(spars, stringer_coordinates, t_spars, t_top_list, t_bot_list, A_str):
     """
-    Calculates the centroid based on PRE-CALCULATED geometry.
-    This keeps the math separate from the geometry generation.
+    New Inputs:
+      t_spars:    LIST of spar thicknesses. Size = Number of Spars.
+                  Ex: [0.005, 0.005, 0.005]
+      t_top_list: LIST of top skin thicknesses. Size = Number of Spars - 1.
+                  Ex: [0.002, 0.002]
+      t_bot_list: LIST of bottom skin thicknesses. Size = Number of Spars - 1.
     """
     elements = []
 
@@ -75,17 +79,27 @@ def calculate_wingbox_centroid(spars, stringer_coordinates, tfront, tmiddle, tre
         })
         return length
 
-    # Process Spars
+    # --- PROCESS SPARS (Use t_spars list) ---
     for i, spar in enumerate(spars):
-        add_line_segment(spar[0], spar[1], t, f'Spar {i + 1} Web')
+        # Safety check to avoid crashing if list is too short
+        t_val = t_spars[i] if i < len(t_spars) else t_spars[-1]
+        add_line_segment(spar[0], spar[1], t_val, f'Spar {i + 1} Web')
 
-    # Process Skins
+    # --- PROCESS SKINS (Use t_top_list and t_bot_list) ---
     if len(spars) > 1:
+        # Loop through each "cell" (gap between spars)
         for i in range(len(spars) - 1):
-            add_line_segment(spars[i][0], spars[i + 1][0], t, 'Top Skin')
-            add_line_segment(spars[i][1], spars[i + 1][1], t, 'Bottom Skin')
+            # 1. Determine Top Skin Thickness for this cell
+            t_top_val = t_top_list[i] if i < len(t_top_list) else t_top_list[-1]
 
-    # Process Stringers
+            # 2. Determine Bottom Skin Thickness for this cell
+            t_bot_val = t_bot_list[i] if i < len(t_bot_list) else t_bot_list[-1]
+
+            # Add the segments
+            add_line_segment(spars[i][0], spars[i + 1][0], t_top_val, f'Top Skin Cell {i + 1}')
+            add_line_segment(spars[i][1], spars[i + 1][1], t_bot_val, f'Bottom Skin Cell {i + 1}')
+
+    # --- PROCESS STRINGERS (Unchanged) ---
     for coord in stringer_coordinates:
         elements.append({
             'area': A_str, 'x': coord[0], 'y': coord[1], 'type': 'stringer'
@@ -96,14 +110,12 @@ def calculate_wingbox_centroid(spars, stringer_coordinates, tfront, tmiddle, tre
     sum_Mx = sum(el['area'] * el['x'] for el in elements)
     sum_My = sum(el['area'] * el['y'] for el in elements)
 
-    if sum_Area == 0:
-        return 0, 0, elements
+    if sum_Area == 0: return 0, 0, elements
 
     x_bar = sum_Mx / sum_Area
     y_bar = sum_My / sum_Area
 
-    return x_bar, y_bar ,elements
-
+    return x_bar, y_bar, elements
 
 def build_spars_from_positions(c, spar_positions_ratios):
     """
