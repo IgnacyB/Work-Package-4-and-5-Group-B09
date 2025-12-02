@@ -12,26 +12,29 @@ from torsional_stiffness_functions import torsional_constant_singlecell
 from load_calculations import T
 from Aircraft_parameters import b
 
-n = 3000
-y_max = b/2
-y_grid = np.linspace(0, y_max, n)
+def twist_function(y):
+    n = 3000
+    y_max = b/2
+    y_grid = np.linspace(0, y_max, n)
 
-#vectorize torsional stiffness J calculations
-J_vec = np.vectorize(torsional_constant_singlecell)
-J_grid = J_vec(y_grid)
+    #vectorize torsional stiffness J calculations
+    J_vec = np.vectorize(torsional_constant_singlecell)
+    J_grid = J_vec(y_grid)
 
-#calculate T and dthetady
-T_grid = T(y_grid)
-dthetady_grid = T_grid / (G * J_grid)
+    #calculate T and dthetady
+    T_grid = T(y_grid)
+    dthetady_grid = T_grid / (G * J_grid)
 
-#integrate to obtain twist
-twist_grid = cumulative_trapezoid(dthetady_grid, y_grid, initial = 0)
+    #integrate to obtain twist
+    twist_grid = cumulative_trapezoid(dthetady_grid, y_grid, initial = 0)
 
-#make function callable
-twist = interp1d(y_grid, twist_grid, fill_value = "extrapolate")
+    #make function callable
+    twist = interp1d(y_grid, twist_grid, fill_value = "extrapolate")
+
+    return twist(y)
 
 #test
-print(twist(b/2))
+print(twist_function(b/2))
 
 
 
