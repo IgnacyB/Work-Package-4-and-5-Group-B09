@@ -44,3 +44,4 @@ def plot_twist_distribution():
     plt.show()
 
 plot_twist_distribution()
+plot_lateral_deflection()
