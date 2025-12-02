@@ -186,14 +186,14 @@ def run_analysis(c, spar_positions_ratios, t_front, t_mid, t_rear, t_skin, strin
         t_skin,
         stringer_area
     )
-
+    """"
     print(f"\n--- ANALYSIS COMPLETE ---")
     print(f"Chord: {c}")
     print(f"Spars: Front={t_front}, Mid={t_mid}, Rear={t_rear}")
     print(f"Centroid: ({cx:.4f}, {cy:.4f})")
 
     if show_plot:
-        plot_wingbox(final_elements, cx, cy, c, len(spars))
+        plot_wingbox(final_elements, cx, cy, c, len(spars))"""
 
     return cx, cy
 
