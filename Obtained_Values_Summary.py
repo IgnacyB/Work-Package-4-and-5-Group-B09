@@ -1,7 +1,7 @@
 import math
 
 from MOI import value
-from CENTROID import get_centroid
+#from CENTROID import get_centroid
 from Lateral_Deflection import lateral_deflection_at_tip
 from Twist_Distribution import twist_at_tip
 from Aircraft_parameters import b, c_r, c_t
