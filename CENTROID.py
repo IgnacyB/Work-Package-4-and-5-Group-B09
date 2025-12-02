@@ -177,35 +177,36 @@ def get_centroid(c, spar_positions_ratios, thickness, stringer_area, total_strin
     return cx, cy
 
 
-def run_analysis(c, spar_positions_ratios, thickness, stringer_area, total_stringers, show_plot=True):
-    """
-    MASTER PIPELINE:
-    1. Generates Spars
-    2. Generates Stringers
-    3. Calculates Centroid
-    4. Returns the data (without saving to a file)
-    """
-
+def run_analysis(c, spar_positions_ratios, t_spars, t_top_list, t_bot_list, stringer_area, total_stringers,
+                 show_plot=True):
     # 1. Build Spars
     spars = build_spars_from_positions(c, spar_positions_ratios)
+    num_spars = len(spars)
+    num_cells = num_spars - 1
+
+    # --- VALIDATION CHECKS (Very Important!) ---
+    if len(t_spars) != num_spars:
+        print(f"WARNING: You have {num_spars} spars but provided {len(t_spars)} thicknesses!")
+
+    if len(t_top_list) != num_cells:
+        print(f"WARNING: You have {num_cells} cells but provided {len(t_top_list)} top skin thicknesses!")
 
     # 2. Generate Stringers
     auto_stringers = generate_stringer_coordinates(spars, total_stringers)
 
-    # 3. Calculate Centroid
+    # 3. Calculate Centroid (Passing the LISTS now)
     cx, cy, final_elements = calculate_wingbox_centroid(
-        spars, auto_stringers, thickness, stringer_area
+        spars, auto_stringers, t_spars, t_top_list, t_bot_list, stringer_area
     )
 
     print(f"\n--- ANALYSIS COMPLETE ---")
-    print(f"Chord: {c}, Spars at: {spar_positions_ratios}")
     print(f"Centroid: ({cx:.4f}, {cy:.4f})")
 
     if show_plot:
         plot_wingbox(final_elements, cx, cy, c, len(spars))
 
-    # We return the values in case you want to use them in a variable
     return cx, cy
+
 
 def plot_wingbox(elements, cx, cy, c, num_spars):
     """Helper function to visualize the wingbox geometry."""
