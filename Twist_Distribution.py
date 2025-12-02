@@ -33,8 +33,7 @@ def twist_function(y):
 
     return twist(y)
 
-#test
-print(twist_function(b/2))
+
 
 
 

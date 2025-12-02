@@ -35,6 +35,7 @@ def plot_twist_distribution():
         spanpos.append(y_position)
         twist_dist.append(twist_function(y_position)*180/math.pi)
         y_position += 0.01
+        print(y_position)
 
     plt.plot(spanpos, twist_dist)
     plt.xlabel("Spanwise position [m]")
