@@ -41,8 +41,8 @@ def lateral_deflection_function(y):
 #test
 
 #
-print(lateral_deflection(b/2),"m")
-print(lateral_deflection(b/2)*100,"mm")
+print(lateral_deflection_function(b/2),"m")
+print(lateral_deflection_function(b/2)*100,"mm")
 
 
 
