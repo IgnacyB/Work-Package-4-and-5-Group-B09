@@ -49,7 +49,7 @@ def fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t):
 
 #DISTANCE FROM LIFT TO CENTROID OF WINGBOX AS FUNCTION OF SPANWISE LOCATION
 def distance_lift_centroid(x_bar_c, x_lift, y):
-    return (x_bar_c - x_lift) * c(y)
+    return 0.25 * c(y)
 
 def dN(y):
     return dL(y, CL) * np.cos(np.radians(alpha(CL))) + dD(y, CL) * np.sin(np.radians(alpha(CL)))
@@ -204,6 +204,40 @@ def plot_dL(y=None, n=300):
     plt.tight_layout()
     plt.show()
 
+def plot_dM(y=None, n=300):
+    """Plot sectional moment distribution dM(y, CL) along the half-span."""
+    if y is None:
+        y = np.linspace(0, b/2, n)
+
+    # dM in XFLRextraction expects (y, CL)
+    dM_arr = _call_array(lambda yy: dM(yy, CL), y)
+
+    plt.figure(figsize=(8,4))
+    plt.plot(y, dM_arr, lw=2, color="tab:purple")
+    plt.axhline(0, color="k", lw=0.6)
+    plt.xlabel("Spanwise coordinate y (m)")
+    plt.ylabel("dM(y) [N·m/m]")
+    plt.title("Sectional moment distribution dM(y) along half-span")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+def plot_dT(y=None, n=300):
+    """Plot sectional torque distribution dT(y) along the half-span."""
+    if y is None:
+        y = np.linspace(0, b/2, n)
+    dT_arr = _call_array(dT, y)
+
+    plt.figure(figsize=(8,4))
+    plt.plot(y, dT_arr, lw=2, color="tab:green")
+    plt.axhline(0, color="k", lw=0.6)
+    plt.xlabel("Spanwise coordinate y (m)")
+    plt.ylabel("dT(y) [N·m/m]")
+    plt.title("Sectional torque distribution dT(y) along half-span")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
 def plot_wing_and_fuel_distributions(y=None, n=300):
     """Plot wing weight distribution w(y) and fuel distribution f(y) along half-span."""
     if y is None:
@@ -292,6 +326,8 @@ if __name__ == "__main__":
     plot_distributed_loads()
     plot_dN()
     plot_dL()
+    plot_dM()
+    plot_dT()
     plot_wing_and_fuel_distributions()
     plot_integrated_distributions()
     plot_integrated_dL()
