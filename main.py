@@ -48,11 +48,16 @@ for case in Load_cases_list:
     # set per-case operating conditions in the module (no circular import)
     load_calculations.set_operating_conditions(mass_aircraft, v_cruise, rho, mass_fuel)
 
+    # PRECOMPUTE grid for this case to make M/T/V queries fast
+    load_calculations.precompute_internal_loads(n=600)  # increase n for accuracy if needed
+
     M_case = load_calculations.M(0)
     T_case = load_calculations.T(0)
     Bending_moment_list.append(M_case)
     Torsion_list.append(T_case)
-
+print(Bending_moment_list)
+print(Torsion_list)
+print("Load cases analysed completely.")
 max_bending_moment = min(Bending_moment_list)
 max_torsion = max(Torsion_list)
 print("Maximum Bending Moment across load cases:", max_bending_moment)

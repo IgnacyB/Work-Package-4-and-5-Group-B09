@@ -97,9 +97,8 @@ def _call_array(func, y):
             return res
     except Exception:
         pass
-    # fallback: vectorize scalar func
-    vec = np.vectorize(lambda yy: func(float(yy)))
-    return vec(y_arr)
+    # fallback: fast Python loop -> numpy array (faster than np.vectorize)
+    return np.asarray([func(float(yy)) for yy in y_arr])
 
 # Internal shear/torque/moment: accept scalar or array y
 def V(y):
