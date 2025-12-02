@@ -34,12 +34,12 @@ def plot_twist_distribution():
     while y_position <= b/2:
         spanpos.append(y_position)
         twist_dist.append(twist_function(y_position)*180/math.pi)
-        y_position += 0.01
+        y_position += 0.5
         print(y_position)
 
     plt.plot(spanpos, twist_dist)
     plt.xlabel("Spanwise position [m]")
     plt.ylabel("Angle of twist [degree]")
-    plt.show
+    plt.show()
 
 plot_twist_distribution()
