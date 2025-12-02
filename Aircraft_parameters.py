@@ -18,8 +18,7 @@ def c(y):
     return c_r - (c_r - c_t)*(2*y)/b
 
 #=============MASS PARAMETERS============#
-from Load_cases import mass_aircraft, mass_fuel
-mass_aircraft = mass_aircraft  # Mass of the aircraft in kg
-mass_fuel = mass_fuel  # Total fuel mass in kg
-mass_wing = 690  # Mass of the wing
+# mass_aircraft and mass_fuel are runtime inputs and must NOT be imported here.
+# Keep structural/mass constants only.
+mass_wing = 690  # Mass of the wing (kg)
 n_fuel = 0.8  # Fraction of fuel in the wing

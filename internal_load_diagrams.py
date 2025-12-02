@@ -4,7 +4,7 @@ import numpy as np
 from Aircraft_parameters import b
 from load_calculations import V, T, M   
 #Defining y values for plotting
-def plot_internal_loads(y=None, n=200):
+def plot_internal_loads(y=None, n=200, title=None):
     if y is None:
         y = np.linspace(0, b/2, n)
     V_arr = V(y) if callable(V) else np.asarray(V)
@@ -12,6 +12,9 @@ def plot_internal_loads(y=None, n=200):
     M_arr = M(y) if callable(M) else np.asarray(M)
 
     fig, axs = plt.subplots(3, 1, figsize=(8, 10), constrained_layout=True)
+
+    if title:
+        fig.suptitle(title, fontsize=14)
 
     axs[0].plot(y, V_arr, lw=2, color="tab:blue")
     axs[0].axhline(0, color="k", lw=0.6)
