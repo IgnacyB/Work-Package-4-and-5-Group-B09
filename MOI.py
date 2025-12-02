@@ -216,6 +216,6 @@ def MOI_multi_cell(y):
 
 value = MOI_single_cell(2)
 value_2 = MOI_multi_cell(0)
-
+print(value)
 #print("This is the calculated value for Ixx with 2 spars method",value,"m^4")
 #print("This is the calculated value for Ixx with 3 spars method",value_2, "m^4")
