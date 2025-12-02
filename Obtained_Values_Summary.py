@@ -1,6 +1,9 @@
+import math
+
 from MOI import value, MOI_single_cell
 #from CENTROID import cx,cy
 from Lateral_Deflection import lateral_deflection_at_tip
+from Twist_Distribution import twist_at_tip
 ## Centroid ##
 
 #print(cx,cy)
@@ -15,3 +18,4 @@ print("The lateral deflection at the tip is {}m or {}mm".format(lateral_deflecti
 
 ## Twist Angle ##
 
+print("The twist angle at the tip is {} rad or {} degrees".format(twist_at_tip,twist_at_tip*180/math.pi))
