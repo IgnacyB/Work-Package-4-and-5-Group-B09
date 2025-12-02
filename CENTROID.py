@@ -1,15 +1,13 @@
 import math
 import numpy as np
 import scipy as sp
-import json
 import matplotlib.pyplot as plt
 
-
-
+import airfoil_geometry
+from airfoil_geometry import t_front
 from torsional_stiffness_functions import find_sparheight as find_sparheight_func
 import airfoil_geometry as ag
 
-# --- END OF IMPORT BLOCK ---
 
 
 def generate_stringer_coordinates(spars, total_stringers):
@@ -230,8 +228,8 @@ def plot_wingbox(elements, cx, cy, c, num_spars):
 # Test Scenario
 C_TEST = 8.0
 
-print("Running 3-Spar Test [0.2c, 0.4c, 0.6c]...")
-run_analysis(C_TEST, [0.2, 0.4, 0.6], 0.005, 0.002, 16, show_plot=True)
+print("Running 3-Spar Test ...")
+run_analysis(C_TEST, [ag.location_front,airfoil_geometry.location_middle,ag.location_rear], ag.t_front, ag.a_stringer, ag.n_stringer, show_plot=True)
 
 #print("\nRunning 2-Spar Test [0.2c, 0.6c]...")
 # NOTE: Here we explicitly pass the spar locations you mentioned
