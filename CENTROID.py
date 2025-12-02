@@ -2,9 +2,9 @@ import math
 import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
+from fontTools.varLib.plot import stops
 
 import airfoil_geometry
-
 from torsional_stiffness_functions import find_sparheight as find_sparheight_func
 import airfoil_geometry as ag
 
@@ -245,3 +245,4 @@ print("\n--- Example: Getting Just Centroid ---")
 cx, cy = get_centroid(C_TEST, [0.2, 0.6], 0.005, 0.002, 10)
 print(f"Received Centroid: ({cx:.4f}, {cy:.4f})")
     '''
+quit()
