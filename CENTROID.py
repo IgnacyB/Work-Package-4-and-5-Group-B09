@@ -57,11 +57,7 @@ def generate_stringer_coordinates(spars, total_stringers):
 
 
 def calculate_wingbox_centroid(spars, stringer_coordinates, t_front, t_mid, t_rear, t_skin, A_str):
-    """
-    UPDATED:
-    - Accepts t_front, t_mid, t_rear as separate arguments.
-    - t_skin is a single value for all skin panels.
-    """
+
     elements = []
 
     # --- LOGIC TO HANDLE 2 VS 3 SPARS ---
@@ -138,7 +134,6 @@ def build_spars_from_positions(c, spar_positions_ratios):
 
 def get_stringer_coordinates_only(c, spar_positions_ratios, total_stringers):
     """
-    Goal: "People will want the coordinate of the stringers"
     Input: Chord (c), Spar Ratios (e.g. [0.2, 0.6]), Total Stringers
     Output: List of [x, y] coordinates
     """
@@ -153,7 +148,7 @@ def get_stringer_coordinates_only(c, spar_positions_ratios, total_stringers):
 
 def get_centroid(c, spar_positions_ratios, t_front, t_mid, t_rear, t_skin, stringer_area, total_stringers):
 
-    
+
     spars = build_spars_from_positions(c, spar_positions_ratios)
 
     auto_stringers = generate_stringer_coordinates(spars, total_stringers)
