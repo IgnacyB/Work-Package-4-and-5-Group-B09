@@ -1,10 +1,9 @@
 import math
-
 from MOI import value
 #from CENTROID import get_centroid
 from Lateral_Deflection import lateral_deflection_at_tip
 from Twist_Distribution import twist_at_tip
-from Aircraft_parameters import b, c_r, c_t
+#from Aircraft_parameters import b, c_r, c_t
 from airfoil_geometry import t_front as thickness
 from airfoil_geometry import a_stringer as mass_stringer
 from airfoil_geometry import n_stringer, a_stringer, location_front, location_rear
