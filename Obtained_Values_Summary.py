@@ -1,7 +1,7 @@
 import math
-from MOI import value
+from MOI import MOI_at_tip
 #from CENTROID import get_centroid
-from Lateral_Deflection import MOI_at_tip
+from Lateral_Deflection import lateral_deflection_at_tip
 from Twist_Distribution import twist_at_tip
 #from Aircraft_parameters import b, c_r, c_t
 from airfoil_geometry import t_front as thickness
@@ -14,7 +14,7 @@ from airfoil_geometry import n_stringer, a_stringer, location_front, location_re
 #print(x_centroid,y_centroid)
 ## Moment of Inertia ##
 
-print("For two spars, the moment of inertia is {}m^4 = {}mm^4".format(,value*1000))
+print("For two spars, the moment of inertia is {}m^4 = {}mm^4".format(MOI_at_tip,MOI_at_tip*1000))
 
 ## Lateral Deflection due to Bending ##
 

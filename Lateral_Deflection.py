@@ -38,6 +38,7 @@ def lateral_deflection_function(y):
 
     return(lateral_deflection(y))
 
+lateral_deflection_at_tip = lateral_deflection_function(b/2)
 
 def lateral_deflection_function_2():
 
