@@ -32,15 +32,29 @@ def parse_loadcases(path):
                 weight = to_float(parts[2])
                 load_factor = to_float(parts[3])
                 density = to_float(parts[5])   # skip altitude (parts[4])
+                fuel = to_float(parts[6])
             except Exception:
                 continue
-            cases.append([case, speed, weight, load_factor, density])
+            cases.append([case, speed, weight, load_factor, density, fuel])
     return cases
 
-if __name__ == "__main__":
-    path = r"Loadcases.txt"
-    loadcases = parse_loadcases(path)
-    print(loadcases)
+Load_cases_list = parse_loadcases('Loadcases.txt')
+Bending_moment_list = []
+Torsion_list = []
+for case in Load_cases_list:
+    mass_aircraft = case[2] * case[3]
+    v_cruise = case[1]
+    rho = case[4]
+    mass_fuel = case[5]
+    from load_calculations import M, T
+    M_case = M(0)
+    T_case = T(0)
+    Bending_moment_list.append(M_case)
+    Torsion_list.append(T_case)
 
+max_bending_moment = max(Bending_moment_list)
+max_torsion = max(Torsion_list)
+print("Maximum Bending Moment across load cases:", max_bending_moment)
+print("Maximum Torsion across load cases:", max_torsion)
 
 
