@@ -4,7 +4,8 @@ import scipy as sp
 import matplotlib.pyplot as plt
 from fontTools.varLib.plot import stops
 
-import airfoil_geometry
+
+from airfoil_geometry import t_front
 from torsional_stiffness_functions import find_sparheight as find_sparheight_func
 import airfoil_geometry as ag
 
@@ -60,7 +61,7 @@ def generate_stringer_coordinates(spars, total_stringers):
     return stringer_coords
 
 
-def calculate_wingbox_centroid(spars, stringer_coordinates, t, A_str):
+def calculate_wingbox_centroid(spars, stringer_coordinates, t,  ag.t_front, A_str):
     """
     Calculates the centroid based on PRE-CALCULATED geometry.
     This keeps the math separate from the geometry generation.
@@ -105,7 +106,7 @@ def calculate_wingbox_centroid(spars, stringer_coordinates, t, A_str):
     x_bar = sum_Mx / sum_Area
     y_bar = sum_My / sum_Area
 
-    return x_bar, y_bar, elements
+    return x_bar, y_bar ,elements
 
 
 def build_spars_from_positions(c, spar_positions_ratios):
