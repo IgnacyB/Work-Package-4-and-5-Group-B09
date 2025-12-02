@@ -8,6 +8,7 @@ from Lateral_Deflection import lateral_deflection_function, lateral_deflection_f
 
 #lateral deflection graph
 def plot_lateral_deflection():
+    print("test")
     y_grid, v_grid = lateral_deflection_function_2
 
     plt.plot(y_grid, v_grid, lw = 2, color = "tab:blue")
@@ -46,11 +47,11 @@ def plot_twist_distribution():
         spanpos.append(y_position)
         twist_dist.append(twist_function(y_position)*180/math.pi)
         y_position += 0.5
-        # print(y_position)
+        print(y_position)
 
     plt.plot(spanpos, twist_dist, lw = 2, color = "tab:blue")
     plt.xlabel("Spanwise position [m]")
     plt.ylabel("Angle of twist [degree]")
     plt.show()
 
-plot_lateral_deflection
+plot_twist_distribution
