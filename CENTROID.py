@@ -166,7 +166,6 @@ def get_centroid(c, spar_positions_ratios, t_front, t_mid, t_rear, t_skin, strin
     return cx, cy
 
 
-
 def run_analysis(c, spar_positions_ratios, t_front, t_mid, t_rear, t_skin, stringer_area, total_stringers,
                  show_plot=True):
     # 1. Build Spars
