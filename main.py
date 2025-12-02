@@ -1,7 +1,3 @@
-
-from internal_load_diagrams import plot_internal_loads
-plot_internal_loads()
-
 #=================Load cases extraction=================#
 
 def parse_loadcases(path):
@@ -41,14 +37,19 @@ def parse_loadcases(path):
 Load_cases_list = parse_loadcases('Loadcases.txt')
 Bending_moment_list = []
 Torsion_list = []
+import load_calculations
+
 for case in Load_cases_list:
     mass_aircraft = case[2] * case[3]
     v_cruise = case[1]
     rho = case[4]
     mass_fuel = case[5]
-    from load_calculations import M, T
-    M_case = M(0)
-    T_case = T(0)
+
+    # set per-case operating conditions in the module (no circular import)
+    load_calculations.set_operating_conditions(mass_aircraft, v_cruise, rho, mass_fuel)
+
+    M_case = load_calculations.M(0)
+    T_case = load_calculations.T(0)
     Bending_moment_list.append(M_case)
     Torsion_list.append(T_case)
 
