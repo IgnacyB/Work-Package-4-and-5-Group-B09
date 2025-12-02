@@ -203,7 +203,7 @@ def plot_dL(y=None, n=300):
         y = np.linspace(0, b/2, n)
 
     # dL in XFLRextraction expects (y, CL)
-    dL_arr = _call_array(lambda yy: dL(yy, CL), y)
+    dL_arr = _call_array(lambda yy: dL(yy, CL_op), y)
 
     plt.figure(figsize=(8,4))
     plt.plot(y, dL_arr, lw=2, color="tab:blue")
@@ -221,7 +221,7 @@ def plot_wing_and_fuel_distributions(y=None, n=300):
         y = np.linspace(0, b/2, n)
 
     w_func = weight_distribution(mass_wing, b, c_r, c_t)
-    f_func = fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t)
+    f_func = fuel_distribution(mass_fuel_op, n_fuel, b, c_r, c_t)
 
     w_arr = _call_array(w_func, y)
     f_arr = _call_array(f_func, y)
@@ -259,7 +259,7 @@ def plot_integrated_distributions(y=None, n=300):
 
     # get distribution functions
     w_func = weight_distribution(mass_wing, b, c_r, c_t)
-    f_func = fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t)
+    f_func = fuel_distribution(mass_fuel_op, n_fuel, b, c_r, c_t)
 
     # compute cumulative integrals from tip to each y
     dN_int = _integrate_from_tip(dN, y)

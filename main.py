@@ -53,9 +53,11 @@ for case in Load_cases_list:
     Bending_moment_list.append(M_case)
     Torsion_list.append(T_case)
 
-max_bending_moment = max(Bending_moment_list)
+max_bending_moment = min(Bending_moment_list)
 max_torsion = max(Torsion_list)
 print("Maximum Bending Moment across load cases:", max_bending_moment)
+print("Load case for maximum Bending Moment:", Load_cases_list[Bending_moment_list.index(max_bending_moment)][0])
 print("Maximum Torsion across load cases:", max_torsion)
+print("Load case for maximum Torsion:", Load_cases_list[Torsion_list.index(max_torsion)][0])
 
 
