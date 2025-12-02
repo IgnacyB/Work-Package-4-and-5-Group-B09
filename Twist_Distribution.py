@@ -2,6 +2,7 @@
 
 #first import the necessary packages and functions from 
 import numpy as np
+import math
 import scipy as sp
 from scipy.integrate import cumulative_trapezoid
 from scipy.interpolate import interp1d
@@ -33,8 +34,7 @@ def twist_function(y):
 
     return twist(y)
 
-#test
-print(twist_function(b/2))
+print("The twist angle is {} rad or {} degrees".format(twist_function(b/2),twist_function(b/2)*180/math.pi))
 
 
 

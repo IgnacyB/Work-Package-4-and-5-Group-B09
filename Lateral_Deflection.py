@@ -38,13 +38,7 @@ def lateral_deflection_function(y):
 
     return(lateral_deflection(y))
 
-#test
-
-#
-print(lateral_deflection_function(b/2),"m")
-print(lateral_deflection_function(b/2)*100,"mm")
-
-
+print("The lateral deflection at the tip is {}m = {}mm".format(lateral_deflection_function(b/2),lateral_deflection_function(b/2)*100 ))
 
 
 
