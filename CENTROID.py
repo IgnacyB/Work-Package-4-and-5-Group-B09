@@ -152,6 +152,8 @@ def get_stringer_coordinates_only(c, spar_positions_ratios, total_stringers):
 
 
 def get_centroid(c, spar_positions_ratios, t_front, t_mid, t_rear, t_skin, stringer_area, total_stringers):
+
+    
     spars = build_spars_from_positions(c, spar_positions_ratios)
 
     auto_stringers = generate_stringer_coordinates(spars, total_stringers)
