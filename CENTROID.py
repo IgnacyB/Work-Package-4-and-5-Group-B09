@@ -8,10 +8,9 @@ import airfoil_geometry as ag
 
 
 def generate_stringer_coordinates(spars, total_stringers):
-    """
+    '''
     INTERNAL FUNCTION: Calculates coordinates based on spar geometry objects.
-    (Users generally won't call this directly; they use the wrapper functions below).
-    """
+    '''
     num_spars = len(spars)
     stringer_coords = []
 
@@ -57,14 +56,11 @@ def generate_stringer_coordinates(spars, total_stringers):
     return stringer_coords
 
 
-def calculate_wingbox_centroid(spars, stringer_coordinates, t_spars, t_top_list, t_bot_list, A_str):
+def calculate_wingbox_centroid(spars, stringer_coordinates, t_spars, t_skin, A_str):
     """
-    New Inputs:
-      t_spars:    LIST of spar thicknesses. Size = Number of Spars.
-                  Ex: [0.005, 0.005, 0.005]
-      t_top_list: LIST of top skin thicknesses. Size = Number of Spars - 1.
-                  Ex: [0.002, 0.002]
-      t_bot_list: LIST of bottom skin thicknesses. Size = Number of Spars - 1.
+    UPDATED:
+    - t_spars: A LIST of thicknesses (one for each spar).
+    - t_skin: A SINGLE number (for all top and bottom skins).
     """
     elements = []
 
@@ -79,27 +75,23 @@ def calculate_wingbox_centroid(spars, stringer_coordinates, t_spars, t_top_list,
         })
         return length
 
-    # --- PROCESS SPARS (Use t_spars list) ---
+    # 1. Process Spars (Using the LIST)
     for i, spar in enumerate(spars):
-        # Safety check to avoid crashing if list is too short
-        t_val = t_spars[i] if i < len(t_spars) else t_spars[-1]
-        add_line_segment(spar[0], spar[1], t_val, f'Spar {i + 1} Web')
+        # We grab the specific thickness for this spar
+        # Safety: use the last thickness if we run out of numbers in the list
+        thickness_val = t_spars[i] if i < len(t_spars) else t_spars[-1]
 
-    # --- PROCESS SKINS (Use t_top_list and t_bot_list) ---
+        add_line_segment(spar[0], spar[1], thickness_val, f'Spar {i + 1} Web')
+
+    # 2. Process Skins (Using the SINGLE value)
     if len(spars) > 1:
-        # Loop through each "cell" (gap between spars)
         for i in range(len(spars) - 1):
-            # 1. Determine Top Skin Thickness for this cell
-            t_top_val = t_top_list[i] if i < len(t_top_list) else t_top_list[-1]
+            # Top Skin (Constant t_skin)
+            add_line_segment(spars[i][0], spars[i + 1][0], t_skin, 'Top Skin')
+            # Bottom Skin (Constant t_skin)
+            add_line_segment(spars[i][1], spars[i + 1][1], t_skin, 'Bottom Skin')
 
-            # 2. Determine Bottom Skin Thickness for this cell
-            t_bot_val = t_bot_list[i] if i < len(t_bot_list) else t_bot_list[-1]
-
-            # Add the segments
-            add_line_segment(spars[i][0], spars[i + 1][0], t_top_val, f'Top Skin Cell {i + 1}')
-            add_line_segment(spars[i][1], spars[i + 1][1], t_bot_val, f'Bottom Skin Cell {i + 1}')
-
-    # --- PROCESS STRINGERS (Unchanged) ---
+    # 3. Process Stringers
     for coord in stringer_coordinates:
         elements.append({
             'area': A_str, 'x': coord[0], 'y': coord[1], 'type': 'stringer'
@@ -110,12 +102,14 @@ def calculate_wingbox_centroid(spars, stringer_coordinates, t_spars, t_top_list,
     sum_Mx = sum(el['area'] * el['x'] for el in elements)
     sum_My = sum(el['area'] * el['y'] for el in elements)
 
-    if sum_Area == 0: return 0, 0, elements
+    if sum_Area == 0:
+        return 0, 0, elements
 
     x_bar = sum_Mx / sum_Area
     y_bar = sum_My / sum_Area
 
     return x_bar, y_bar, elements
+
 
 def build_spars_from_positions(c, spar_positions_ratios):
     """
@@ -150,10 +144,7 @@ def get_stringer_coordinates_only(c, spar_positions_ratios, total_stringers):
 
 
 def get_centroid(c, spar_positions_ratios, t_spars, t_skin, stringer_area, total_stringers):
-    """
-    Simplified wrapper: Accepts different spar thicknesses (list)
-    but a constant skin thickness (float).
-    """
+
     # 1. Build Spars
     spars = build_spars_from_positions(c, spar_positions_ratios)
     num_cells = len(spars) - 1
@@ -179,33 +170,16 @@ def get_centroid(c, spar_positions_ratios, t_spars, t_skin, stringer_area, total
 
 
 def run_analysis(c, spar_positions_ratios, t_spars, t_skin, stringer_area, total_stringers, show_plot=True):
-    """
-    Inputs:
-      t_spars: LIST of thicknesses for spars. Ex: [0.005, 0.010]
-      t_skin:  SINGLE number for all skin (top & bot). Ex: 0.002
-    """
-
     # 1. Build Spars
     spars = build_spars_from_positions(c, spar_positions_ratios)
-    num_spars = len(spars)
-    num_cells = num_spars - 1
-
-    # --- INTERNAL CONVERSION ---
-    # We turn the single 't_skin' into lists because the calculator expects lists
-    t_top_list = [t_skin] * num_cells  # e.g., [0.002, 0.002]
-    t_bot_list = [t_skin] * num_cells  # e.g., [0.002, 0.002]
-
-    # Check Spars
-    if len(t_spars) != num_spars:
-        print(f"WARNING: You have {num_spars} spars but provided {len(t_spars)} thicknesses!")
 
     # 2. Generate Stringers
     auto_stringers = generate_stringer_coordinates(spars, total_stringers)
 
     # 3. Calculate Centroid
-    # (We pass the lists we just created: t_top_list, t_bot_list)
+    # (Pass t_spars as a list, and t_skin as a single number)
     cx, cy, final_elements = calculate_wingbox_centroid(
-        spars, auto_stringers, t_spars, t_top_list, t_bot_list, stringer_area
+        spars, auto_stringers, t_spars, t_skin, stringer_area
     )
 
     print(f"\n--- ANALYSIS COMPLETE ---")
@@ -215,6 +189,8 @@ def run_analysis(c, spar_positions_ratios, t_spars, t_skin, stringer_area, total
         plot_wingbox(final_elements, cx, cy, c, len(spars))
 
     return cx, cy
+
+
 
 def plot_wingbox(elements, cx, cy, c, num_spars):
     """Helper function to visualize the wingbox geometry."""
@@ -252,15 +228,9 @@ C_TEST = 8.0
 
 cx, cy = run_analysis(
     C_TEST,
-    [0.2, 0.6],         # Spar locations
-    [0.005, 0.010],     # t_spars (List)
-    0.002,              # t_skin (Single Number)
-    0.002,              # Stringer Area
-    10                  # Total Stringers
+    [ag.location_front,ag.location_middle,ag.location_rear],         # Spar locations
+    [ag.t_front, ag.t_middle,ag.t_rear],     # t_spars (List)
+    ag.t_skin,              # t_skin (Single Number)
+    ag.a_stringer,              # Stringer Area
+    ag.n_stringer                  # Total Stringers
 )
-# Test Scenario
-C_TEST = 8.0
-
-print("Running 3-Spar Test ...")
-run_analysis(C_TEST, [ag.location_front,ag.location_middle,ag.location_rear], ag.t_front, ag.a_stringer, ag.n_stringer, show_plot=True)
-
