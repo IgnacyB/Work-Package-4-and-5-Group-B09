@@ -227,22 +227,13 @@ def plot_wingbox(elements, cx, cy, c, num_spars):
 
 
 
-run_analysis(
-    c=8.0,
-    spar_positions_ratios=[0.2, 0.4, 0.6],
-    t_front=0.005,
-    t_mid=0.008,   # <--- Used
-    t_rear=0.005,
-    t_skin=0.002,
-    stringer_area=0.002,
-    total_stringers=16
-)
+run_analysis(9,[ag.location_front,ag.location_middle,ag.location_rear],ag.t_front,ag.t_middle,ag.t_rear,ag.t_skin,ag.a_stringer,ag.n_stringer)
 
 '''cx, cy = run_analysis(
     C_TEST,
     [ag.location_front,ag.location_middle,ag.location_rear],         # Spar locations
-    [ag.t_front, ag.t_middle,ag.t_rear],     # t_spars (List)
-    ag.t_skin,              # t_skin (Single Number)
+    [],     # t_spars (List)
+                  # t_skin (Single Number)
     ag.a_stringer,              # Stringer Area
     ag.n_stringer                  # Total Stringers
 )
