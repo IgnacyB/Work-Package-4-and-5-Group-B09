@@ -9,6 +9,7 @@ from Interpolation import interpolate
 #import modules
 import numpy as np
 import matplotlib.pyplot as plt
+import io
 
 def extract_main_wing_data(filepath):
     y_span = []
@@ -16,7 +17,7 @@ def extract_main_wing_data(filepath):
     Cm = []
     Cd_i = []
 
-    with open(filepath, 'r') as f:
+    with io.open(filepath, 'r',encoding="iso-8859-1") as f:
         lines = f.readlines()
 
     # Find the Cl of the whole wing
