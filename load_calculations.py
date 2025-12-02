@@ -18,7 +18,6 @@ from Load_cases import mass_aircraft, v_cruise, rho_cruise, mass_fuel
 x_bar_c = 1/2 #location of centroid of wing box assumed to be at half the chord (Should be update with more accurate data!!!)
 x_lift = 1/4 #location of aerodynamic lift assumed to be at quarter chord
 CL = 2 * mass_aircraft * g / (rho_cruise * v_cruise**2 * S_w) # Calculating the required CL for level flight
-
 #=========WEIGHT CALCULATIONS=========#
 
 #WEIGHT DISTRIBUTION (HALF OF SPAN)
@@ -26,7 +25,7 @@ def weight_distribution(mass_wing, b, c_r, c_t):
 
     y_0 = b / 2 * c_r / (c_r - c_t) #location where the load distribution becomes zero
 
-    A = 3 / 2 * mass_wing*g / 2 / (y_0**3-(y_0 - b/2)**3)
+    A = 3 / 2 * mass_wing*g / (y_0**3-(y_0 - b/2)**3) #It is divided by 2 since we are only considering half the span and thus half of the weight
     def w_dist(y):
         return A * (y_0 - y)**2
     
@@ -40,7 +39,7 @@ def fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t):
 
     y_0 = b / 2 * c_r / (c_r - c_t) #location where the load distribution becomes zero
 
-    A = 3 / 2 * n_fuel * mass_fuel*g / 2 / (y_0**3-(y_0 - b/2)**3)
+    A = 3 / 2 * n_fuel * mass_fuel*g / (y_0**3-(y_0 - b/2)**3) #It is divided by 2 since we are only considering half the span and thus half of the weight
     def f_dist(y):
         return A * (y_0 - y)**2
     
@@ -53,7 +52,7 @@ def distance_lift_centroid(x_bar_c, x_lift, y):
     return (x_bar_c - x_lift) * c(y)
 
 def dN(y):
-    return dL(y, CL) * np.cos(alpha(CL)) + dD(y, CL) * np.sin(alpha(CL))
+    return dL(y, CL) * np.cos(np.radians(alpha(CL))) + dD(y, CL) * np.sin(np.radians(alpha(CL)))
 
 #=========FORCE AND MOMENT IN CROSS SECTION=========#
 
@@ -95,8 +94,9 @@ def V(y):
     # array/vectorized behavior (fast cumulative integration)
     y_arr = np.asarray(y)
     dV_arr = _call_array(dV, y_arr)
-    int_arr = cumulative_trapezoid(dV_arr, y_arr, initial=0)
-    V_arr = -1 * int_arr + int_arr[-1]  # shift so V(b/2)=0
+    # integrate from tip (b/2) inward so V(b/2)=0
+    V_flip = cumulative_trapezoid(np.flip(dV_arr), np.flip(y_arr), initial=0)
+    V_arr = -1 * np.flip(V_flip)
     return V_arr
 
 def T(y):
@@ -105,8 +105,8 @@ def T(y):
         return Tval
     y_arr = np.asarray(y)
     dT_arr = _call_array(dT, y_arr)
-    T_arr = cumulative_trapezoid(dT_arr, y_arr, initial=0)
-    T_arr = T_arr - T_arr[-1]  # shift so T(b/2)=0
+    T_flip = cumulative_trapezoid(np.flip(dT_arr), np.flip(y_arr), initial=0)
+    T_arr = -1 * np.flip(T_flip)
     return T_arr
 
 def M(y):
@@ -117,8 +117,8 @@ def M(y):
     # array: build V array then integrate
     y_arr = np.asarray(y)
     V_arr = V(y_arr)  # uses vectorized V above
-    M_arr = cumulative_trapezoid(V_arr, y_arr, initial=0)
-    M_arr = M_arr - M_arr[-1]  # shift so M(b/2)=0
+    M_flip = cumulative_trapezoid(np.flip(V_arr), np.flip(y_arr), initial=0)
+    M_arr = np.flip(M_flip)
     return M_arr
 
 def plot_internal_loads(y=None, n=200):
@@ -170,6 +170,128 @@ def plot_distributed_loads(y=None, n=300):
     plt.tight_layout()
     plt.show()
 
+def plot_dN(y=None, n=300):
+    """Plot the net distributed normal force dN(y) along the half-span."""
+    if y is None:
+        y = np.linspace(0, b/2, n)
+    dN_arr = _call_array(dN, y)
+
+    plt.figure(figsize=(8,4))
+    plt.plot(y, dN_arr, lw=2, color="tab:orange")
+    plt.axhline(0, color="k", lw=0.6)
+    plt.xlabel("Spanwise coordinate y (m)")
+    plt.ylabel("dN(y) [N/m]")
+    plt.title("Net distributed normal force dN(y) along half-span")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+def plot_dL(y=None, n=300):
+    """Plot sectional lift distribution dL(y, CL) along the half-span."""
+    if y is None:
+        y = np.linspace(0, b/2, n)
+
+    # dL in XFLRextraction expects (y, CL)
+    dL_arr = _call_array(lambda yy: dL(yy, CL), y)
+
+    plt.figure(figsize=(8,4))
+    plt.plot(y, dL_arr, lw=2, color="tab:blue")
+    plt.axhline(0, color="k", lw=0.6)
+    plt.xlabel("Spanwise coordinate y (m)")
+    plt.ylabel("dL(y) [N/m]")
+    plt.title("Sectional lift distribution dL(y) along half-span")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+def plot_wing_and_fuel_distributions(y=None, n=300):
+    """Plot wing weight distribution w(y) and fuel distribution f(y) along half-span."""
+    if y is None:
+        y = np.linspace(0, b/2, n)
+
+    w_func = weight_distribution(mass_wing, b, c_r, c_t)
+    f_func = fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t)
+
+    w_arr = _call_array(w_func, y)
+    f_arr = _call_array(f_func, y)
+
+    plt.figure(figsize=(8,5))
+    plt.plot(y, w_arr, lw=2, label="Wing weight distribution w(y) [N/m]", color="tab:blue")
+    plt.plot(y, f_arr, lw=2, linestyle="--", label="Fuel distribution f(y) [N/m]", color="tab:green")
+    plt.axhline(0, color="k", lw=0.6)
+    plt.xlabel("Spanwise coordinate y (m)")
+    plt.ylabel("Distributed load [N/m]")
+    plt.title("Wing weight and fuel distributions along half-span")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+def _integrate_from_tip(func, y):
+    """Integrate `func` from tip (b/2) to y. Accepts scalar or array y."""
+    # scalar behavior
+    if np.ndim(y) == 0:
+        val, err = sp.integrate.quad(func, b/2, float(y))
+        return val
+    # array/vectorized behavior: integrate from tip inward so integral(b/2)=0
+    y_arr = np.asarray(y)
+    f_arr = _call_array(func, y_arr)
+    # integrate on flipped arrays then flip back (consistent with V/T implementation)
+    integral_flip = cumulative_trapezoid(np.flip(f_arr), np.flip(y_arr), initial=0)
+    integral_arr = -1 * np.flip(integral_flip)
+    return integral_arr
+
+def plot_integrated_distributions(y=None, n=300):
+    """Compute and plot cumulative integrals (from tip b/2 to y) of dN, wing weight and fuel distributions."""
+    if y is None:
+        y = np.linspace(0, b/2, n)
+
+    # get distribution functions
+    w_func = weight_distribution(mass_wing, b, c_r, c_t)
+    f_func = fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t)
+
+    # compute cumulative integrals from tip to each y
+    dN_int = _integrate_from_tip(dN, y)
+    w_int  = _integrate_from_tip(w_func, y)
+    f_int  = _integrate_from_tip(f_func, y)
+
+    plt.figure(figsize=(8,5))
+    plt.plot(y, dN_int, lw=2, label="Integrated dN (from tip) [N]", color="tab:orange")
+    plt.plot(y, w_int, lw=2, label="Integrated wing weight (from tip) [N]", color="tab:blue")
+    plt.plot(y, f_int, lw=2, linestyle="--", label="Integrated fuel (from tip) [N]", color="tab:green")
+    plt.axhline(0, color="k", lw=0.6)
+    plt.xlabel("Spanwise coordinate y (m)")
+    plt.ylabel("Cumulative force from tip to y [N]")
+    plt.title("Cumulative integrals of dN, wing weight and fuel along half-span")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+def plot_integrated_dL(y=None, n=300):
+    """Compute and plot cumulative integral of sectional lift dL(y,CL) from tip (b/2) to y."""
+    if y is None:
+        y = np.linspace(0, b/2, n)
+
+    # dL depends on CL (module-level CL). Integrate from tip to y.
+    dL_int = _integrate_from_tip(lambda yy: dL(yy, CL), y)
+
+    plt.figure(figsize=(8,5))
+    plt.plot(y, dL_int, lw=2, label="Integrated dL (from tip) [N]", color="tab:blue")
+    plt.axhline(0, color="k", lw=0.6)
+    plt.xlabel("Spanwise coordinate y (m)")
+    plt.ylabel("Cumulative lift from tip to y [N]")
+    plt.title("Cumulative integral of sectional lift dL along half-span")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
 if __name__ == "__main__":
     plot_internal_loads()
     plot_distributed_loads()
+    plot_dN()
+    plot_dL()
+    plot_wing_and_fuel_distributions()
+    plot_integrated_distributions()
+    plot_integrated_dL()
