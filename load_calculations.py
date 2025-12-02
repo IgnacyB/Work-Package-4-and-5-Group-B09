@@ -49,7 +49,7 @@ def fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t):
 
 #DISTANCE FROM LIFT TO CENTROID OF WINGBOX AS FUNCTION OF SPANWISE LOCATION
 def distance_lift_centroid(x_bar_c, x_lift, y):
-    return 0.25 * c(y)
+    return (x_bar_c - x_lift) * c(y)
 
 def dN(y):
     return dL(y, CL) * np.cos(np.radians(alpha(CL))) + dD(y, CL) * np.sin(np.radians(alpha(CL)))
@@ -321,6 +321,22 @@ def plot_integrated_dL(y=None, n=300):
     plt.tight_layout()
     plt.show()
 
+def plot_dM_N(y=None, n=300):
+    """Plot shifted moment contribution dM_N(y) = dN(y)*distance_lift_centroid(...) along half-span."""
+    if y is None:
+        y = np.linspace(0, b/2, n)
+    dM_N_arr = _call_array(dM_N, y)
+
+    plt.figure(figsize=(8,4))
+    plt.plot(y, dM_N_arr, lw=2, color="tab:brown")
+    plt.axhline(0, color="k", lw=0.6)
+    plt.xlabel("Spanwise coordinate y (m)")
+    plt.ylabel("dM_N(y) [N·m/m]")
+    plt.title("Shifted moment from normal force dM_N(y) along half-span")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
 if __name__ == "__main__":
     plot_internal_loads()
     plot_distributed_loads()
@@ -331,3 +347,4 @@ if __name__ == "__main__":
     plot_wing_and_fuel_distributions()
     plot_integrated_distributions()
     plot_integrated_dL()
+    plot_dM_N()
