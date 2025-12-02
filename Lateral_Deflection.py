@@ -104,4 +104,3 @@ print(lateral_deflection(b/2))
 #     return np.interp(y, ys, v_vals)
 
 # print(lateral_deflection(0.1))
-
