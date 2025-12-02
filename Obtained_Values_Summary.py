@@ -1,15 +1,28 @@
-from MOI import value, MOI_single_cell
-from CENTROID import cx,cy
+import math
+
+from MOI import value
+
+from CENTROID import get_centroid
+from Lateral_Deflection import lateral_deflection_at_tip
+from Twist_Distribution import twist_at_tip
+from Aircraft_parameters import b, c_r, c_t
+from airfoil_geometry import t_front as thickness
+from airfoil_geometry import a_stringer as mass_stringer
+from airfoil_geometry import n_stringer, a_stringer, location_front, location_rear
 ## Centroid ##
+chord_at_tip = c_r-((c_r-c_t)/(b/2))*(4)
+spar_positions_ratios = [location_front, location_rear]
 
-print(cx,cy)
-
+x_centroid, y_centroid = get_centroid(chord_at_tip, spar_positions_ratios, thickness, a_stringer, n_stringer)
+print(x_centroid,y_centroid)
 ## Moment of Inertia ##
 
-print("For two spars, the moment of inertia is: {}m^4 = {}mm^4".format(value,value*100))
+print("For two spars, the moment of inertia is {}m^4 = {}mm^4".format(value,value*1000))
 
 ## Lateral Deflection due to Bending ##
 
+print("The lateral deflection at the tip is {}m or {}mm".format(lateral_deflection_at_tip,lateral_deflection_at_tip*100))
 
 ## Twist Angle ##
 
+print("The twist angle at the tip is {} rad or {} degrees".format(twist_at_tip,twist_at_tip*180/math.pi))
