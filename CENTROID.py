@@ -125,7 +125,7 @@ def build_spars_from_positions(c, spar_positions_ratios):
     return spars
 
 # =========================================================
-#  PUBLIC FUNCTIONS (This is what your team will call)
+#  PUBLIC FUNCTIONS
 # =========================================================
 
 def get_stringer_coordinates_only(c, spar_positions_ratios, total_stringers):
@@ -193,7 +193,7 @@ def run_analysis(c, spar_positions_ratios, t_spars, t_skin, stringer_area, total
 
 
 def plot_wingbox(elements, cx, cy, c, num_spars):
-    """Helper function to visualize the wingbox geometry."""
+
     plt.figure(figsize=(10, 6))
 
     for el in elements:
