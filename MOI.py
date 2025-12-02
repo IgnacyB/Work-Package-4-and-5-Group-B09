@@ -36,6 +36,11 @@ def MOI_single_cell(y):
     spars.append(chord_position_front)
     spars.append(chord_position_rear)
 
+    t_spars = []
+    t_spars.append(thickness_front)
+    t_spars.append(thickness_middle)
+    t_spars.append(thickness_rear)
+
     x_centroid, y_centroid = get_centroid(chord,spars, thickness_front, thickness_middle, thickness_rear, skin_thickness ,mass_stringer,n_stringer)
     #print("X_centroid ",x_centroid)
     #print("Y_centroid",y_centroid)
@@ -211,6 +216,6 @@ def MOI_multi_cell(y):
 
 value = MOI_single_cell(2)
 value_2 = MOI_multi_cell(0)
-
+print(value)
 #print("This is the calculated value for Ixx with 2 spars method",value,"m^4")
 #print("This is the calculated value for Ixx with 3 spars method",value_2, "m^4")
