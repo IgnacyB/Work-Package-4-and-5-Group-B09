@@ -104,6 +104,6 @@ Volume_material, error1 = quad(area_of_material,0,b/2)
 Volume_fuel, erro2 = quad(area_for_fuel,0,b/2)
 
 Mass = Density*Volume_material
-print("The material volume is ",Volume_material)
+print("The volume is ",Volume_material)
 print("The fuel volume is ",Volume_fuel, "m^3")
 print("The mass of the wingbox structure is", Mass)
