@@ -1,3 +1,4 @@
+# This is the file used to calculate the twist distribution in the wing
 
 import scipy as sp
 

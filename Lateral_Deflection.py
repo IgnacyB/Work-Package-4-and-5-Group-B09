@@ -1,4 +1,4 @@
-# This is the file used to actually calculate the lateral deflection experienced by the wing
+# This is the file used to calculate the lateral deflection experienced by the wing
 
 #first import the necessary packages and functions from 
 import numpy as np
