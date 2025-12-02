@@ -112,9 +112,7 @@ def calculate_wingbox_centroid(spars, stringer_coordinates, t_spars, t_skin, A_s
 
 
 def build_spars_from_positions(c, spar_positions_ratios):
-    """
-    Helper function: Converts [0.2, 0.6] -> Actual Coordinate List
-    """
+    
     spars = []
     for ratio in spar_positions_ratios:
         x_pos = ratio * c
