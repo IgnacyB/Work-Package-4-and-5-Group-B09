@@ -269,6 +269,25 @@ def plot_integrated_distributions(y=None, n=300):
     plt.tight_layout()
     plt.show()
 
+def plot_integrated_dL(y=None, n=300):
+    """Compute and plot cumulative integral of sectional lift dL(y,CL) from tip (b/2) to y."""
+    if y is None:
+        y = np.linspace(0, b/2, n)
+
+    # dL depends on CL (module-level CL). Integrate from tip to y.
+    dL_int = _integrate_from_tip(lambda yy: dL(yy, CL), y)
+
+    plt.figure(figsize=(8,5))
+    plt.plot(y, dL_int, lw=2, label="Integrated dL (from tip) [N]", color="tab:blue")
+    plt.axhline(0, color="k", lw=0.6)
+    plt.xlabel("Spanwise coordinate y (m)")
+    plt.ylabel("Cumulative lift from tip to y [N]")
+    plt.title("Cumulative integral of sectional lift dL along half-span")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
 if __name__ == "__main__":
     plot_internal_loads()
     plot_distributed_loads()
@@ -276,4 +295,4 @@ if __name__ == "__main__":
     plot_dL()
     plot_wing_and_fuel_distributions()
     plot_integrated_distributions()
-
+    plot_integrated_dL()
