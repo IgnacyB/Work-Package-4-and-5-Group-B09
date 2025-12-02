@@ -55,6 +55,7 @@ for case in Load_cases_list:
     T_case = load_calculations.T(0)
     Bending_moment_list.append(M_case)
     Torsion_list.append(T_case)
+
 print(Bending_moment_list)
 print(Torsion_list)
 print("Load cases analysed completely.")
