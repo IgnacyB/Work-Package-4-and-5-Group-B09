@@ -103,3 +103,10 @@ for idx in critical_idxs:
     title = f"Load case {case[0]} — {reason_str}"
     print(f"Plotting internal loads for case {case[0]} (index {idx}): {reason_str}")
     ild.plot_internal_loads(title=title)
+
+from internal_load_diagrams import plot_all_cases_internal_distributions
+
+# Example usage: plot all cases
+if __name__ == "__main__":
+    # call after Load_cases_list and load_calculations are ready
+    plot_all_cases_internal_distributions(Load_cases_list, load_calculations)
