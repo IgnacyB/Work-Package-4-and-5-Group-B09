@@ -1,16 +1,16 @@
 import math
 import numpy as np
 import scipy as sp
-import json
 import matplotlib.pyplot as plt
-
 from torsional_stiffness_functions import find_sparheight as find_sparheight_func
+import airfoil_geometry as ag
+
+
 
 def generate_stringer_coordinates(spars, total_stringers):
-    """
+    '''
     INTERNAL FUNCTION: Calculates coordinates based on spar geometry objects.
-    (Users generally won't call this directly; they use the wrapper functions below).
-    """
+    '''
     num_spars = len(spars)
     stringer_coords = []
 
@@ -56,12 +56,23 @@ def generate_stringer_coordinates(spars, total_stringers):
     return stringer_coords
 
 
-def calculate_wingbox_centroid(spars, stringer_coordinates, t, A_str):
-    """
-    Calculates the centroid based on PRE-CALCULATED geometry.
-    This keeps the math separate from the geometry generation.
-    """
+def calculate_wingbox_centroid(spars, stringer_coordinates, t_front, t_mid, t_rear, t_skin, A_str):
+
     elements = []
+
+    # --- LOGIC TO HANDLE 2 VS 3 SPARS ---
+    num_spars = len(spars)
+
+    # We build the list dynamically based on how many spars exist
+    if num_spars == 2:
+        # If only 2 spars, we ignore t_mid
+        active_spar_thicknesses = [t_front, t_rear]
+    elif num_spars == 3:
+        # If 3 spars, we use all three
+        active_spar_thicknesses = [t_front, t_mid, t_rear]
+    else:
+        # Fallback for unexpected cases (assumes all are front thickness)
+        active_spar_thicknesses = [t_front] * num_spars
 
     def add_line_segment(p1, p2, thickness, type_name):
         length = math.sqrt((p2[1] - p1[1]) ** 2 + (p2[0] - p1[0]) ** 2)
@@ -74,17 +85,18 @@ def calculate_wingbox_centroid(spars, stringer_coordinates, t, A_str):
         })
         return length
 
-    # Process Spars
+    # 1. Process Spars (Using our new active_spar_thicknesses list)
     for i, spar in enumerate(spars):
-        add_line_segment(spar[0], spar[1], t, f'Spar {i + 1} Web')
+        t_val = active_spar_thicknesses[i]
+        add_line_segment(spar[0], spar[1], t_val, f'Spar {i + 1} Web')
 
-    # Process Skins
+    # 2. Process Skins (Using the SINGLE t_skin value)
     if len(spars) > 1:
         for i in range(len(spars) - 1):
-            add_line_segment(spars[i][0], spars[i + 1][0], t, 'Top Skin')
-            add_line_segment(spars[i][1], spars[i + 1][1], t, 'Bottom Skin')
+            add_line_segment(spars[i][0], spars[i + 1][0], t_skin, 'Top Skin')
+            add_line_segment(spars[i][1], spars[i + 1][1], t_skin, 'Bottom Skin')
 
-    # Process Stringers
+    # 3. Process Stringers
     for coord in stringer_coordinates:
         elements.append({
             'area': A_str, 'x': coord[0], 'y': coord[1], 'type': 'stringer'
@@ -101,30 +113,27 @@ def calculate_wingbox_centroid(spars, stringer_coordinates, t, A_str):
     x_bar = sum_Mx / sum_Area
     y_bar = sum_My / sum_Area
 
-    return x_bar, y_bar
+    return x_bar, y_bar, elements
+
 
 
 def build_spars_from_positions(c, spar_positions_ratios):
-    """
-    Helper function: Converts [0.2, 0.6] -> Actual Coordinate List
-    """
+
     spars = []
     for ratio in spar_positions_ratios:
         x_pos = ratio * c
         y_top, y_bot = find_sparheight_func(ratio)
-        y_top = c*y_top
-        y_bot = c*y_bot
+        y_bot = y_bot*c
+        y_top = y_top*c
         spars.append([[x_pos, y_top], [x_pos, y_bot]])
     return spars
 
-
 # =========================================================
-#  PUBLIC FUNCTIONS (This is what your team will call)
+#  PUBLIC FUNCTIONS
 # =========================================================
 
 def get_stringer_coordinates_only(c, spar_positions_ratios, total_stringers):
     """
-    Goal: "People will want the coordinate of the stringers"
     Input: Chord (c), Spar Ratios (e.g. [0.2, 0.6]), Total Stringers
     Output: List of [x, y] coordinates
     """
@@ -137,44 +146,28 @@ def get_stringer_coordinates_only(c, spar_positions_ratios, total_stringers):
     return stringer_coords
 
 
-def get_centroid(c, spar_positions_ratios, thickness, stringer_area, total_stringers):
-    """
-    Goal: Return ONLY the centroid coordinates (x, y).
-    This runs the full pipeline internally but returns simple values.
+def get_centroid(c, spar_positions_ratios, t_front, t_mid, t_rear, t_skin, stringer_area, total_stringers):
 
-    Input:
-      c: Chord length
-      spar_positions_ratios: List (e.g. [0.2, 0.6])
-      thickness: Skin/Spar thickness
-      stringer_area: Area of one stringer
-      total_stringers: Number of stringers
 
-    Output: Tuple (cx, cy)
-    """
-    # 1. Build Spars
     spars = build_spars_from_positions(c, spar_positions_ratios)
 
-    # 2. Generate Stringers (Required for centroid calculation)
     auto_stringers = generate_stringer_coordinates(spars, total_stringers)
 
-    # 3. Calculate Centroid
-    cx,cy = calculate_wingbox_centroid(
-        spars, auto_stringers, thickness, stringer_area
+    cx, cy, final_elements = calculate_wingbox_centroid(
+        spars,
+        auto_stringers,
+        t_front,
+        t_mid,
+        t_rear,
+        t_skin,
+        stringer_area
     )
 
     return cx, cy
 
 
-def run_analysis_and_export(c, spar_positions_ratios, thickness, stringer_area, total_stringers,
-                            file_path="centroid_data.json", show_plot=True):
-    """
-    MASTER PIPELINE:
-    1. Generates Spars
-    2. Generates Stringers
-    3. Calculates Centroid
-    4. Saves Everything
-    """
-
+def run_analysis(c, spar_positions_ratios, t_front, t_mid, t_rear, t_skin, stringer_area, total_stringers,
+                 show_plot=True):
     # 1. Build Spars
     spars = build_spars_from_positions(c, spar_positions_ratios)
 
@@ -182,36 +175,30 @@ def run_analysis_and_export(c, spar_positions_ratios, thickness, stringer_area, 
     auto_stringers = generate_stringer_coordinates(spars, total_stringers)
 
     # 3. Calculate Centroid
+    # We pass the 3 separate spar inputs down to the calculator
     cx, cy, final_elements = calculate_wingbox_centroid(
-        spars, auto_stringers, thickness, stringer_area
+        spars,
+        auto_stringers,
+        t_front,
+        t_mid,
+        t_rear,
+        t_skin,
+        stringer_area
     )
 
-    # 4. Save Results
-    results_data = {
-        "chord_length_c": c,
-        "spar_positions": spar_positions_ratios,
-        "centroid_x": cx,
-        "centroid_y": cy,
-        "stringer_area": stringer_area,
-        "stringer_coordinates": [np.around(c, 4).tolist() for c in auto_stringers]
-    }
-
-    with open(file_path, 'w') as f:
-        json.dump(results_data, f, indent=4)
-
     print(f"\n--- ANALYSIS COMPLETE ---")
-    print(f"Chord: {c}, Spars at: {spar_positions_ratios}")
-    print(f"Saved to: {file_path}")
+    print(f"Chord: {c}")
+    print(f"Spars: Front={t_front}, Mid={t_mid}, Rear={t_rear}")
     print(f"Centroid: ({cx:.4f}, {cy:.4f})")
 
     if show_plot:
         plot_wingbox(final_elements, cx, cy, c, len(spars))
 
-    return results_data
+    return cx, cy
 
 
 def plot_wingbox(elements, cx, cy, c, num_spars):
-    """Helper function to visualize the wingbox geometry."""
+
     plt.figure(figsize=(10, 6))
 
     for el in elements:
@@ -226,33 +213,27 @@ def plot_wingbox(elements, cx, cy, c, num_spars):
     plt.scatter(str_x, str_y, c='green', s=40, zorder=5, label='Stringers')
     plt.scatter(cx, cy, c='red', marker='x', s=100, zorder=10, label='Centroid')
 
-    plt.title(f"Wing Box Cross-Section (c={c}, Spars={num_spars})")
+    plt.title(f"Wing Box Cross-Section (chord lenght={c}, Spars={num_spars},number of stringers={ag.n_stringer})")
     plt.xlabel("Chordwise Position (x)")
     plt.ylabel("Height (y)")
     plt.axis('equal')
     plt.grid(True, linestyle='--', alpha=0.6)
     plt.legend()
     plt.show()
-    #jj
 
 
-if __name__ == '__main__':
-    # Test Scenario
-    C_TEST = 8.0
 
-    print("Running 3-Spar Test [0.2c, 0.4c, 0.6c]...")
-    run_analysis_and_export(C_TEST, [0.2, 0.4, 0.6], 0.005, 0.002, 16, "centroid_3spar.json", show_plot=True)
 
-    print("\nRunning 2-Spar Test [0.2c, 0.6c]...")
-    # NOTE: Here we explicitly pass the spar locations you mentioned
-    run_analysis_and_export(C_TEST, [0.2, 0.6], 0.005, 0.002, 10, "centroid_2spar.json", show_plot=True)
 
-    # EXAMPLE: How your team can get JUST stringer coordinates
-    print("\n--- Example: Getting Just Stringer Coords ---")
-    coords = get_stringer_coordinates_only(C_TEST, [0.2, 0.6], 10)
-    print(f"Received {len(coords)} stringer coordinates.")
 
-    # EXAMPLE: How your team can get JUST centroid coordinates
-    print("\n--- Example: Getting Just Centroid ---")
-    cx, cy = get_centroid(C_TEST, [0.2, 0.6], 0.005, 0.002, 10)
-    print(f"Received Centroid: ({cx:.4f}, {cy:.4f})")
+run_analysis(9,[ag.location_front,ag.location_middle,ag.location_rear],ag.t_front,ag.t_middle,ag.t_rear,ag.t_skin,ag.a_stringer,ag.n_stringer,show_plot=True)
+
+'''cx, cy = run_analysis(
+    C_TEST,
+    [ag.location_front,ag.location_middle,ag.location_rear],         # Spar locations
+    [],     # t_spars (List)
+                  # t_skin (Single Number)
+    ag.a_stringer,              # Stringer Area
+    ag.n_stringer                  # Total Stringers
+)
+'''

@@ -2,42 +2,29 @@ import matplotlib.pyplot as plt
 import math
 
 from Aircraft_parameters import b
-from Twist_Distribution import twist
-from Lateral_Deflection import lateral_deflection
+from Twist_Distribution import twist_function
+from Lateral_Deflection import lateral_deflection_function
 
 
 #lateral deflection graph
-def lateral_deflection_graph():
-    spanpos = []
-    lateral_dist = []
+def plot_lateral_deflection():
+    y_grid, v_grid = lateral_deflection_function()
 
-    y_position = 0
-
-    while y_position <= b/2:
-        spanpos.append(y_position)
-        lateral_dist.append(lateral_deflection(y_position))
-        y_position += 0.5
-
-    plt.plot(spanpos, lateral_dist)
+    plt.plot(y_grid, v_grid, lw = 2, color = "tab:blue")
+    plt.title("Lateral deflection along wingspan")
     plt.xlabel("Spanwise position [m]")
     plt.ylabel("Lateral deflection [m]")
-    plt.show
+    plt.show()
 
+plot_lateral_deflection()
 
 #twist distribution
-def twist_distribution_graph():
-    spanpos = []
-    twist_dist = []
+def plot_twist_distribution():
+    y_grid, twist_grid = twist_function()
 
-    y_position = 0
-
-    while y_position <= b/2:
-        spanpos.append(y_position)
-        twist_dist.append(twist(y_position)*180/math.pi)
-        y_position += 0.5
-
-    plt.plot(spanpos, twist_dist)
+    plt.plot(y_grid, twist_grid*180/math.pi, lw = 2, color = "tab:blue")
     plt.xlabel("Spanwise position [m]")
     plt.ylabel("Angle of twist [degree]")
-    plt.show
+    plt.show()
 
+plot_twist_distribution()

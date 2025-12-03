@@ -1,11 +1,13 @@
 # Moment of inertia calculations
 import numpy as np
 import scipy as sp
-
+from Aircraft_parameters import b
 def MOI_single_cell(y):
     #import the necessary functions from other
     from airfoil_geometry import t_skin as skin_thickness
-    from airfoil_geometry import t_front as thickness
+    from airfoil_geometry import t_middle as thickness_middle
+    from airfoil_geometry import t_front as thickness_front
+    from airfoil_geometry import t_rear as thickness_rear
     from airfoil_geometry import a_stringer as mass_stringer
     from airfoil_geometry import n_stringer
     from airfoil_geometry import location_front as chord_position_front
@@ -34,7 +36,12 @@ def MOI_single_cell(y):
     spars.append(chord_position_front)
     spars.append(chord_position_rear)
 
-    x_centroid, y_centroid = get_centroid(chord,spars, thickness,mass_stringer,n_stringer)
+    t_spars = []
+    t_spars.append(thickness_front)
+    t_spars.append(thickness_middle)
+    t_spars.append(thickness_rear)
+
+    x_centroid, y_centroid = get_centroid(chord,spars, thickness_front, thickness_middle, thickness_rear, skin_thickness ,mass_stringer,n_stringer)
     #print("X_centroid ",x_centroid)
     #print("Y_centroid",y_centroid)
 
@@ -47,8 +54,8 @@ def MOI_single_cell(y):
     y_centroid_front_spar = (y_top_front_spar - y_bottom_front_spar)/2
     y_centroid_rear_spar = (y_top_rear_spar-y_bottom_rear_spar)/2
 
-    MOI_front_spar = thickness*np.power((y_top_front_spar-y_bottom_front_spar),3)/12 + np.power(abs(y_centroid_front_spar -y_centroid),2)*(y_top_front_spar - y_bottom_front_spar)*thickness
-    MOI_rear_spar = thickness*np.power((y_top_rear_spar-y_bottom_rear_spar),3)/12 + np.power(abs(y_centroid_rear_spar -y_centroid),2)*(y_top_rear_spar - y_bottom_rear_spar)*thickness
+    MOI_front_spar = thickness_front*np.power((y_top_front_spar-y_bottom_front_spar),3)/12 + np.power(abs(y_centroid_front_spar -y_centroid),2)*(y_top_front_spar - y_bottom_front_spar)*thickness_front
+    MOI_rear_spar = thickness_rear*np.power((y_top_rear_spar-y_bottom_rear_spar),3)/12 + np.power(abs(y_centroid_rear_spar -y_centroid),2)*(y_top_rear_spar - y_bottom_rear_spar)*thickness_rear
 
     # code to calculate MOI for top and bottom sections of wingbox
     
@@ -61,8 +68,8 @@ def MOI_single_cell(y):
     y_centroid_top = y_top_front_spar + (y_top_rear_spar-y_top_front_spar)/2
     y_centroid_bottom = y_bottom_front_spar + (y_bottom_rear_spar-y_bottom_front_spar)/2
 
-    MOI_top = skin_thickness*distance_top/12 * (np.power(skin_thickness,2)*np.power(np.cos(alpha_top),2) +np.power(distance_top,2) * np.power(np.sin(alpha_top),2) ) + thickness*distance_top*np.power((y_centroid_top-y_centroid),2)
-    MOI_bottom = skin_thickness*distance_bottom/12 * (np.power(skin_thickness,2)*np.power(np.cos(alpha_bottom),2) + np.power(distance_bottom,2) * np.power(np.sin(alpha_bottom),2)) + thickness*distance_bottom*np.power((y_centroid_bottom-y_centroid),2)
+    MOI_top = skin_thickness*distance_top/12 * (np.power(skin_thickness,2)*np.power(np.cos(alpha_top),2) +np.power(distance_top,2) * np.power(np.sin(alpha_top),2) ) + skin_thickness*distance_top*np.power((y_centroid_top-y_centroid),2)
+    MOI_bottom = skin_thickness*distance_bottom/12 * (np.power(skin_thickness,2)*np.power(np.cos(alpha_bottom),2) + np.power(distance_bottom,2) * np.power(np.sin(alpha_bottom),2)) + skin_thickness*distance_bottom*np.power((y_centroid_bottom-y_centroid),2)
     
     # code to calculate parallel axis for stringer
     MOI_stringer =0
@@ -207,8 +214,9 @@ def MOI_multi_cell(y):
 
     return MOI_total
 
+MOI_at_tip = MOI_single_cell(b/2)
 value = MOI_single_cell(2)
 value_2 = MOI_multi_cell(0)
-
-#print("This is the calculated value for Ixx with 2 spars method",value)
-#print("This is the calculated value for Ixx with 3 spars method",value_2)
+print(value)
+#print("This is the calculated value for Ixx with 2 spars method",value,"m^4")
+#print("This is the calculated value for Ixx with 3 spars method",value_2, "m^4")
