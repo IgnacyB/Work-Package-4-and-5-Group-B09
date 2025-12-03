@@ -61,10 +61,10 @@ max_bending_moment = max(Bending_moment_list)
 max_torsion = max(Torsion_list)
 min_bending_moment = min(Bending_moment_list)
 min_torsion = min(Torsion_list)
-print("Maximum Bending Moment across load cases:", max_bending_moment, "[Nm], load case:", Load_cases_list[Bending_moment_list.index(max_bending_moment)][0])
-print("Maximum Torsion across load cases:", max_torsion, "[Nm], load case:", Load_cases_list[Torsion_list.index(max_torsion)][0])
-print("Minimum Bending Moment across load cases:", min_bending_moment, "[Nm], load case:", Load_cases_list[Bending_moment_list.index(min_bending_moment)][0])
-print("Minimum Torsion across load cases:", min_torsion, "[Nm], load case:", Load_cases_list[Torsion_list.index(min_torsion)][0])
+print("Maximum positive Bending Moment across load cases:", max_bending_moment, "[Nm], load case:", Load_cases_list[Bending_moment_list.index(max_bending_moment)][0])
+print("Maximum positive Torsion across load cases:", max_torsion, "[Nm], load case:", Load_cases_list[Torsion_list.index(max_torsion)][0])
+print("Maximum negative Bending Moment across load cases:", min_bending_moment, "[Nm], load case:", Load_cases_list[Bending_moment_list.index(min_bending_moment)][0])
+print("Maximum negative Torsion across load cases:", min_torsion, "[Nm], load case:", Load_cases_list[Torsion_list.index(min_torsion)][0])
 
 # Plot internal-load diagrams for the most constraining cases
 import internal_load_diagrams as ild
@@ -88,5 +88,25 @@ for idx in critical_idxs:
     load_calculations.set_operating_conditions(mass_aircraft, v_cruise, rho, mass_fuel)
     load_calculations.precompute_internal_loads(n=600)
 
-    print(f"Plotting internal loads for case {case[0]} (index {idx})")
-    ild.plot_internal_loads(title=f"Load case {case[0]}")
+    # build descriptive title indicating why this case is critical
+    reasons = []
+    if idx == idx_max_b:
+        reasons.append("maximum positive bending moment")
+    if idx == idx_min_b:
+        reasons.append("maximum negative bending moment")
+    if idx == idx_max_t:
+        reasons.append("maximum positive torsion")
+    if idx == idx_min_t:
+        reasons.append("maximum negative torsion")
+    reason_str = "; ".join(reasons) if reasons else "critical case"
+
+    title = f"Load case {case[0]} — {reason_str}"
+    print(f"Plotting internal loads for case {case[0]} (index {idx}): {reason_str}")
+    ild.plot_internal_loads(title=title)
+
+from internal_load_diagrams import plot_all_cases_internal_distributions
+
+# Example usage: plot all cases
+if __name__ == "__main__":
+    # call after Load_cases_list and load_calculations are ready
+    plot_all_cases_internal_distributions(Load_cases_list, load_calculations)

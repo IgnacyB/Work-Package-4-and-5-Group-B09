@@ -435,7 +435,7 @@ def plot_integrated_dL(y=None, n=300):
         y = np.linspace(0, b/2, n)
 
     # dL depends on CL (module-level CL). Integrate from tip to y.
-    dL_int = _integrate_from_tip(lambda yy: dL(yy, CL), y)
+    dL_int = _integrate_from_tip(lambda yy: dL(yy, CL_op), y)
 
     plt.figure(figsize=(8,5))
     plt.plot(y, dL_int, lw=2, label="Integrated dL (from tip) [N]", color="tab:blue")
