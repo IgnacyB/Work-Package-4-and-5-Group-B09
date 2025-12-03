@@ -2,6 +2,15 @@ import matplotlib.pyplot as plt
 import math
 import numpy as np
 
+# choose a plotting style from available styles with sensible fallbacks
+preferred_styles = ["seaborn-darkgrid", "seaborn", "seaborn-whitegrid", "ggplot", "classic", "default"]
+for style in preferred_styles:
+    if style in plt.style.available:
+        plt.style.use(style)
+        break
+else:
+    plt.style.use("default")
+
 from Aircraft_parameters import b
 from Twist_Distribution import twist_function
 from Lateral_Deflection import lateral_deflection_function
