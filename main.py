@@ -61,10 +61,10 @@ max_bending_moment = max(Bending_moment_list)
 max_torsion = max(Torsion_list)
 min_bending_moment = min(Bending_moment_list)
 min_torsion = min(Torsion_list)
-print("Maximum Bending Moment across load cases:", max_bending_moment, "[Nm], load case:", Load_cases_list[Bending_moment_list.index(max_bending_moment)][0])
-print("Maximum Torsion across load cases:", max_torsion, "[Nm], load case:", Load_cases_list[Torsion_list.index(max_torsion)][0])
-print("Minimum Bending Moment across load cases:", min_bending_moment, "[Nm], load case:", Load_cases_list[Bending_moment_list.index(min_bending_moment)][0])
-print("Minimum Torsion across load cases:", min_torsion, "[Nm], load case:", Load_cases_list[Torsion_list.index(min_torsion)][0])
+print("Maximum positive Bending Moment across load cases:", max_bending_moment, "[Nm], load case:", Load_cases_list[Bending_moment_list.index(max_bending_moment)][0])
+print("Maximum positive Torsion across load cases:", max_torsion, "[Nm], load case:", Load_cases_list[Torsion_list.index(max_torsion)][0])
+print("Maximum negative Bending Moment across load cases:", min_bending_moment, "[Nm], load case:", Load_cases_list[Bending_moment_list.index(min_bending_moment)][0])
+print("Maximum negative Torsion across load cases:", min_torsion, "[Nm], load case:", Load_cases_list[Torsion_list.index(min_torsion)][0])
 
 # Plot internal-load diagrams for the most constraining cases
 import internal_load_diagrams as ild
