@@ -1,5 +1,4 @@
 #Importing constants and wing geometry
-from constants import g, rho_air
 from Aircraft_parameters import b, c_r, c_t, c, S_w
 
 #Importing functions from other files
@@ -12,8 +11,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import io
 
-#Calculating dynamic pressure at cruise
-q = 0.5*rho_cruise*v_cruise**2
+# NOTE: Do NOT import runtime flight variables from main at module import time.
+# Provide a setter so other modules (e.g. load_calculations.set_operating_conditions)
+# can configure the flight conditions (rho, v) before calling dL/dD/dM.
+_q = None
+def set_flight_conditions(rho, v):
+    global _q
+    _q = 0.5 * rho * v**2
+
+#Calculating dynamic pressure at cruise is deferred until set_flight_conditions is called.
 
 def extract_main_wing_data(filepath):
     y_span = []
@@ -56,17 +62,6 @@ def extract_main_wing_data(filepath):
 
     return y_span, Cl, Cd_i, Cm, CL_wing
 
-'''
-# Example usage:
-file_path = "MainWing_a=10.00_v=10.00ms.txt"
-y, cl, cm, cd_i, CL= extract_main_wing_data(file_path)
-
-print("y-span:", y)
-print("Cl:", cl)
-print("Cm:", cm)
-print("Cd_i:", cd_i)
-'''
-
 #===============Extraction and calculation of aerodynamic force distributions===============#
 
 #Extract Cl,Cd,Cm data from XLFR for AOA=0 and AOA=10
@@ -82,11 +77,17 @@ Cm = linear_model(fcm0,fcm10,CL10,CL0)
 
 #Apply linear model to get L, D, M per unit span as functions of y and CL
 def dL(y,CL):
-    return Cl(y,CL)*q*c(y)
+    if _q is None:
+        raise RuntimeError("Call XFLRextraction.set_flight_conditions(rho, v) before using dL/dD/dM")
+    return Cl(y,CL)*_q*c(y)
 def dD(y,CL):
-    return Cd(y,CL)*q*c(y)
+    if _q is None:
+        raise RuntimeError("Call XFLRextraction.set_flight_conditions(rho, v) before using dL/dD/dM")
+    return Cd(y,CL)*_q*c(y)
 def dM(y,CL):
-    return Cm(y,CL)*q*(c(y))**2
+    if _q is None:
+        raise RuntimeError("Call XFLRextraction.set_flight_conditions(rho, v) before using dL/dD/dM")
+    return Cm(y,CL)*_q*(c(y))**2
 
 #Define AOA as function of CL
 def alpha(CL):
@@ -113,6 +114,8 @@ def plot_Cm_surface(y_steps=200, CL_steps=200):
     plt.show()
     
 if __name__ == "__main__":
+    # quick check (user must set flight conditions before plotting)
+    set_flight_conditions(1.225, 10.0)
     #Plot data for testing
     # Create ranges
     y_vals  = np.linspace(0, max(ylst), 200)
