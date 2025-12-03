@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 #Importing important constants and functions
 from Aircraft_parameters import b
 from load_calculations import V, T, M   
@@ -37,15 +38,19 @@ def plot_internal_loads(y=None, n=200, title=None):
 
     plt.show()
 
-def plot_all_cases_internal_distributions(Load_cases_list, load_calculations, case_indexes=None, y=None, n=300):
+def plot_all_cases_internal_distributions(Load_cases_list, load_calculations, case_indexes=None, y=None, n=300, split_legend=False):
     """Plot V(y), T(y), M(y) for multiple load cases.
     Arguments:
       - Load_cases_list: nested list as parsed in main.py
       - load_calculations: module object (imported in main) providing set_operating_conditions(), precompute_internal_loads(), V(), T(), M()
+      - split_legend: if True split legend entries into two stacked boxes placed to the right
     """
     if case_indexes is None:
         case_indexes = list(range(len(Load_cases_list)))
     if y is None:
+        b = getattr(load_calculations, "b", None)
+        if b is None:
+            raise RuntimeError("plot_all_cases_internal_distributions: cannot determine wing span 'b' from load_calculations")
         y = np.linspace(0, b/2, n)
 
     figV, axV = plt.subplots(figsize=(8,4))
@@ -59,9 +64,7 @@ def plot_all_cases_internal_distributions(Load_cases_list, load_calculations, ca
         rho = case[4]
         mass_fuel = case[5]
 
-        # set operating conditions and precompute grid for speed/consistency
         load_calculations.set_operating_conditions(mass_aircraft, v_cruise, rho, mass_fuel)
-        # ensure precompute uses same grid length as y for consistent interpolation
         load_calculations.precompute_internal_loads(n=len(y))
 
         V_arr = load_calculations.V(y)
@@ -73,14 +76,38 @@ def plot_all_cases_internal_distributions(Load_cases_list, load_calculations, ca
         axT.plot(y, T_arr, lw=1.2, label=label)
         axM.plot(y, M_arr, lw=1.2, label=label)
 
+    for fig, ax in ((figV, axV), (figT, axT), (figM, axM)):
+        ax.set_xlabel("y (m)")
+        ax.grid(True)
+
     axV.set_title("Internal Shear V(y) — multiple load cases")
-    axV.set_xlabel("y (m)"); axV.set_ylabel("V(y) [N]"); axV.grid(True); axV.legend(loc="best", fontsize="small")
+    axV.set_ylabel("V(y) [N]")
 
     axT.set_title("Internal Torque T(y) — multiple load cases")
-    axT.set_xlabel("y (m)"); axT.set_ylabel("T(y) [N·m]"); axT.grid(True); axT.legend(loc="best", fontsize="small")
+    axT.set_ylabel("T(y) [N·m]")
 
     axM.set_title("Bending Moment M(y) — multiple load cases")
-    axM.set_xlabel("y (m)"); axM.set_ylabel("M(y) [N·m]"); axM.grid(True); axM.legend(loc="best", fontsize="small")
+    axM.set_ylabel("M(y) [N·m]")
+
+    if split_legend:
+        # make room on the right for two stacked legend boxes
+        for fig in (figV, figT, figM):
+            fig.subplots_adjust(right=0.72)
+
+        for ax in (axV, axT, axM):
+            handles, labels = ax.get_legend_handles_labels()
+            if not labels:
+                continue
+            mid = math.ceil(len(labels) / 2)
+            leg1 = ax.legend(handles[:mid], labels[:mid],
+                             bbox_to_anchor=(1.02, 1.0), loc='upper left', fontsize='small', frameon=True)
+            leg2 = ax.legend(handles[mid:], labels[mid:],
+                             bbox_to_anchor=(1.02, 0.45), loc='upper left', fontsize='small', frameon=True)
+            ax.add_artist(leg1)
+    else:
+        # single legend with two columns (compact)
+        for ax in (axV, axT, axM):
+            ax.legend(ncol=2, loc="best", fontsize="small")
 
     plt.show()
 
