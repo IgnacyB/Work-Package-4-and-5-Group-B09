@@ -88,5 +88,18 @@ for idx in critical_idxs:
     load_calculations.set_operating_conditions(mass_aircraft, v_cruise, rho, mass_fuel)
     load_calculations.precompute_internal_loads(n=600)
 
-    print(f"Plotting internal loads for case {case[0]} (index {idx})")
-    ild.plot_internal_loads(title=f"Load case {case[0]}")
+    # build descriptive title indicating why this case is critical
+    reasons = []
+    if idx == idx_max_b:
+        reasons.append("maximum positive bending moment")
+    if idx == idx_min_b:
+        reasons.append("maximum negative bending moment")
+    if idx == idx_max_t:
+        reasons.append("maximum positive torsion")
+    if idx == idx_min_t:
+        reasons.append("maximum negative torsion")
+    reason_str = "; ".join(reasons) if reasons else "critical case"
+
+    title = f"Load case {case[0]} — {reason_str}"
+    print(f"Plotting internal loads for case {case[0]} (index {idx}): {reason_str}")
+    ild.plot_internal_loads(title=title)
