@@ -21,5 +21,5 @@ def c(y):
 from Load_cases import mass_aircraft, mass_fuel
 mass_aircraft = mass_aircraft  # Mass of the aircraft in kg
 mass_fuel = mass_fuel  # Total fuel mass in kg
-mass_wing = 690  # Mass of the wing
+mass_wing = 2.9 * 690  # Mass of the wing
 n_fuel = 0.8  # Fraction of fuel in the wing
