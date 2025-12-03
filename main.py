@@ -40,13 +40,14 @@ Torsion_list = []
 import load_calculations
 
 for case in Load_cases_list:
-    mass_aircraft = case[2] * case[3]
     v_cruise = case[1]
+    mass_aircraft =  case[2]
+    load_factor = case[3]
     rho = case[4]
     mass_fuel = case[5]
 
     # set per-case operating conditions in the module (no circular import)
-    load_calculations.set_operating_conditions(mass_aircraft, v_cruise, rho, mass_fuel)
+    load_calculations.set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fuel)
 
     # PRECOMPUTE grid for this case to make M/T/V queries fast
     load_calculations.precompute_internal_loads(n=600)  # increase n for accuracy if needed
