@@ -35,6 +35,6 @@ def plot_twist_distribution(title=None):
     plt.xlabel("Spanwise position [m]")
     plt.ylabel("Angle of twist [degree]")
     plt.show()
-
-plot_lateral_deflection()
-plot_twist_distribution()
+if __name__ == "__main__":
+    plot_lateral_deflection()
+    plot_twist_distribution()
