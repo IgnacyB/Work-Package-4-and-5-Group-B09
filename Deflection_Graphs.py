@@ -16,7 +16,6 @@ from Twist_Distribution import twist_function
 from Lateral_Deflection import lateral_deflection_function
 
 # apply a clean plotting style and sensible defaults
-plt.style.use("seaborn-darkgrid")
 DEFAULT_FIGSIZE = (9, 5)
 DEFAULT_DPI = 120
 LABEL_FONTSIZE = 12
