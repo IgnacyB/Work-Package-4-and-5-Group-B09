@@ -23,6 +23,7 @@ def twist_function():
     J_grid = J_vec(y_grid)
 
     #calculate T and dthetady
+    
     T_grid = T(y_grid)
     dthetady_grid = T_grid / (G * J_grid)
 

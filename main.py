@@ -68,6 +68,7 @@ print("Maximum negative Torsion across load cases:", min_torsion, "[Nm], load ca
 
 # Plot internal-load diagrams for the most constraining cases
 import internal_load_diagrams as ild
+import Deflection_Graphs as defl
 idx_max_b = Bending_moment_list.index(max_bending_moment)
 idx_max_t = Torsion_list.index(max_torsion)
 idx_min_b = Bending_moment_list.index(min_bending_moment)
@@ -103,6 +104,9 @@ for idx in critical_idxs:
     title = f"Load case {case[0]} — {reason_str}"
     print(f"Plotting internal loads for case {case[0]} (index {idx}): {reason_str}")
     ild.plot_internal_loads(title=title)
+    # pass the descriptive title to deflection plots so they indicate the load case
+    defl.plot_lateral_deflection(title=title)
+    defl.plot_twist_distribution(title=title)
 
 from internal_load_diagrams import plot_all_cases_internal_distributions
 
