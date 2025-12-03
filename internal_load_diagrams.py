@@ -59,8 +59,9 @@ def plot_all_cases_internal_distributions(Load_cases_list, load_calculations, ca
 
     for idx in case_indexes:
         case = Load_cases_list[idx]
-        mass_aircraft = case[2] * case[3]
         v_cruise = case[1]
+        mass_aircraft =  case[2]
+        load_factor = case[3]
         rho = case[4]
         mass_fuel = case[5]
 
