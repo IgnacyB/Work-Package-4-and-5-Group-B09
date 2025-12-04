@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import math
 
 from Aircraft_parameters import b
-from Twist_Distribution import twist
-from Lateral_Deflection import lateral_deflection
+from Twist_Distribution import twist_function
+from Lateral_Deflection import lateral_deflection_function
 
 
 def plot_lateral_deflection(title=None):
