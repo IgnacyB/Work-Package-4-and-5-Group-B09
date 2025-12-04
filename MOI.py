@@ -3,6 +3,7 @@ import numpy as np
 import scipy as sp
 from Aircraft_parameters import b
 import matplotlib.pyplot as plt
+from airfoil_geometry import n_spars, end_third_spar
 
 def MOI_single_cell(y):
     #import the necessary functions from other
