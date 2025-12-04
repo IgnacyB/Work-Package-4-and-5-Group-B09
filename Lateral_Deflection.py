@@ -9,7 +9,7 @@ from scipy.interpolate import interp1d
 #import constants from other files
 from material_properties import E
 from MOI import MOI
-from load_calculations import M, V
+from load_calculations import M
 from Aircraft_parameters import b
 
 def lateral_deflection_function():
@@ -73,3 +73,6 @@ def lateral_deflection_function_from_V(n=3000):
     # v_func = interp1d(y_grid, v_grid, fill_value="extrapolate")
 
     return y_grid, v_grid
+=======
+# lateral_deflection_at_tip = lateral_deflection_function()[1][-
+>>>>>>> parent of 98612e3 (Chnaged the integration to V in deflaction)
