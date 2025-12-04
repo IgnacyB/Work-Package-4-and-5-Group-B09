@@ -100,56 +100,6 @@ def _call_array(func, y):
     # fallback: fast Python loop -> numpy array (faster than np.vectorize)
     return np.asarray([func(float(yy)) for yy in y_arr])
 
-# Internal shear/torque/moment: accept scalar or array y
-def V(y):
-    # scalar case
-    if np.ndim(y) == 0:
-        if _grid_y is not None:
-            return float(np.interp(float(y), _grid_y, _grid_V))
-        # fallback to scalar quad
-        Vval, error = sp.integrate.quad(dV, b/2, float(y))
-        return Vval
-
-    # array case
-    y_arr = np.asarray(y)
-    if _grid_y is not None:
-        return np.interp(y_arr, _grid_y, _grid_V)
-    dV_arr = _call_array(dV, y_arr)
-    V_flip = cumulative_trapezoid(np.flip(dV_arr), np.flip(y_arr), initial=0)
-    V_arr = -1 * np.flip(V_flip)
-    return V_arr
-
-def T(y):
-    # scalar case
-    if np.ndim(y) == 0:
-        if _grid_y is not None:
-            return float(np.interp(float(y), _grid_y, _grid_T))
-        Tval, error = sp.integrate.quad(dT, b/2, float(y))
-        return Tval
-
-    y_arr = np.asarray(y)
-    if _grid_y is not None:
-        return np.interp(y_arr, _grid_y, _grid_T)
-    dT_arr = _call_array(dT, y_arr)
-    T_flip = cumulative_trapezoid(np.flip(dT_arr), np.flip(y_arr), initial=0)
-    T_arr = -1 * np.flip(T_flip)
-    return T_arr
-
-def M(y):
-    # scalar case
-    if np.ndim(y) == 0:
-        if _grid_y is not None:
-            return float(np.interp(float(y), _grid_y, _grid_M))
-        Mval, error = sp.integrate.quad(lambda s: V(s), b/2, float(y))
-        return Mval
-
-    y_arr = np.asarray(y)
-    if _grid_y is not None:
-        return np.interp(y_arr, _grid_y, _grid_M)
-    V_arr = V(y_arr)  # uses vectorized V above
-    M_flip = cumulative_trapezoid(np.flip(V_arr), np.flip(y_arr), initial=0)
-    M_arr = np.flip(M_flip)
-    return M_arr
 
 # cache for grid-based internal-loads (speeds up repeated queries)
 _grid_y = None
@@ -242,45 +192,6 @@ def M(y):
     M_arr = np.flip(M_flip)
     return M_arr
 
-# cache for grid-based internal-loads (speeds up repeated queries)
-_grid_y = None
-_grid_V = None
-_grid_T = None
-_grid_M = None
-_grid_params = None  # tuple identifying operating conditions used for cache
-
-def precompute_internal_loads(n=400):
-    """Precompute dV/dT -> V/T and integrate to M on a uniform grid.
-    Call after set_operating_conditions(...) to accelerate many M/T/V queries.
-    Returns (y, V_arr, T_arr, M_arr).
-    """
-    global _grid_y, _grid_V, _grid_T, _grid_M, _grid_params
-    if CL_op is None:
-        raise RuntimeError("Call set_operating_conditions(...) before precomputing loads")
-
-    params = (CL_op, mass_fuel_op, mass_aircraft_op, v_cruise_op, rho_op, n)
-    if _grid_params == params and _grid_y is not None:
-        return _grid_y, _grid_V, _grid_T, _grid_M
-
-    y = np.linspace(0, b/2, n)
-    # vectorized evaluation of differential loads
-    dV_arr = _call_array(dV, y)
-    dT_arr = _call_array(dT, y)
-
-    # integrate from tip inward (same method used elsewhere)
-    V_flip = cumulative_trapezoid(np.flip(dV_arr), np.flip(y), initial=0)
-    V_arr = -1 * np.flip(V_flip)
-
-    T_flip = cumulative_trapezoid(np.flip(dT_arr), np.flip(y), initial=0)
-    T_arr = -1 * np.flip(T_flip)
-
-    # bending moment: integrate V
-    M_flip = cumulative_trapezoid(np.flip(V_arr), np.flip(y), initial=0)
-    M_arr = np.flip(M_flip)
-
-    _grid_y, _grid_V, _grid_T, _grid_M = y, V_arr, T_arr, M_arr
-    _grid_params = params
-    return _grid_y, _grid_V, _grid_T, _grid_M
 
 def plot_internal_loads(y=None, n=200):
     if y is None:
