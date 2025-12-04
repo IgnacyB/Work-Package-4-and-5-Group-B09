@@ -223,8 +223,44 @@ def plot_MOI_single_cell(y=None, n=200, figsize=(10,4), dpi=100):
     plt.show()
 
 
+def plot_MOI_multi_cell(y=None, n=200, figsize=(10,4), dpi=100):
+    """Plot MOI_multi_cell from 0 to b/2."""
+    if y is None:
+        y = np.linspace(0, b/2, n)
+    else:
+        y = np.asarray(y)
+
+    vals = []
+    for yy in y:
+        try:
+            vals.append(MOI_multi_cell(float(yy)))
+        except Exception:
+            vals.append(np.nan)
+
+    vals = np.asarray(vals, dtype=float)
+
+    fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
+    ax.plot(y, vals, lw=2, color="#2ca02c", label="MOI_multi_cell")
+    ax.fill_between(y, vals, alpha=0.12, color="#2ca02c")
+    ax.set_xlabel("Spanwise coordinate y (m)")
+    ax.set_ylabel("MOI_multi_cell [m^4]")
+    ax.set_title("MOI_multi_cell along half-span (0 to b/2)")
+    ax.grid(True, linestyle="--", alpha=0.6)
+
+    if np.any(~np.isnan(vals)):
+        idx = np.nanargmax(vals)
+        ax.plot(y[idx], vals[idx], "o", color="#d62728")
+        ax.annotate(f"{vals[idx]:.3e}", xy=(y[idx], vals[idx]),
+                    xytext=(8, 8), textcoords="offset points", fontsize=9,
+                    arrowprops=dict(arrowstyle="->", lw=0.8))
+
+    ax.legend(fontsize=9)
+    plt.tight_layout()
+    plt.show()
+
 if __name__ == "__main__":
     plot_MOI_single_cell()
+    plot_MOI_multi_cell()
 
 value_1 = MOI_single_cell(b/2)
 value_2 = MOI_multi_cell(b/2)
