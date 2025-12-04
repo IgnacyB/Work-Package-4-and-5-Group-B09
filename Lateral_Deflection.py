@@ -25,8 +25,6 @@ def lateral_deflection_function():
 
     #calculate M and h 
     M_grid = M(y_grid)
-    print(M_grid[0])
-    print(MOI_grid[0], MOI_grid[-1])
     h_grid = M_grid / (E * MOI_grid)
 
     #double integration to obtain deflection profile
@@ -40,70 +38,4 @@ def lateral_deflection_function():
 
     return(y_grid, v_grid)
 
-# lateral_deflection_at_tip = lateral_deflection_function()[1][-1]
-
-
-
-
-
-
-
-
-
-
-# def h(y):
-#     return M(y) / (E * MOI_single_cell(y))
-
-# print(h(5))
-
-# def dvdy(y):
-#     return -1 * sp.integrate.quad(np.vectorize(h),0,y)[0]
-
-# print(dvdy(5))
-
-# #y_pos = float(input("spanwise location: "))
-# def lateral_deflection(y):
-#     return sp.integrate.quad(dvdy,0,y)[0]
-
-# print(lateral_deflection(0.1))
-
-
-
-
-
-
-
-
-# import numpy as np
-# from scipy.integrate import cumulative_trapezoid as cumtrapz
-
-# from material_properties import E
-# from Aircraft_parameters import b
-# from MOI import MOI_single_cell
-# from load_calculations import M
-
-# def h(y):
-#     return M(y) / (E * MOI_single_cell(y))
-
-# L = b/2
-# N = 10
-# ys = np.linspace(0, L, N)
-
-# # Vectorize h
-# h_vec = np.vectorize(h)
-# h_vals = h_vec(ys)
-
-# # first integration
-# dvdy_vals = -cumtrapz(h_vals, ys, initial=0)
-
-# # second integration
-# v_vals = cumtrapz(dvdy_vals, ys, initial=0)
-
-# def dvdy(y):
-#     return np.interp(y, ys, dvdy_vals)
-
-# def lateral_deflection(y):
-#     return np.interp(y, ys, v_vals)
-
-# print(lateral_deflection(0.1))
-
+# lateral_deflection_at_tip = lateral_deflection_function()[1][-

@@ -1,4 +1,4 @@
-# This is the file used to calculate the twist distribution in the wing
+## This is the file used to calculate the twist distribution in the wing
 
 #first import the necessary packages and functions from 
 import numpy as np
@@ -9,7 +9,7 @@ from scipy.interpolate import interp1d
 
 #import constants from other files
 from material_properties import G
-from torsional_stiffness_functions import torsional_constant_singlecell
+from torsional_stiffness_functions import torsional_constant
 from load_calculations import T
 from Aircraft_parameters import b
 
@@ -19,7 +19,7 @@ def twist_function():
     y_grid = np.linspace(0, y_max, n)
 
     #vectorize torsional stiffness J calculations
-    J_vec = np.vectorize(torsional_constant_singlecell)
+    J_vec = np.vectorize(torsional_constant)
     J_grid = J_vec(y_grid)
 
     #calculate T and dthetady
