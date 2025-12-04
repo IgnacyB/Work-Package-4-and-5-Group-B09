@@ -3,12 +3,12 @@ import math
 
 from Aircraft_parameters import b
 from Twist_Distribution import twist_function
-from Lateral_Deflection import lateral_deflection_function
+from Lateral_Deflection import lateral_deflection_function, lateral_deflection_function_from_V
 
 
 def plot_lateral_deflection(title=None):
     """Plot lateral deflection. If title provided, include it in the figure title."""
-    y_grid, v_grid = lateral_deflection_function()
+    y_grid, v_grid = lateral_deflection_function_from_V()
 
     plt.plot(y_grid, v_grid, lw=2, color="tab:blue")
     if title:
