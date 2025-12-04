@@ -78,7 +78,7 @@ def plot_all_cases_internal_distributions(Load_cases_list, load_calculations, ca
         axM.plot(y, M_arr, lw=1.2, label=label)
 
     for fig, ax in ((figV, axV), (figT, axT), (figM, axM)):
-        ax.set_xlabel("y (m)")
+        ax.set_xlabel("y [m]")
         ax.grid(True)
 
     axV.set_title("Internal Shear V(y) — multiple load cases")

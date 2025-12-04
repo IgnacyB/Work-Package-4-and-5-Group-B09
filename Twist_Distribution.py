@@ -35,7 +35,7 @@ def twist_function():
 
     return(y_grid, twist_grid)
 
-twist_at_tip = twist_function()[1][-1]
+# twist_at_tip = twist_function()[1][-1]
 #print("The twist angle is {} rad or {} degrees".format(twist_function(b/2),twist_function(b/2)*180/math.pi))
 
 
