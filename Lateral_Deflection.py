@@ -38,7 +38,7 @@ def lateral_deflection_function():
 
     return(y_grid, v_grid)
 
-def lateral_deflection_function_from_V(n=1000):
+def lateral_deflection_function_from_V(n=3000):
     """
     Compute lateral deflection v(y) using d^3 v / dy^3 = - V(y) / (E * I(y)).
     Integrates three times with trapezoidal rule.
