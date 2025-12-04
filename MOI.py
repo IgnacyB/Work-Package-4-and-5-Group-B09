@@ -73,14 +73,9 @@ def MOI_single_cell(y):
     MOI_top = skin_thickness*distance_top/12 * (np.power(skin_thickness,2)*np.power(np.cos(alpha_top),2) +np.power(distance_top,2) * np.power(np.sin(alpha_top),2) ) + skin_thickness*distance_top*np.power((y_centroid_top-y_centroid),2)
     MOI_bottom = skin_thickness*distance_bottom/12 * (np.power(skin_thickness,2)*np.power(np.cos(alpha_bottom),2) + np.power(distance_bottom,2) * np.power(np.sin(alpha_bottom),2)) + skin_thickness*distance_bottom*np.power((y_centroid_bottom-y_centroid),2)
     
-    # code to calculate parallel axis for stringer
     MOI_stringer =0
-
     for element in stringer_chord:
         MOI_stringer += np.power(abs(element[1]-y_centroid),2)*mass_stringer
-
-    # sum all the elements together 
-    #MOI_total_2 = MOI_front_spar + MOI_rear_spar + MOI_stringer_2 + MOI_top + MOI_bottom + MOI_middle_spar
 
     MOI_total = MOI_front_spar + MOI_rear_spar + MOI_stringer + MOI_top + MOI_bottom
    
@@ -232,6 +227,6 @@ if __name__ == "__main__":
     plot_MOI_single_cell()
 
 value_1 = MOI_single_cell(b/2)
-value = MOI_multi_cell(b/2)
-print(value)
+value_2 = MOI_multi_cell(b/2)
 print(value_1)
+print(value_2)
