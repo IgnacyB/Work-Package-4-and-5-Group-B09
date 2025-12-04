@@ -226,7 +226,7 @@ def plot_wingbox(elements, cx, cy, c, num_spars):
 
 
 if __name__ == "__main__":
-    run_analysis(9,[ag.location_front,ag.location_middle,ag.location_rear],ag.t_front,ag.t_middle,ag.t_rear,ag.t_skin,ag.a_stringer,ag.n_stringer,show_plot=True)
+    run_analysis(9,[ag.location_front,ag.location_rear],ag.t_front,ag.t_middle,ag.t_rear,ag.t_skin,ag.a_stringer,ag.n_stringer,show_plot=True)
 
 '''cx, cy = run_analysis(
     C_TEST,
