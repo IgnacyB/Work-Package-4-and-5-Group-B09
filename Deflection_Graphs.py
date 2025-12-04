@@ -18,6 +18,9 @@ def plot_lateral_deflection(title=None):
         plt.title("Lateral deflection along wingspan")
     plt.xlabel("Spanwise position [m]")
     plt.ylabel("Lateral deflection [m]")
+
+    plt.text(y_grid[-1], v_grid[-1], f'{v_grid[-1]}', fontsize = 12, ha = "left", va = "bottom")
+
     plt.grid(True)
     plt.show()
 
@@ -35,6 +38,9 @@ def plot_twist_distribution(title=None):
         plt.title("Twist distribution along wingspan")
     plt.xlabel("Spanwise position [m]")
     plt.ylabel("Angle of twist [degree]")
+
+    plt.text(y_grid[-1], twist_grid[-1], f'{twist_grid[-1]}', fontsize = 12, ha = "left", va = "bottom")
+
     plt.grid(True)
     plt.show()
 
