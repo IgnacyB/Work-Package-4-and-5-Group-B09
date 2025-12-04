@@ -1,3 +1,4 @@
+
 #Importing necessary libraries
 import numpy as np
 import scipy as sp
@@ -286,59 +287,6 @@ def plot_integrated_dL(y=None, n=300):
     plt.legend()
     plt.tight_layout()
     plt.show()
-
-# cached grids (filled by precompute_internal_loads)
-_grid_y = None
-_grid_V = None
-_grid_T = None
-_grid_M = None
-_grid_params = None  # identify conditions used for cache
-
-def precompute_internal_loads(n=400):
-    """Precompute V(y), T(y), M(y) on a uniform grid for speed.
-    Call after CL and distributions are set. Results are cached in _grid_*.
-    """
-    global _grid_y, _grid_V, _grid_T, _grid_M, _grid_params
-
-    # build ascending grid 0..b/2
-    y = np.linspace(0.0, b/2, n)
-
-    # evaluate distributed loads
-    dV_arr = _call_array(dV, y)
-    dT_arr = _call_array(dT, y)
-
-    # cumulative integrals from root, then shift so tip=0 (V(b/2)=T(b/2)=0)
-    cum_dV = cumulative_trapezoid(dV_arr, y, initial=0.0)
-    cum_dT = cumulative_trapezoid(dT_arr, y, initial=0.0)
-    V_arr = cum_dV - cum_dV[-1]
-    T_arr = cum_dT - cum_dT[-1]
-
-    # bending moment: integrate V and shift so M(b/2)=0
-    cum_V = cumulative_trapezoid(V_arr, y, initial=0.0)
-    M_arr = cum_V - cum_V[-1]
-
-    _grid_y, _grid_V, _grid_T, _grid_M = y, V_arr, T_arr, M_arr
-    # record simple params key (depends on CL and distributions); update if needed
-    _grid_params = (float(CL), n)
-
-# Optional: fast helpers that use cache when available
-def V_fast(y):
-    y_arr = np.asarray(y)
-    if _grid_y is not None:
-        return np.interp(y_arr, _grid_y, _grid_V)
-    return V(y_arr)
-
-def T_fast(y):
-    y_arr = np.asarray(y)
-    if _grid_y is not None:
-        return np.interp(y_arr, _grid_y, _grid_T)
-    return T(y_arr)
-
-def M_fast(y):
-    y_arr = np.asarray(y)
-    if _grid_y is not None:
-        return np.interp(y_arr, _grid_y, _grid_M)
-    return M(y_arr)
 
 if __name__ == "__main__":
     plot_internal_loads()
