@@ -12,11 +12,11 @@ def generate_stringer_coordinates(spars, total_stringers):
     num_spars = len(spars)
     stringer_coords = []
 
-    # 1. Identify Corner Stringers
-    '''for spar in spars:
-        stringer_coords.append(spar[0])  # Top
-        stringer_coords.append(spar[1])  # Bottom
-    '''
+    if not total_stringers ==0:
+            for spar in spars:
+                stringer_coords.append(spar[0])  # Top
+                stringer_coords.append(spar[1])  # Bottom
+
     min_stringers = len(stringer_coords)
     remaining_stringers = total_stringers - min_stringers
 
@@ -114,18 +114,26 @@ def calculate_wingbox_centroid(spars, stringer_coordinates, t_front, t_mid, t_re
     return x_bar, y_bar, elements
 
 
-
 def build_spars_from_positions(c, spar_positions_ratios):
-
+    """
+    UPDATED: Filters out None or 0 values so they don't become accidental spars.
+    """
     spars = []
-    for ratio in spar_positions_ratios:
+
+    # FILTER STEP: Only keep ratios that are not None and greater than 0
+    valid_ratios = [r for r in spar_positions_ratios if r is not None and r > 0]
+
+    # Sort them just in case (e.g. if you pass [0.7, 0.2], it fixes it to [0.2, 0.7])
+    valid_ratios.sort()
+
+    for ratio in valid_ratios:
         x_pos = ratio * c
         y_top, y_bot = find_sparheight_func(ratio)
-        y_bot = y_bot*c
-        y_top = y_top*c
+        y_bot = y_bot * c
+        y_top = y_top * c
         spars.append([[x_pos, y_top], [x_pos, y_bot]])
-    return spars
 
+    return spars
 # =========================================================
 #  PUBLIC FUNCTIONS
 # =========================================================
@@ -164,16 +172,15 @@ def get_centroid(c, spar_positions_ratios, t_front, t_mid, t_rear, t_skin, strin
     return cx, cy
 
 
-def run_analysis(c, spar_positions_ratios, t_front, t_mid, t_rear, t_skin, stringer_area, total_stringers,
-                 show_plot=True):
+def run_analysis(c, spar_positions_ratios, t_front, t_mid, t_rear, t_skin, stringer_area, total_stringers, show_plot=True):
     # 1. Build Spars
+    # (Relies on build_spars_from_positions filtering out 'None' values correctly)
     spars = build_spars_from_positions(c, spar_positions_ratios)
 
     # 2. Generate Stringers
     auto_stringers = generate_stringer_coordinates(spars, total_stringers)
 
     # 3. Calculate Centroid
-    # We pass the 3 separate spar inputs down to the calculator
     cx, cy, final_elements = calculate_wingbox_centroid(
         spars,
         auto_stringers,
@@ -186,19 +193,20 @@ def run_analysis(c, spar_positions_ratios, t_front, t_mid, t_rear, t_skin, strin
 
     print(f"\n--- ANALYSIS COMPLETE ---")
     print(f"Chord: {c}")
-    print(f"Spars: Front={t_front}, Mid={t_mid}, Rear={t_rear}")
+    print(f"Active Spars: {len(spars)}")
     print(f"Centroid: ({cx:.4f}, {cy:.4f})")
 
     if show_plot:
-        plot_wingbox(final_elements, cx, cy, c, len(spars))
+        # UPDATED: We pass 'total_stringers' here so the plot title works
+        plot_wingbox(final_elements, cx, cy, c, len(spars), total_stringers)
 
     return cx, cy
 
-
-def plot_wingbox(elements, cx, cy, c, num_spars):
+def plot_wingbox(elements, cx, cy, c, num_spars, n_stringers):
     """
-    Helper function to visualize the wingbox geometry.
-    Now includes the Airfoil Contour.
+    Changes:
+    - Added 'n_stringers' to inputs.
+    - Updated plt.title to use 'n_stringers'.
     """
     plt.figure(figsize=(12, 6))
 
@@ -217,7 +225,6 @@ def plot_wingbox(elements, cx, cy, c, num_spars):
                    -0.01267, -0.00751, -0.00282, 0.00089, 0.00278, 0.00000]
 
     # --- 2. SCALE AND PLOT AIRFOIL ---
-    # We multiply every coordinate by 'c' (Chord Length) to make it the right size
     plt.plot([x * c for x in x_pos_upper], [y * c for y in y_pos_upper],
              color='gray', linestyle='--', alpha=0.5, label='Airfoil Contour')
     plt.plot([x * c for x in x_pos_lower], [y * c for y in y_pos_lower],
@@ -227,7 +234,6 @@ def plot_wingbox(elements, cx, cy, c, num_spars):
     for el in elements:
         if 'p1' in el:
             p1, p2 = el['p1'], el['p2']
-            # Color logic: Spars = Blue, Skin = Black (or customize as you like)
             color = 'blue' if 'Spar' in el['type'] else 'black'
             lw = 2 if 'Spar' in el['type'] else 1.5
             plt.plot([p1[0], p2[0]], [p1[1], p2[1]], color=color, linewidth=lw)
@@ -240,7 +246,8 @@ def plot_wingbox(elements, cx, cy, c, num_spars):
     plt.scatter(cx, cy, c='red', marker='x', s=100, zorder=10, label='Centroid')
 
     # --- 5. FORMATTING ---
-    plt.title(f"Wing Box Cross-Section (chord lenght={c}m, Spars={num_spars},number of stringer={ag.n_stringer})")
+    # UPDATED: Use n_stringers passed in the argument
+    plt.title(f"Wing Box Cross-Section (chord length={c}m, Spars={num_spars}, Number of Stringers={n_stringers})")
     plt.xlabel("Chordwise Position (x) [m]")
     plt.ylabel("Height (y) [m]")
     plt.axis('equal')
@@ -248,9 +255,8 @@ def plot_wingbox(elements, cx, cy, c, num_spars):
     plt.legend()
     plt.show()
 
-
-
-run_analysis(9,[ag.location_front,ag.location_middle,ag.location_rear],ag.t_front,ag.t_middle,ag.t_rear,ag.t_skin,ag.a_stringer,0,show_plot=True)
+if __name__ == "__main__": 
+    run_analysis(9,[ag.location_front,ag.location_middle,ag.location_rear],ag.t_front,ag.t_middle,ag.t_rear,ag.t_skin,ag.a_stringer,ag.n_stringer,show_plot=True)
 
 '''cx, cy = run_analysis(
     C_TEST,

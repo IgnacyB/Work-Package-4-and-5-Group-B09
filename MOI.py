@@ -2,6 +2,8 @@
 import numpy as np
 import scipy as sp
 from Aircraft_parameters import b
+import matplotlib.pyplot as plt
+
 def MOI_single_cell(y):
     #import the necessary functions from other
     from airfoil_geometry import t_skin as skin_thickness
@@ -214,5 +216,44 @@ def MOI_multi_cell(y):
 
     return MOI_total
 
-#print("This is the calculated value for Ixx with 2 spars method",value,"m^4")
-#print("This is the calculated value for Ixx with 3 spars method",value_2, "m^4")
+def plot_MOI_single_cell(y=None, n=200, figsize=(10,4), dpi=100):
+    """Plot MOI_single_cell from 0 to b/2.
+    Evaluates MOI_single_cell on n points (or on provided y array) and shows a simple plot.
+    """
+    if y is None:
+        y = np.linspace(0, b/2, n)
+    else:
+        y = np.asarray(y)
+
+    # evaluate (use Python loop because MOI_single_cell does internal imports and is not vectorized)
+    vals = []
+    for yy in y:
+        try:
+            vals.append(MOI_single_cell(float(yy)))
+        except Exception as e:
+            vals.append(np.nan)
+
+    vals = np.asarray(vals, dtype=float)
+
+    fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
+    ax.plot(y, vals, lw=2, color="#1f77b4")
+    ax.fill_between(y, vals, alpha=0.12, color="#1f77b4")
+    ax.set_xlabel("Spanwise coordinate y (m)")
+    ax.set_ylabel("MOI_single_cell [m^4]")
+    ax.set_title("MOI_single_cell along half-span (0 to b/2)")
+    ax.grid(True, linestyle="--", alpha=0.6)
+
+    # mark and annotate max value (ignoring NaNs)
+    if np.any(~np.isnan(vals)):
+        idx = np.nanargmax(vals)
+        ax.plot(y[idx], vals[idx], "o", color="#d62728")
+        ax.annotate(f"{vals[idx]:.3e}", xy=(y[idx], vals[idx]),
+                    xytext=(8, 8), textcoords="offset points", fontsize=9,
+                    arrowprops=dict(arrowstyle="->", lw=0.8))
+
+    plt.tight_layout()
+    plt.show()
+
+
+if __name__ == "__main__":
+    plot_MOI_single_cell()
