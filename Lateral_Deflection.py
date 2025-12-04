@@ -61,7 +61,7 @@ def lateral_deflection_function_from_V(n=3000):
     # distributed relation h3 = -V/(E I)
     V_grid = V(y_grid)
     with np.errstate(divide='ignore', invalid='ignore'):
-        h3_grid = np.where(I_grid != 0.0, -V_grid / (E * I_grid), np.nan)
+        h3_grid = np.where(I_grid != 0.0, V_grid / (E * I_grid), np.nan)
 
     # integrate 3 times: v'' -> v' -> v
     v2_grid = cumulative_trapezoid(h3_grid, y_grid, initial=0.0)         # v''(y)
