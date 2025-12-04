@@ -17,6 +17,7 @@ v_cruise_op = None
 rho_op = None
 mass_fuel_op = None
 CL_op = None
+mass_wing_op = None
 
 # placeholders for distributions that depend on operating conditions
 w_dist = None
@@ -32,7 +33,7 @@ def weight_distribution(mass_wing, b, c_r, c_t):
     y_0 = b / 2 * c_r / (c_r - c_t) #location where the load distribution becomes zero
     A = mass_wing*g / (y_0**2-(y_0 - b/2)**2) #It is divided by 2 since we are only considering half the span and thus half of the weight
     def w_dist(y):
-        return A * (y_0 - y) 
+        return A * (y_0 - y)
     return w_dist
 
 #FUEL DISTRIBUTION (HALF OF SPAN)
@@ -43,15 +44,16 @@ def fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t):
         return A * (y_0 - y)**2
     return f_dist
 
-def set_operating_conditions(mass_aircraft, v_cruise, rho, mass_fuel):
+def set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fuel):
     """Store per-load-case operating conditions used by other functions.
     Must be called from main before calling M(), T(), dN(), etc.
     """
-    global mass_aircraft_op, v_cruise_op, rho_op, mass_fuel_op, CL_op, w_dist, f_dist
-    mass_aircraft_op = mass_aircraft
+    global mass_aircraft_op, v_cruise_op, rho_op, mass_fuel_op, CL_op, w_dist, f_dist, mass_wing_op
+    mass_aircraft_op = load_factor * mass_aircraft
     v_cruise_op = v_cruise
     rho_op = rho
-    mass_fuel_op = mass_fuel
+    mass_fuel_op = load_factor * mass_fuel
+    mass_wing_op = load_factor * mass_wing
     # compute CL for level flight using aircraft constants (S_w, g)
     CL_op = 2 * mass_aircraft_op * g / (rho_op * v_cruise_op**2 * S_w)
 
@@ -59,7 +61,7 @@ def set_operating_conditions(mass_aircraft, v_cruise, rho, mass_fuel):
     set_flight_conditions(rho_op, v_cruise_op)
 
     # build distributions that depend on current mass_fuel (fuel distribution) and wing mass (fixed)
-    w_dist = weight_distribution(mass_wing, b, c_r, c_t)
+    w_dist = weight_distribution(mass_wing_op, b, c_r, c_t)
     f_dist = fuel_distribution(mass_fuel_op, n_fuel, b, c_r, c_t)
 
 #DISTANCE FROM LIFT TO CENTROID OF WINGBOX AS FUNCTION OF SPANWISE LOCATION
@@ -99,7 +101,6 @@ def _call_array(func, y):
         pass
     # fallback: fast Python loop -> numpy array (faster than np.vectorize)
     return np.asarray([func(float(yy)) for yy in y_arr])
-
 
 # cache for grid-based internal-loads (speeds up repeated queries)
 _grid_y = None
@@ -191,7 +192,6 @@ def M(y):
     M_flip = cumulative_trapezoid(np.flip(V_arr), np.flip(y_arr), initial=0)
     M_arr = np.flip(M_flip)
     return M_arr
-
 
 def plot_internal_loads(y=None, n=200):
     if y is None:
