@@ -19,7 +19,8 @@ def plot_lateral_deflection(title=None):
     plt.xlabel("Spanwise position [m]")
     plt.ylabel("Lateral deflection [m]")
 
-    plt.text(y_grid[-1], v_grid[-1], f'{v_grid[-1]}', fontsize = 12, ha = "left", va = "bottom")
+    plt.annotate(f'{v_grid[-1]:2f}', (y_grid[-1], v_grid[-1]), xytext = (-65, -5), textcoords = "offset points", ha = "left", va = "bottom")
+    plt.plot(y_grid[-1], v_grid[-1], marker='o', color='blue')
 
     plt.grid(True)
     plt.show()
@@ -30,6 +31,9 @@ def plot_twist_distribution(title=None):
     """Plot twist distribution. If title provided, include it in the figure title."""
     y_grid, twist_grid = twist_function()
 
+    if twist_grid[-1] < 0:
+        plt.gca().invert_yaxis()
+
     plt.plot(y_grid, twist_grid * 180 / math.pi, lw=2, color="tab:blue")
     if title:
         plt.title(f"{title} — Twist distribution")
@@ -39,7 +43,8 @@ def plot_twist_distribution(title=None):
     plt.xlabel("Spanwise position [m]")
     plt.ylabel("Angle of twist [degree]")
 
-    plt.text(y_grid[-1], twist_grid[-1], f'{twist_grid[-1]}', fontsize = 12, ha = "left", va = "bottom")
+    plt.annotate(f'{twist_grid[-1]*180/math.pi:2f}', (y_grid[-1], twist_grid[-1]*180/math.pi), xytext = (-40, -30), textcoords = "offset points", ha = "left", va = "bottom")
+    plt.plot(y_grid[-1], twist_grid[-1]*180/math.pi, marker='o', color='blue')
 
     plt.grid(True)
     plt.show()
