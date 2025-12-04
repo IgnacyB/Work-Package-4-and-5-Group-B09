@@ -218,5 +218,6 @@ MOI_at_tip = MOI_single_cell(b/2)
 value = MOI_single_cell(2)
 "value_2 = MOI_multi_cell(0)"
 print("MOI", value)
+print("MOI at tip", MOI_at_tip)
 #print("This is the calculated value for Ixx with 2 spars method",value,"m^4")
 #print("This is the calculated value for Ixx with 3 spars method",value_2, "m^4")
