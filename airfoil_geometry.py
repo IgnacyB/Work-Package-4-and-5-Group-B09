@@ -4,6 +4,6 @@ t_rear = 0.005 #m
 location_front = 0.20 #x/c
 location_middle = 0.50 #x/c
 location_rear = 0.70 #x/c
-t_skin = 0.05 #m
+t_skin = 0.0016 #m
 n_stringer = 16 #-
 a_stringer =  0.0014 #m^2
