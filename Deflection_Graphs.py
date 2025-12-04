@@ -25,7 +25,7 @@ def plot_lateral_deflection(title=None):
     plt.annotate(
         f'{v_grid[-1]:.2f}',
         (y_grid[-1], v_grid[-1]),
-        xytext=(-10, -20),
+        xytext=(-40, -10),
         textcoords="offset points",
         ha="left",
         va="bottom")
@@ -59,34 +59,10 @@ def plot_twist_distribution(title=None):
     plt.annotate(
         f'{twist_deg[-1]:.2f}',
         (y_grid[-1], twist_deg[-1]),
-        xytext=(-10, -20),
+        xytext=(-15, -20),
         textcoords="offset points",
         ha="left",
         va="bottom")
 
     plt.grid(True)
     plt.show()
-
-
-
-# # twist distribution
-# def plot_twist_distribution(title=None):
-#     """Plot twist distribution. If title provided, include it in the figure title."""
-#     y_grid, twist_grid = twist_function()
-
-#     plt.plot(y_grid, twist_grid * 180 / math.pi, lw=2, color="tab:blue")
-#     if title:
-#         plt.title(f"{title} — Twist distribution")
-#     else:
-#         plt.xlabel("Spanwise position [m]")
-#         plt.title("Twist distribution along wingspan")
-#     plt.xlabel("Spanwise position [m]")
-#     plt.ylabel("Angle of twist [degree]")
-#     plt.grid(True)
-#     plt.show()
-
-
-
-# if __name__ == "__main__":
-#     plot_lateral_deflection()
-#     plot_twist_distribution()
