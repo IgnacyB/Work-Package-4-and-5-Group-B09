@@ -102,57 +102,6 @@ def _call_array(func, y):
     # fallback: fast Python loop -> numpy array (faster than np.vectorize)
     return np.asarray([func(float(yy)) for yy in y_arr])
 
-# Internal shear/torque/moment: accept scalar or array y
-def V(y):
-    # scalar case
-    if np.ndim(y) == 0:
-        if _grid_y is not None:
-            return float(np.interp(float(y), _grid_y, _grid_V))
-        # fallback to scalar quad
-        Vval, error = sp.integrate.quad(dV, b/2, float(y))
-        return Vval
-
-    # array case
-    y_arr = np.asarray(y)
-    if _grid_y is not None:
-        return np.interp(y_arr, _grid_y, _grid_V)
-    dV_arr = _call_array(dV, y_arr)
-    V_flip = cumulative_trapezoid(np.flip(dV_arr), np.flip(y_arr), initial=0)
-    V_arr = -1 * np.flip(V_flip)
-    return V_arr
-
-def T(y):
-    # scalar case
-    if np.ndim(y) == 0:
-        if _grid_y is not None:
-            return float(np.interp(float(y), _grid_y, _grid_T))
-        Tval, error = sp.integrate.quad(dT, b/2, float(y))
-        return Tval
-
-    y_arr = np.asarray(y)
-    if _grid_y is not None:
-        return np.interp(y_arr, _grid_y, _grid_T)
-    dT_arr = _call_array(dT, y_arr)
-    T_flip = cumulative_trapezoid(np.flip(dT_arr), np.flip(y_arr), initial=0)
-    T_arr = -1 * np.flip(T_flip)
-    return T_arr
-
-def M(y):
-    # scalar case
-    if np.ndim(y) == 0:
-        if _grid_y is not None:
-            return float(np.interp(float(y), _grid_y, _grid_M))
-        Mval, error = sp.integrate.quad(lambda s: V(s), b/2, float(y))
-        return Mval
-
-    y_arr = np.asarray(y)
-    if _grid_y is not None:
-        return np.interp(y_arr, _grid_y, _grid_M)
-    V_arr = V(y_arr)  # uses vectorized V above
-    M_flip = cumulative_trapezoid(np.flip(V_arr), np.flip(y_arr), initial=0)
-    M_arr = np.flip(M_flip)
-    return M_arr
-
 # cache for grid-based internal-loads (speeds up repeated queries)
 _grid_y = None
 _grid_V = None
