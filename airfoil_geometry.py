@@ -8,4 +8,4 @@ t_skin = 0.0016 #m
 n_stringer = 0 #-
 a_stringer =  0.0002 #m^2
 n_spars = 3 #-
-end_third_spar = 0.5 # y/(b/2)
+end_third_spar = 0.3 # y/(b/2)

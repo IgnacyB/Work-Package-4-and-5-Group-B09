@@ -9,7 +9,7 @@ from scipy.interpolate import interp1d
 
 #import constants from other files
 from material_properties import G
-from torsional_stiffness_functions import torsional_constant_singlecell, torsional_constant
+from torsional_stiffness_functions import torsional_constant
 from load_calculations import T
 from Aircraft_parameters import b
 
