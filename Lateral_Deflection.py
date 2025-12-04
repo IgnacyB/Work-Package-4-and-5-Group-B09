@@ -26,7 +26,7 @@ def lateral_deflection_function():
     #calculate M and h 
     M_grid = M(y_grid)
     h_grid = M_grid / (E * MOI_grid)
-
+    print(M_grid[0], M_grid[-1])
     #double integration to obtain deflection profile
     dvdy_grid = -1 * cumulative_trapezoid(h_grid, y_grid, initial=0)
     v_grid = cumulative_trapezoid(dvdy_grid, y_grid, initial = 0)
