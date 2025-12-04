@@ -41,3 +41,6 @@ def twist_distribution_graph():
     plt.ylabel("Angle of twist [degree]")
     plt.show
 
+if __name__ == "__main__":
+    lateral_deflection_graph()
+    twist_distribution_graph()
