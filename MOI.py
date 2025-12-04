@@ -3,7 +3,22 @@ import numpy as np
 import scipy as sp
 from Aircraft_parameters import b
 import matplotlib.pyplot as plt
-from airfoil_geometry import n_spars, end_third_spar
+
+def MOI(y):
+    from airfoil_geometry import n_spars
+    from airfoil_geometry import end_third_spar
+
+    if n_spars > 2:
+        if y < end_third_spar:
+            MOI_value = MOI_multi_cell(y)
+        else:
+            MOI_value = MOI_single_cell(y)
+
+    else:
+        MOI_value = MOI_single_cell(y)
+
+    return MOI_value
+
 
 def MOI_single_cell(y):
     #import the necessary functions from other
@@ -263,7 +278,11 @@ if __name__ == "__main__":
     plot_MOI_single_cell()
     plot_MOI_multi_cell()
 
+
+
+""""
 value_1 = MOI_single_cell(b/2)
 value_2 = MOI_multi_cell(b/2)
 print(value_1)
 print(value_2)
+"""
