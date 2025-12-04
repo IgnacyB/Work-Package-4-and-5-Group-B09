@@ -44,7 +44,7 @@ def torsional_constant(y):
 
         #set up system of equations with variables: q_1, q_2, twist_rate.
         lefthand_matrix = np.array([[2*A_1, 2*A_2, 0.], [(-1/(2*A_1))*((((h_upper_middle-h_lower_middle)*c)/(G*t_middle))+((l_upper_1)/(G*t_skin))+(((h_upper_front-h_lower_front)*c)/(G*t_front))+((l_lower_1)/(G*t_skin))), (((h_upper_middle-h_lower_middle)*c)/(2*A_1*G*t_middle)), 1], [(((h_upper_middle-h_lower_middle)*c)/(2*A_2*G*t_middle)), ((-1/(2*A_2))*((((h_upper_rear-h_lower_rear)*c)/(G*t_rear))+((l_upper_2)/(G*t_skin))+(((h_upper_middle-h_lower_middle)*c)/(G*t_middle))+((l_lower_2)/(G*t_skin)))), 1]])
-        righthand_matrix = np.array([[1, 0, 0]])
+        righthand_matrix = np.array([1, 0, 0])
 
         #solve system of equations
         solution = np.linalg.solve(lefthand_matrix, righthand_matrix)
@@ -133,6 +133,9 @@ def torsional_constant_multicell(y):
     J_y = 1/(G*twist_rate)
 
     return J_y
+
+print(torsional_constant_multicell(b/2))
+
 
 #test
 # print(torsional_constant_singlecell(0.001, 0.001, 0.2, 0.7, 0.003, 2))
