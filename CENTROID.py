@@ -261,4 +261,3 @@ run_analysis(9,[ag.location_front,ag.location_middle,ag.location_rear],ag.t_fron
     ag.n_stringer                  # Total Stringers
 )
 '''
-'''
