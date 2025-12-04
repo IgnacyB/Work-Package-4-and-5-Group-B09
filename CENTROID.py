@@ -8,17 +8,15 @@ import airfoil_geometry as ag
 
 
 def generate_stringer_coordinates(spars, total_stringers):
-    '''
-    INTERNAL FUNCTION: Calculates coordinates based on spar geometry objects.
-    '''
+
     num_spars = len(spars)
     stringer_coords = []
 
     # 1. Identify Corner Stringers
-    for spar in spars:
+    '''for spar in spars:
         stringer_coords.append(spar[0])  # Top
         stringer_coords.append(spar[1])  # Bottom
-
+    '''
     min_stringers = len(stringer_coords)
     remaining_stringers = total_stringers - min_stringers
 
@@ -198,24 +196,53 @@ def run_analysis(c, spar_positions_ratios, t_front, t_mid, t_rear, t_skin, strin
 
 
 def plot_wingbox(elements, cx, cy, c, num_spars):
+    """
+    Helper function to visualize the wingbox geometry.
+    Now includes the Airfoil Contour.
+    """
+    plt.figure(figsize=(12, 6))
 
-    plt.figure(figsize=(10, 6))
+    # --- 1. DEFINE AIRFOIL COORDINATES ---
+    x_pos_upper = [1.00000, 0.95033, 0.90066, 0.85090, 0.80103, 0.75107, 0.70101, 0.65086, 0.60064, 0.55035, 0.50000,
+                   0.44962, 0.39923, 0.34884, 0.29846, 0.24881, 0.19781, 0.14757, 0.09746, 0.07247, 0.04757, 0.02283,
+                   0.01059, 0.00580, 0.00347, 0.00000]
+    x_pos_lower = [0.00000, 0.00653, 0.00920, 0.01441, 0.02717, 0.05243, 0.07753, 0.10254, 0.15243, 0.20219, 0.25189,
+                   0.30154, 0.35116, 0.40077, 0.45038, 0.50000, 0.54965, 0.59936, 0.64914, 0.69899, 0.74893, 0.79897,
+                   0.84910, 0.89934, 0.94967, 1.00000]
+    y_pos_upper = [0.00000, 0.00986, 0.01979, 0.02974, 0.03935, 0.04847, 0.05686, 0.06440, 0.07085, 0.07602, 0.07963,
+                   0.08139, 0.08139, 0.07971, 0.07658, 0.07193, 0.06562, 0.05741, 0.04672, 0.04010, 0.03227, 0.02234,
+                   0.01588, 0.01236, 0.01010, 0.00000]
+    y_pos_lower = [0.00000, -0.00810, -0.00956, -0.01160, -0.01490, -0.01963, -0.02314, -0.02604, -0.03049, -0.03378,
+                   -0.03613, -0.03770, -0.03851, -0.03855, -0.03759, -0.03551, -0.03222, -0.02801, -0.02320, -0.01798,
+                   -0.01267, -0.00751, -0.00282, 0.00089, 0.00278, 0.00000]
 
+    # --- 2. SCALE AND PLOT AIRFOIL ---
+    # We multiply every coordinate by 'c' (Chord Length) to make it the right size
+    plt.plot([x * c for x in x_pos_upper], [y * c for y in y_pos_upper],
+             color='gray', linestyle='--', alpha=0.5, label='Airfoil Contour')
+    plt.plot([x * c for x in x_pos_lower], [y * c for y in y_pos_lower],
+             color='gray', linestyle='--', alpha=0.5)
+
+    # --- 3. PLOT WINGBOX ELEMENTS ---
     for el in elements:
         if 'p1' in el:
             p1, p2 = el['p1'], el['p2']
-            color = 'black' if 'Spar' in el['type'] else 'blue'
+            # Color logic: Spars = Blue, Skin = Black (or customize as you like)
+            color = 'blue' if 'Spar' in el['type'] else 'black'
             lw = 2 if 'Spar' in el['type'] else 1.5
             plt.plot([p1[0], p2[0]], [p1[1], p2[1]], color=color, linewidth=lw)
 
+    # --- 4. PLOT STRINGERS AND CENTROID ---
     str_x = [el['x'] for el in elements if el['type'] == 'stringer']
     str_y = [el['y'] for el in elements if el['type'] == 'stringer']
+
     plt.scatter(str_x, str_y, c='green', s=40, zorder=5, label='Stringers')
     plt.scatter(cx, cy, c='red', marker='x', s=100, zorder=10, label='Centroid')
 
-    plt.title(f"Wing Box Cross-Section (chord lenght={c}, Spars={num_spars},number of stringers={ag.n_stringer})")
-    plt.xlabel("Chordwise Position (x)")
-    plt.ylabel("Height (y)")
+    # --- 5. FORMATTING ---
+    plt.title(f"Wing Box Cross-Section (chord lenght={c}m, Spars={num_spars},number of stringer={ag.n_stringer})")
+    plt.xlabel("Chordwise Position (x) [m]")
+    plt.ylabel("Height (y) [m]")
     plt.axis('equal')
     plt.grid(True, linestyle='--', alpha=0.6)
     plt.legend()
@@ -223,10 +250,7 @@ def plot_wingbox(elements, cx, cy, c, num_spars):
 
 
 
-
-
-if __name__ == "__main__":
-    run_analysis(9,[ag.location_front,ag.location_middle,ag.location_rear],ag.t_front,ag.t_middle,ag.t_rear,ag.t_skin,ag.a_stringer,ag.n_stringer,show_plot=True)
+run_analysis(9,[ag.location_front,ag.location_middle,ag.location_rear],ag.t_front,ag.t_middle,ag.t_rear,ag.t_skin,ag.a_stringer,0,show_plot=True)
 
 '''cx, cy = run_analysis(
     C_TEST,
@@ -236,4 +260,5 @@ if __name__ == "__main__":
     ag.a_stringer,              # Stringer Area
     ag.n_stringer                  # Total Stringers
 )
+'''
 '''
