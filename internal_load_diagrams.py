@@ -5,7 +5,7 @@ import math
 from Aircraft_parameters import b
 from load_calculations import V, T, M   
 #Defining y values for plotting
-def plot_internal_loads(y=None, n=200, title=None):
+def plot_internal_loads(y=None, n=600, title=None):
     if y is None:
         y = np.linspace(0, b/2, n)
     V_arr = V(y) if callable(V) else np.asarray(V)
