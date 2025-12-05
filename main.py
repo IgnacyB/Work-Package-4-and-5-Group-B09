@@ -39,6 +39,10 @@ Bending_moment_list = []
 Torsion_list = []
 import load_calculations
 
+#Creating y array for half-span to be used throught the calculations
+from Aircraft_parameters import b
+import numpy as np
+y_arr = np.linspace(0, b/2, 600)
 for case in Load_cases_list:
     v_cruise = case[1]
     mass_aircraft =  case[2]
@@ -47,13 +51,10 @@ for case in Load_cases_list:
     mass_fuel = case[5]
 
     # set per-case operating conditions in the module (no circular import)
-    load_calculations.set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fuel)
+    load_calculations.set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fuel, y_arr)
 
-    # PRECOMPUTE grid for this case to make M/T/V queries fast
-    load_calculations.precompute_internal_loads(n=600)  # increase n for accuracy if needed
-
-    M_case = load_calculations.M(0)
-    T_case = load_calculations.T(0)
+    M_case = load_calculations.M([0])
+    T_case = load_calculations.T([0])
     Bending_moment_list.append(M_case)
     Torsion_list.append(T_case)
 

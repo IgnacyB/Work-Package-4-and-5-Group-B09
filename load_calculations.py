@@ -29,26 +29,25 @@ x_bar_c = 1/2 #location of centroid of wing box assumed to be at half the chord 
 x_lift = 1/4 #location of aerodynamic lift assumed to be at quarter chord
 
 #WEIGHT DISTRIBUTION (HALF OF SPAN)
-def weight_distribution(mass_wing, b, c_r, c_t):
+def weight_distribution(mass_wing, b, c_r, c_t, y_arr):
     y_0 = (b / 2) * c_r / (c_r - c_t) #location where the load distribution becomes zero
     A = mass_wing*g / (y_0**2-(y_0 - b/2)**2) #It is divided by 2 since we are only considering half the span and thus half of the weight
-    def w_dist(y):
-        return A * (y_0 - y)
-    return w_dist
+    w = A * (y_0 - y_arr)
+    return w
 
 #FUEL DISTRIBUTION (HALF OF SPAN)
-def fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t):
+def fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t, y_arr):
     y_0 = b / 2 * c_r / (c_r - c_t) #location where the load distribution becomes zero
     A = 3 / 2 * n_fuel * mass_fuel*g / (y_0**3-(y_0 - b/2)**3) #It is divided by 2 since we are only considering half the span and thus half of the weight
-    def f_dist(y):
-        return A * (y_0 - y)**2
-    return f_dist
+    f = A * (y_0 - y_arr)**2
+    return f
 
-def set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fuel):
+def set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fuel, y_arr):
     """Store per-load-case operating conditions used by other functions.
     Must be called from main before calling M(), T(), dN(), etc.
     """
-    global mass_aircraft_op, v_cruise_op, rho_op, mass_fuel_op, CL_op, w_dist, f_dist, mass_wing_op
+    global mass_aircraft_op, v_cruise_op, rho_op, mass_fuel_op, CL_op, w_dist, f_dist, mass_wing_op, y_arr_op
+    y_arr_op = y_arr
     mass_aircraft_op = load_factor * mass_aircraft
     v_cruise_op = v_cruise
     rho_op = rho
@@ -61,91 +60,74 @@ def set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fue
     set_flight_conditions(rho_op, v_cruise_op)
 
     # build distributions that depend on current mass_fuel (fuel distribution) and wing mass (fixed)
-    w_dist = weight_distribution(mass_wing_op, b, c_r, c_t)
-    f_dist = fuel_distribution(mass_fuel_op, n_fuel, b, c_r, c_t)
+    w_dist = weight_distribution(mass_wing_op, b, c_r, c_t, y_arr_op)
+    f_dist = fuel_distribution(mass_fuel_op, n_fuel, b, c_r, c_t, y_arr_op)
 
 #DISTANCE FROM LIFT TO CENTROID OF WINGBOX AS FUNCTION OF SPANWISE LOCATION
 def distance_lift_centroid(x_bar_c, x_lift, y):
     return (x_bar_c - x_lift) * c(y)
 
-def dN(y):
+def dN(y_arr):
     if CL_op is None:
         raise RuntimeError("Call set_operating_conditions(...) before computing dN")
-    return dL(y, CL_op) * np.cos(np.radians(alpha(CL_op))) + dD(y, CL_op) * np.sin(np.radians(alpha(CL_op)))
+    return dL(y_arr, CL_op) * np.cos(np.radians(alpha(CL_op))) + dD(y_arr, CL_op) * np.sin(np.radians(alpha(CL_op)))
 
 #SHIFTING N FROM LIFT TO WINGBOX CENTROID
-def dM_N(y):
-    return dN(y) * distance_lift_centroid(x_bar_c, x_lift, y)
-
+def dM_N(y_arr):
+    return dN(y_arr) * distance_lift_centroid(x_bar_c, x_lift, y_arr)
 #======== internal loads ========
-def dV(y):
+def dV(y_arr):
     if w_dist is None or f_dist is None:
         raise RuntimeError("Call set_operating_conditions(...) before computing internal loads")
-    return -dN(y) + w_dist(y) + f_dist(y)
+    return -dN(y_arr) + w_dist(y_arr) + f_dist(y_arr)
 
-def dT(y):
+def dT(y_arr):
     if CL_op is None:
         raise RuntimeError("Call set_operating_conditions(...) before computing internal loads")
-    return -dM_N(y) - dM(y, CL_op)
+    return -dM_N(y_arr) - dM(y_arr, CL_op)
 
-# helper: try to call func on array, fall back to vectorize if needed
-def _call_array(func, y):
-    y_arr = np.asarray(y)
-    # fast path: try direct call
-    try:
-        res = func(y_arr)
-        res = np.asarray(res)
-        if res.shape == y_arr.shape:
-            return res
-    except Exception:
-        pass
-    # fallback: fast Python loop -> numpy array (faster than np.vectorize)
-    return np.asarray([func(float(yy)) for yy in y_arr])
 
-# adapt M/V/T to use precomputed grid when available (fast)
-def V(y):
-    y_arr_copy = np.asarray(y)
-    dV_arr = _call_array(dV, y_arr_copy)
+def V(y_arr):
+    y_arr_copy = np.asarray(y_arr)
+    dV_arr = dV(y_arr_copy)
     V_flip = cumulative_trapezoid(np.flip(dV_arr), np.flip(y_arr_copy), initial=0)
     V_arr = -1 * np.flip(V_flip)
     return V_arr
 
-def T(y):
-    y_arr_copy = np.asarray(y)
-    dT_arr = _call_array(dT, y_arr_copy)
+def T(y_arr):
+    y_arr_copy = np.asarray(y_arr)
+    dT_arr = dT(y_arr_copy)
     T_flip = cumulative_trapezoid(np.flip(dT_arr), np.flip(y_arr_copy), initial=0)
     T_arr = -1 * np.flip(T_flip)
     return T_arr
 
-def M(y):
-    y_arr_copy = np.asarray(y)
-    V_arr = V(y_arr_copy)  # uses vectorized V above
+def M(y_arr):
+    y_arr_copy = np.asarray(y_arr)
+    V_arr = V(y_arr_copy)
     M_flip = cumulative_trapezoid(np.flip(V_arr), np.flip(y_arr_copy), initial=0)
     M_arr = np.flip(M_flip)
     return M_arr
 
-def plot_internal_loads(y=None, n=200):
-    if y is None:
-        y = np.linspace(0, b/2, n)
-    V_arr = V(y) if callable(V) else np.asarray(V)
-    T_arr = T(y) if callable(T) else np.asarray(T)
-    M_arr = M(y) if callable(M) else np.asarray(M)
+def plot_internal_loads(y_arr):
+    V_arr = V(y_arr)
+    T_arr = T(y_arr) 
+    M_arr = M(y_arr) 
 
     fig, axs = plt.subplots(3, 1, figsize=(8, 10), constrained_layout=True)
 
-    axs[0].plot(y, V_arr, lw=2, color="tab:blue")
+    axs[0].plot(y_arr, V_arr, lw=2, color="tab:blue")
     axs[0].axhline(0, color="k", lw=0.6)
     axs[0].set_ylabel("V(y) [N]")
     axs[0].set_title("Internal Shear Force along wing span")
     axs[0].grid(True)
 
-    axs[1].plot(y, T_arr, lw=2, color="tab:green")
+    axs[1].plot(y_arr, T_arr, lw=2, color="tab:green")
     axs[1].axhline(0, color="k", lw=0.6)
     axs[1].set_ylabel("T(y) [N·m]")
     axs[1].set_title("Internal Torque along wing span")
     axs[1].grid(True)
 
-    axs[2].plot(y, M_arr, lw=2, color="tab:red")
+    axs[2].plot(y_arr, M_arr, lw=2, color="tab:red")
     axs[2].axhline(0, color="k", lw=0.6)
     axs[2].set_xlabel("Spanwise coordinate y (m)")
     axs[2].set_ylabel("M(y) [N·m]")
@@ -154,16 +136,14 @@ def plot_internal_loads(y=None, n=200):
 
     plt.show()
 
-def plot_distributed_loads(y=None, n=300):
-    if y is None:
-        y = np.linspace(0, b/2, n)
+def plot_distributed_loads(y_arr):
     # use existing helper to evaluate funcs on arrays
-    dV_arr = _call_array(dV, y)
-    dT_arr = _call_array(dT, y)
+    dV_arr = dV(y_arr)
+    dT_arr = dT(y_arr)
 
     plt.figure(figsize=(8,5))
-    plt.plot(y, dV_arr, lw=2, label="dV/dy (q(y))", color="tab:orange")
-    plt.plot(y, dT_arr, lw=2, linestyle="--", label="dT/dy", color="tab:purple")
+    plt.plot(y_arr, dV_arr, lw=2, label="dV/dy (q(y))", color="tab:orange")
+    plt.plot(y_arr, dT_arr, lw=2, linestyle="--", label="dT/dy", color="tab:purple")
     plt.axhline(0, color="k", lw=0.6)
     plt.xlabel("Spanwise coordinate y (m)")
     plt.ylabel("Distributed loads")
@@ -173,14 +153,11 @@ def plot_distributed_loads(y=None, n=300):
     plt.tight_layout()
     plt.show()
 
-def plot_dN(y=None, n=300):
-    """Plot the net distributed normal force dN(y) along the half-span."""
-    if y is None:
-        y = np.linspace(0, b/2, n)
-    dN_arr = _call_array(dN, y)
+def plot_dN(y_arr):
+    dN_arr = dN(y_arr)
 
     plt.figure(figsize=(8,4))
-    plt.plot(y, dN_arr, lw=2, color="tab:orange")
+    plt.plot(y_arr, dN_arr, lw=2, color="tab:orange")
     plt.axhline(0, color="k", lw=0.6)
     plt.xlabel("Spanwise coordinate y (m)")
     plt.ylabel("dN(y) [N/m]")
@@ -189,16 +166,13 @@ def plot_dN(y=None, n=300):
     plt.tight_layout()
     plt.show()
 
-def plot_dL(y=None, n=300):
-    """Plot sectional lift distribution dL(y, CL) along the half-span."""
-    if y is None:
-        y = np.linspace(0, b/2, n)
+def plot_dL(y_arr):
 
     # dL in XFLRextraction expects (y, CL)
-    dL_arr = _call_array(lambda yy: dL(yy, CL_op), y)
+    dL_arr = dL(y_arr, CL_op)
 
     plt.figure(figsize=(8,4))
-    plt.plot(y, dL_arr, lw=2, color="tab:blue")
+    plt.plot(y_arr, dL_arr, lw=2, color="tab:blue")
     plt.axhline(0, color="k", lw=0.6)
     plt.xlabel("Spanwise coordinate y (m)")
     plt.ylabel("dL(y) [N/m]")
@@ -207,20 +181,11 @@ def plot_dL(y=None, n=300):
     plt.tight_layout()
     plt.show()
 
-def plot_wing_and_fuel_distributions(y=None, n=300):
-    """Plot wing weight distribution w(y) and fuel distribution f(y) along half-span."""
-    if y is None:
-        y = np.linspace(0, b/2, n)
-
-    w_func = weight_distribution(mass_wing, b, c_r, c_t)
-    f_func = fuel_distribution(mass_fuel_op, n_fuel, b, c_r, c_t)
-
-    w_arr = _call_array(w_func, y)
-    f_arr = _call_array(f_func, y)
+def plot_wing_and_fuel_distributions(y_arr):
 
     plt.figure(figsize=(8,5))
-    plt.plot(y, w_arr, lw=2, label="Wing weight distribution w(y) [N/m]", color="tab:blue")
-    plt.plot(y, f_arr, lw=2, linestyle="--", label="Fuel distribution f(y) [N/m]", color="tab:green")
+    plt.plot(y_arr, w_dist, lw=2, label="Wing weight distribution w(y) [N/m]", color="tab:blue")
+    plt.plot(y_arr, f_dist, lw=2, linestyle="--", label="Fuel distribution f(y) [N/m]", color="tab:green")
     plt.axhline(0, color="k", lw=0.6)
     plt.xlabel("Spanwise coordinate y (m)")
     plt.ylabel("Distributed load [N/m]")
@@ -238,7 +203,7 @@ def _integrate_from_tip(func, y):
         return val
     # array/vectorized behavior: integrate from tip inward so integral(b/2)=0
     y_arr = np.asarray(y)
-    f_arr = _call_array(func, y_arr)
+    f_arr = func(y_arr)
     # integrate on flipped arrays then flip back (consistent with V/T implementation)
     integral_flip = cumulative_trapezoid(np.flip(f_arr), np.flip(y_arr), initial=0)
     integral_arr = -1 * np.flip(integral_flip)
@@ -291,10 +256,10 @@ def plot_integrated_dL(y=None, n=300):
     plt.show()
 
 if __name__ == "__main__":
-    plot_internal_loads()
-    plot_distributed_loads()
-    plot_dN()
-    plot_dL()
-    plot_wing_and_fuel_distributions()
-    plot_integrated_distributions()
-    plot_integrated_dL()
+    plot_internal_loads(y_arr_op)
+    plot_distributed_loads(y_arr_op)
+    plot_dN(y_arr_op)
+    plot_dL(y_arr_op)
+    plot_wing_and_fuel_distributions(y_arr_op)
+    plot_integrated_distributions(y_arr_op)
+    plot_integrated_dL(y_arr_op)
