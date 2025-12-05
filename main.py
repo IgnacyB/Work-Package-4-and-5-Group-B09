@@ -35,34 +35,48 @@ def parse_loadcases(path):
     return cases
 
 Load_cases_list = parse_loadcases('Loadcases.txt')
-Bending_moment_list = []
-Torsion_list = []
-import load_calculations
+Load_cases_ids = [case[0] for case in Load_cases_list]
+#=================User input=================#
+choice = input("Do you want to analyse specyfic Load cases or most constraining ones? (input 1 for specific, 2 for constraining): ")
+if choice == '1':
+    print("Available load cases are presebted in the file 'Loadcases.txt'")
+    selected_idxs = input("Enter the case indetifiers separated by commas (e.g., LC-1,LC-2,LC-3): ")
+    try:
+        selected_idxs = [idx.strip() for idx in selected_idxs.split(',')]
+        Load_cases_list = [Load_cases_list[Load_cases_ids.index(idx)] for idx in selected_idxs]
+    except Exception as e:
+        print("Invalid input. Exiting.")
+        exit(1)
+    
+elif choice == '2':
+    Bending_moment_list = []
+    Torsion_list = []
 
-for case in Load_cases_list:
-    v_cruise = case[1]
-    mass_aircraft =  case[2]
-    load_factor = case[3]
-    rho = case[4]
-    mass_fuel = case[5]
 
-    # set per-case operating conditions in the module (no circular import)
-    load_calculations.set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fuel)
+    for case in Load_cases_list:
+        v_cruise = case[1]
+        mass_aircraft =  case[2]
+        load_factor = case[3]
+        rho = case[4]
+        mass_fuel = case[5]
 
-    M_case = (load_calculations.M())[0]
-    T_case = (load_calculations.T())[0]
-    Bending_moment_list.append(M_case)
-    Torsion_list.append(T_case)
+        # set per-case operating conditions in the module (no circular import)
+        load_calculations.set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fuel)
 
-print("Load cases analysed completely.")
-max_bending_moment = max(Bending_moment_list)
-max_torsion = max(Torsion_list)
-min_bending_moment = min(Bending_moment_list)
-min_torsion = min(Torsion_list)
-print("Maximum positive Bending Moment across load cases:", max_bending_moment, "[Nm], load case:", Load_cases_list[Bending_moment_list.index(max_bending_moment)][0])
-print("Maximum positive Torsion across load cases:", max_torsion, "[Nm], load case:", Load_cases_list[Torsion_list.index(max_torsion)][0])
-print("Maximum negative Bending Moment across load cases:", min_bending_moment, "[Nm], load case:", Load_cases_list[Bending_moment_list.index(min_bending_moment)][0])
-print("Maximum negative Torsion across load cases:", min_torsion, "[Nm], load case:", Load_cases_list[Torsion_list.index(min_torsion)][0])
+        M_case = (load_calculations.M())[0]
+        T_case = (load_calculations.T())[0]
+        Bending_moment_list.append(M_case)
+        Torsion_list.append(T_case)
+
+    print("Load cases analysed completely.")
+    max_bending_moment = max(Bending_moment_list)
+    max_torsion = max(Torsion_list)
+    min_bending_moment = min(Bending_moment_list)
+    min_torsion = min(Torsion_list)
+    print("Maximum positive Bending Moment across load cases:", max_bending_moment, "[Nm], load case:", Load_cases_list[Bending_moment_list.index(max_bending_moment)][0])
+    print("Maximum positive Torsion across load cases:", max_torsion, "[Nm], load case:", Load_cases_list[Torsion_list.index(max_torsion)][0])
+    print("Maximum negative Bending Moment across load cases:", min_bending_moment, "[Nm], load case:", Load_cases_list[Bending_moment_list.index(min_bending_moment)][0])
+    print("Maximum negative Torsion across load cases:", min_torsion, "[Nm], load case:", Load_cases_list[Torsion_list.index(min_torsion)][0])
 
 # Plot internal-load diagrams for the most constraining cases
 import internal_load_diagrams as ild
