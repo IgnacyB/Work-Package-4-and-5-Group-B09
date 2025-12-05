@@ -111,4 +111,5 @@ from internal_load_diagrams import plot_all_cases_internal_distributions
 # Example usage: plot all cases
 if __name__ == "__main__":
     # call after Load_cases_list and load_calculations are ready
+    print("Plotting all load cases internal distributions")
     plot_all_cases_internal_distributions(Load_cases_list, load_calculations)
