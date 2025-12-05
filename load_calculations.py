@@ -11,6 +11,8 @@ from scipy.integrate import cumulative_trapezoid
 #importing functions from other files if needed
 from XFLRextraction import dL_array, dD_array, dM_array, alpha, set_flight_conditions
 
+#importing y grid
+from grid_setup import y_arr
 # add module-level operating-condition holders
 mass_aircraft_op = None
 v_cruise_op = None
@@ -29,25 +31,24 @@ x_bar_c = 1/2 #location of centroid of wing box assumed to be at half the chord 
 x_lift = 1/4 #location of aerodynamic lift assumed to be at quarter chord
 
 #WEIGHT DISTRIBUTION (HALF OF SPAN)
-def weight_distribution(mass_wing, b, c_r, c_t, y_arr):
+def weight_distribution(mass_wing, b, c_r, c_t):
     y_0 = (b / 2) * c_r / (c_r - c_t) #location where the load distribution becomes zero
     A = mass_wing*g / (y_0**2-(y_0 - b/2)**2) #It is divided by 2 since we are only considering half the span and thus half of the weight
     w = A * (y_0 - y_arr)
     return w
 
 #FUEL DISTRIBUTION (HALF OF SPAN)
-def fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t, y_arr):
+def fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t):
     y_0 = b / 2 * c_r / (c_r - c_t) #location where the load distribution becomes zero
     A = 3 / 2 * n_fuel * mass_fuel*g / (y_0**3-(y_0 - b/2)**3) #It is divided by 2 since we are only considering half the span and thus half of the weight
     f = A * (y_0 - y_arr)**2
     return f
 
-def set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fuel, y_arr):
+def set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fuel):
     """Store per-load-case operating conditions used by other functions.
     Must be called from main before calling M(), T(), dN(), etc.
     """
-    global mass_aircraft_op, v_cruise_op, rho_op, mass_fuel_op, CL_op, w_dist, f_dist, mass_wing_op, y_arr_op
-    y_arr_op = y_arr
+    global mass_aircraft_op, v_cruise_op, rho_op, mass_fuel_op, CL_op, w_dist, f_dist, mass_wing_op
     mass_aircraft_op = load_factor * mass_aircraft
     v_cruise_op = v_cruise
     rho_op = rho
@@ -60,42 +61,42 @@ def set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fue
     set_flight_conditions(rho_op, v_cruise_op)
 
     # build distributions that depend on current mass_fuel (fuel distribution) and wing mass (fixed)
-    w_dist = weight_distribution(mass_wing_op, b, c_r, c_t, y_arr_op)
-    f_dist = fuel_distribution(mass_fuel_op, n_fuel, b, c_r, c_t, y_arr_op)
+    w_dist = weight_distribution(mass_wing_op, b, c_r, c_t)
+    f_dist = fuel_distribution(mass_fuel_op, n_fuel, b, c_r, c_t)
 
 #DISTANCE FROM LIFT TO CENTROID OF WINGBOX AS FUNCTION OF SPANWISE LOCATION
-def distance_lift_centroid(x_bar_c, x_lift, y):
-    return (x_bar_c - x_lift) * c(y)
+def distance_lift_centroid(x_bar_c, x_lift):
+    return (x_bar_c - x_lift) * c(y_arr)
 
-def dN(y_arr):
+def dN():
     if CL_op is None:
         raise RuntimeError("Call set_operating_conditions(...) before computing dN")
     return dL_array(y_arr, CL_op) * np.cos(np.radians(alpha(CL_op))) + dD_array(y_arr, CL_op) * np.sin(np.radians(alpha(CL_op)))
 
 #SHIFTING N FROM LIFT TO WINGBOX CENTROID
-def dM_N(y_arr):
-    return dN(y_arr) * distance_lift_centroid(x_bar_c, x_lift, y_arr)
+def dM_N():
+    return dN() * distance_lift_centroid(x_bar_c, x_lift)
 #======== internal loads ========
-def dV(y_arr):
+def dV():
     y_arr_copy = np.asarray(y_arr)
     if w_dist is None or f_dist is None:
         raise RuntimeError("Call set_operating_conditions(...) before computing internal loads")
     return -dN(y_arr) + w_dist + f_dist
 
-def dT(y_arr):
+def dT():
     if CL_op is None:
         raise RuntimeError("Call set_operating_conditions(...) before computing internal loads")
     return -dM_N(y_arr) - dM_array(y_arr, CL_op)
 
 
-def V(y_arr):
+def V():
     y_arr_copy = np.asarray(y_arr)
     dV_arr = dV(y_arr_copy)
     V_flip = cumulative_trapezoid(np.flip(dV_arr), np.flip(y_arr_copy), initial=0)
     V_arr = -1 * np.flip(V_flip)
     return V_arr
 
-def T(y_arr):
+def T():
     y_arr_copy = np.asarray(y_arr)
     dT_arr = dT(y_arr_copy)
     T_flip = cumulative_trapezoid(np.flip(dT_arr), np.flip(y_arr_copy), initial=0)
@@ -257,10 +258,10 @@ def plot_integrated_dL(y=None, n=300):
     plt.show()
 
 if __name__ == "__main__":
-    plot_internal_loads(y_arr_op)
-    plot_distributed_loads(y_arr_op)
-    plot_dN(y_arr_op)
-    plot_dL(y_arr_op)
-    plot_wing_and_fuel_distributions(y_arr_op)
-    plot_integrated_distributions(y_arr_op)
-    plot_integrated_dL(y_arr_op)
+    plot_internal_loads(y_arr)
+    plot_distributed_loads(y_arr)
+    plot_dN(y_arr)
+    plot_dL(y_arr)
+    plot_wing_and_fuel_distributions(y_arr)
+    plot_integrated_distributions(y_arr)
+    plot_integrated_dL(y_arr)

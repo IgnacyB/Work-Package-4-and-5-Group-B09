@@ -6,13 +6,13 @@ from Twist_Distribution import twist_function
 from Lateral_Deflection import lateral_deflection_function
 
 #Importing y grid
-from main import y_arr
+from grid_setup import y_arr
 
 # lateral deflection graph
 def plot_lateral_deflection(title=None):
     """Plot lateral deflection. If title provided, include it in the figure title."""
 
-    plt.plot(y_arr, lateral_deflection_function(y_arr), lw=2, color="tab:blue")
+    plt.plot(y_arr, lateral_deflection_function(), lw=2, color="tab:blue")
     if title:
         plt.title(f"{title} — Lateral deflection")
     else:
@@ -21,11 +21,11 @@ def plot_lateral_deflection(title=None):
     plt.xlabel("Spanwise position [m]")
     plt.ylabel("Lateral deflection [m]")
 
-    plt.plot(y_arr[-1], lateral_deflection_function(y_arr)[-1], marker='o', color='blue')
+    plt.plot(y_arr[-1], lateral_deflection_function()[-1], marker='o', color='blue')
 
     plt.annotate(
-        f'{lateral_deflection_function(y_arr)[-1]:.2f}',
-        (y_arr[-1], lateral_deflection_function(y_arr)[-1]),
+        f'{lateral_deflection_function()[-1]:.2f}',
+        (y_arr[-1], lateral_deflection_function()[-1]),
         xytext=(-40, -10),
         textcoords="offset points",
         ha="left",

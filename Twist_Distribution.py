@@ -14,7 +14,7 @@ from load_calculations import T
 from Aircraft_parameters import b
 
 #importing y grid
-from main import y_arr
+from grid_setup import y_arr
 
 def twist_function():
 
@@ -23,7 +23,7 @@ def twist_function():
     J_grid = J_vec(y_arr)
     #calculate T and dthetady
     
-    T_grid = T(y_arr)
+    T_grid = T()
     dthetady_grid = T_grid / (G * J_grid)
 
     #integrate to obtain twist
