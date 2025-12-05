@@ -78,42 +78,38 @@ def dM_N():
     return dN() * distance_lift_centroid(x_bar_c, x_lift)
 #======== internal loads ========
 def dV():
-    y_arr_copy = np.asarray(y_arr)
     if w_dist is None or f_dist is None:
         raise RuntimeError("Call set_operating_conditions(...) before computing internal loads")
-    return -dN(y_arr) + w_dist + f_dist
+    return -dN() + w_dist + f_dist
 
 def dT():
     if CL_op is None:
         raise RuntimeError("Call set_operating_conditions(...) before computing internal loads")
-    return -dM_N(y_arr) - dM_array(y_arr, CL_op)
+    return -dM_N() - dM_array(y_arr, CL_op)
 
 
 def V():
-    y_arr_copy = np.asarray(y_arr)
-    dV_arr = dV(y_arr_copy)
-    V_flip = cumulative_trapezoid(np.flip(dV_arr), np.flip(y_arr_copy), initial=0)
+    dV_arr = dV()
+    V_flip = cumulative_trapezoid(np.flip(dV_arr), np.flip(y_arr), initial=0)
     V_arr = -1 * np.flip(V_flip)
     return V_arr
 
 def T():
-    y_arr_copy = np.asarray(y_arr)
-    dT_arr = dT(y_arr_copy)
-    T_flip = cumulative_trapezoid(np.flip(dT_arr), np.flip(y_arr_copy), initial=0)
+    dT_arr = dT()
+    T_flip = cumulative_trapezoid(np.flip(dT_arr), np.flip(y_arr), initial=0)
     T_arr = -1 * np.flip(T_flip)
     return T_arr
 
 def M():
-    y_arr_copy = np.asarray(y_arr)
-    V_arr = V(y_arr_copy)
-    M_flip = cumulative_trapezoid(np.flip(V_arr), np.flip(y_arr_copy), initial=0)
+    V_arr = V()
+    M_flip = cumulative_trapezoid(np.flip(V_arr), np.flip(y_arr), initial=0)
     M_arr = np.flip(M_flip)
     return M_arr
 
 def plot_internal_loads(y_arr):
-    V_arr = V(y_arr)
-    T_arr = T(y_arr) 
-    M_arr = M(y_arr) 
+    V_arr = V()
+    T_arr = T()
+    M_arr = M()
 
     fig, axs = plt.subplots(3, 1, figsize=(8, 10), constrained_layout=True)
 
