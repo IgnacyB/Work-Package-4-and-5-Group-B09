@@ -79,7 +79,7 @@ def dM_N(y_arr):
 def dV(y_arr):
     if w_dist is None or f_dist is None:
         raise RuntimeError("Call set_operating_conditions(...) before computing internal loads")
-    return -dN(y_arr) + w_dist(y_arr) + f_dist(y_arr)
+    return -dN(y_arr) + w_dist + f_dist
 
 def dT(y_arr):
     if CL_op is None:
