@@ -103,7 +103,7 @@ def T():
     T_arr = -1 * np.flip(T_flip)
     return T_arr
 
-def M(y_arr):
+def M():
     y_arr_copy = np.asarray(y_arr)
     V_arr = V(y_arr_copy)
     M_flip = cumulative_trapezoid(np.flip(V_arr), np.flip(y_arr_copy), initial=0)
