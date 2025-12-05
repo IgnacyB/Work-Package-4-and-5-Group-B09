@@ -93,7 +93,7 @@ def _call_array(func, y):
 def V(y):
     # scalar behavior (keep previous quad-based result)
     if np.ndim(y) == 0:
-        Vval, error = sp.integrate.quad(dV, b/2, float(y))
+        Vval, error = sp.integrate.quad(dV, float(y), b/2)
         return Vval
     # array/vectorized behavior (fast cumulative integration)
     y_arr = np.asarray(y)
@@ -102,10 +102,10 @@ def V(y):
     V_flip = cumulative_trapezoid(np.flip(dV_arr), np.flip(y_arr), initial=0)
     V_arr = -1 * np.flip(V_flip)
     return V_arr
-
+print(V(b/2), V(0))
 def T(y):
     if np.ndim(y) == 0:
-        Tval, error = sp.integrate.quad(dT, b/2, float(y))
+        Tval, error = sp.integrate.quad(dT, float(y), b/2)
         return Tval
     y_arr = np.asarray(y)
     dT_arr = _call_array(dT, y_arr)
@@ -116,7 +116,7 @@ def T(y):
 def M(y):
     # scalar: integrate V via quad (keeps previous API)
     if np.ndim(y) == 0:
-        Mval, error = sp.integrate.quad(lambda s: V(s), b/2, float(y))
+        Mval, error = sp.integrate.quad(lambda s: V(s), float(y), b/2)
         return Mval
     # array: build V array then integrate
     y_arr = np.asarray(y)
