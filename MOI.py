@@ -9,7 +9,7 @@ def MOI(y):
     from airfoil_geometry import end_third_spar
 
     if n_spars > 2:
-        if y < end_third_spar:
+        if y < end_third_spar*b/2:
             MOI_value = MOI_multi_cell(y)
         else:
             MOI_value = MOI_single_cell(y)
