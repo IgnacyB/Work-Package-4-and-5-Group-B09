@@ -9,9 +9,9 @@ from load_calculations import V, T, M
 from grid_setup import y_arr
 
 def plot_internal_loads(title=None):
-    V_arr = V(y_arr)
-    T_arr = T(y_arr)
-    M_arr = M(y_arr) 
+    V_arr = V()
+    T_arr = T()
+    M_arr = M()
 
     fig, axs = plt.subplots(3, 1, figsize=(8, 10), constrained_layout=True)
 
