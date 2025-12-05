@@ -56,11 +56,11 @@ def plot_all_cases_internal_distributions(Load_cases_list, load_calculations, ca
         rho = case[4]
         mass_fuel = case[5]
 
-        load_calculations.set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fuel, y_arr)
+        load_calculations.set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fuel)
 
-        V_arr = load_calculations.V(y_arr)
-        T_arr = load_calculations.T(y_arr)
-        M_arr = load_calculations.M(y_arr)
+        V_arr = load_calculations.V()
+        T_arr = load_calculations.T()
+        M_arr = load_calculations.M()
         label = f"{case[0]} (v={v_cruise:.1f} m/s, n={case[3]:.2f})"
         axV.plot(y_arr, V_arr, lw=1.2, label=label)
         axT.plot(y_arr, T_arr, lw=1.2, label=label)
