@@ -9,7 +9,7 @@ from constants import g, rho_air
 from Aircraft_parameters import mass_wing, n_fuel, b, c_r, c_t, c, S_w
 from scipy.integrate import cumulative_trapezoid
 #importing functions from other files if needed
-from XFLRextraction import dL, dD, dM, alpha, set_flight_conditions
+from XFLRextraction import dL_array, dD_array, dM_array, alpha, set_flight_conditions
 
 # add module-level operating-condition holders
 mass_aircraft_op = None
@@ -70,7 +70,7 @@ def distance_lift_centroid(x_bar_c, x_lift, y):
 def dN(y_arr):
     if CL_op is None:
         raise RuntimeError("Call set_operating_conditions(...) before computing dN")
-    return dL(y_arr, CL_op) * np.cos(np.radians(alpha(CL_op))) + dD(y_arr, CL_op) * np.sin(np.radians(alpha(CL_op)))
+    return dL_array(y_arr, CL_op) * np.cos(np.radians(alpha(CL_op))) + dD_array(y_arr, CL_op) * np.sin(np.radians(alpha(CL_op)))
 
 #SHIFTING N FROM LIFT TO WINGBOX CENTROID
 def dM_N(y_arr):
@@ -85,7 +85,7 @@ def dV(y_arr):
 def dT(y_arr):
     if CL_op is None:
         raise RuntimeError("Call set_operating_conditions(...) before computing internal loads")
-    return -dM_N(y_arr) - dM(y_arr, CL_op)
+    return -dM_N(y_arr) - dM_array(y_arr, CL_op)
 
 
 def V(y_arr):
@@ -170,7 +170,7 @@ def plot_dN(y_arr):
 def plot_dL(y_arr):
 
     # dL in XFLRextraction expects (y, CL)
-    dL_arr = dL(y_arr, CL_op)
+    dL_arr = dL_array(y_arr, CL_op)
 
     plt.figure(figsize=(8,4))
     plt.plot(y_arr, dL_arr, lw=2, color="tab:blue")
@@ -243,7 +243,7 @@ def plot_integrated_dL(y=None, n=300):
         y = np.linspace(0, b/2, n)
 
     # dL depends on CL (module-level CL). Integrate from tip to y.
-    dL_int = _integrate_from_tip(lambda yy: dL(yy, CL_op), y)
+    dL_int = _integrate_from_tip(lambda yy: dL_array(yy, CL_op), y)
 
     plt.figure(figsize=(8,5))
     plt.plot(y, dL_int, lw=2, label="Integrated dL (from tip) [N]", color="tab:blue")
