@@ -90,7 +90,6 @@ for idx in critical_idxs:
     
     # configure load_calculations for this case and precompute grid for speed
     load_calculations.set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fuel, y_arr)
-    load_calculations.precompute_internal_loads(n=600)
 
     # build descriptive title indicating why this case is critical
     reasons = []
