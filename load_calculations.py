@@ -30,7 +30,7 @@ x_lift = 1/4 #location of aerodynamic lift assumed to be at quarter chord
 
 #WEIGHT DISTRIBUTION (HALF OF SPAN)
 def weight_distribution(mass_wing, b, c_r, c_t):
-    y_0 = b / 2 * c_r / (c_r - c_t) #location where the load distribution becomes zero
+    y_0 = (b / 2) * c_r / (c_r - c_t) #location where the load distribution becomes zero
     A = mass_wing*g / (y_0**2-(y_0 - b/2)**2) #It is divided by 2 since we are only considering half the span and thus half of the weight
     def w_dist(y):
         return A * (y_0 - y)
