@@ -53,8 +53,8 @@ for case in Load_cases_list:
     # set per-case operating conditions in the module (no circular import)
     load_calculations.set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fuel, y_arr)
 
-    M_case = load_calculations.M([0])
-    T_case = load_calculations.T([0])
+    M_case = load_calculations.M[0]
+    T_case = load_calculations.T[0]
     Bending_moment_list.append(M_case)
     Torsion_list.append(T_case)
 
