@@ -13,27 +13,25 @@ from torsional_stiffness_functions import torsional_constant
 from load_calculations import T
 from Aircraft_parameters import b
 
+#importing y grid
+from main import y_arr
+
 def twist_function():
-    n = 3000
-    y_max = b/2
-    y_grid = np.linspace(0, y_max, n)
 
     #vectorize torsional stiffness J calculations
     J_vec = np.vectorize(torsional_constant)
-    J_grid = J_vec(y_grid)
-
+    J_grid = J_vec(y_arr)
     #calculate T and dthetady
     
-    T_grid = T(y_grid)
+    T_grid = T(y_arr)
     dthetady_grid = T_grid / (G * J_grid)
 
     #integrate to obtain twist
-    twist_grid = cumulative_trapezoid(dthetady_grid, y_grid, initial = 0)
-
+    twist_grid = cumulative_trapezoid(dthetady_grid, y_arr, initial = 0)
     #make function callable
-    twist = interp1d(y_grid, twist_grid, fill_value = "extrapolate")
+    twist = interp1d(y_arr, twist_grid, fill_value = "extrapolate")
 
-    return(y_grid, twist_grid)
+    return twist_grid
 
 # twist_at_tip = twist_function()[1][-1]
 #print("The twist angle is {} rad or {} degrees".format(twist_function(b/2),twist_function(b/2)*180/math.pi))

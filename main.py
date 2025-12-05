@@ -43,6 +43,7 @@ import load_calculations
 from Aircraft_parameters import b
 import numpy as np
 y_arr = np.linspace(0, b/2, 600)
+
 for case in Load_cases_list:
     v_cruise = case[1]
     mass_aircraft =  case[2]
