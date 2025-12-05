@@ -77,6 +77,7 @@ def dM_N(y_arr):
     return dN(y_arr) * distance_lift_centroid(x_bar_c, x_lift, y_arr)
 #======== internal loads ========
 def dV(y_arr):
+    y_arr_copy = np.asarray(y_arr)
     if w_dist is None or f_dist is None:
         raise RuntimeError("Call set_operating_conditions(...) before computing internal loads")
     return -dN(y_arr) + w_dist + f_dist
