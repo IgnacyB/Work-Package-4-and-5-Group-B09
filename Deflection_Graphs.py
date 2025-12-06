@@ -13,6 +13,7 @@ def plot_lateral_deflection(title=None):
     """Plot lateral deflection. If title provided, include it in the figure title."""
 
     plt.plot(y_arr, lateral_deflection_function(), lw=2, color="tab:blue")
+    plt.gca().invert_yaxis()
     if title:
         plt.title(f"{title} — Lateral deflection")
     else:
@@ -44,8 +45,6 @@ def plot_twist_distribution(title=None):
 
     # Plot twist distribution
     plt.plot(y_arr, twist_deg, lw=2, color="tab:blue")
-    if twist_deg[-1] < 0:
-        plt.gca().invert_yaxis()
 
     if title:
         plt.title(f"{title} — Twist distribution")

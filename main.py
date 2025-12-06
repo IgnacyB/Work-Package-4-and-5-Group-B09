@@ -66,6 +66,7 @@ if choice == '1':
         print(f"Plotting internal loads for case {case[0]}")
         title=f"Load case {case[0]} (v={v_cruise} m/s, n={load_factor})"
         ild.plot_internal_loads(title=title)
+        print(f"Plotting deflections for case {case[0]}")
         defl.plot_lateral_deflection(title=title)
         defl.plot_twist_distribution(title=title)
     
