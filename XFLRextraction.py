@@ -89,6 +89,12 @@ def dM(y,CL):
         raise RuntimeError("Call XFLRextraction.set_flight_conditions(rho, v) before using dL/dD/dM")
     return Cm(y,CL)*_q*(c(y))**2
 
+def dL_array(y_arr, CL):
+    return np.asarray([dL(float(yy), CL) for yy in y_arr], dtype=float)
+def dD_array(y_arr, CL):
+    return np.asarray([dD(float(yy), CL) for yy in y_arr], dtype=float)
+def dM_array(y_arr, CL):
+    return np.asarray([dM(float(yy), CL) for yy in y_arr], dtype=float)
 #Define AOA as function of CL
 def alpha(CL):
     return 10*(CL-CL0)/(CL10-CL0)

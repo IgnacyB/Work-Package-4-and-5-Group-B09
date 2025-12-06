@@ -10,14 +10,14 @@ def MOI(y):
 
     if n_spars > 2:
         if y < end_third_spar*b/2:
-            MOI_value = MOI_multi_cell(y)
+            MOI_value, x_centroid = MOI_multi_cell(y)
         else:
-            MOI_value = MOI_single_cell(y)
+            MOI_value, x_centroid = MOI_single_cell(y)
 
     else:
-        MOI_value = MOI_single_cell(y)
+        MOI_value, x_centroid = MOI_single_cell(y)
 
-    return MOI_value
+    return MOI_value, x_centroid
 
 
 def MOI_single_cell(y):
@@ -96,7 +96,7 @@ def MOI_single_cell(y):
     MOI_total = MOI_front_spar + MOI_rear_spar + MOI_stringer + MOI_top + MOI_bottom
    
     
-    return MOI_total
+    return MOI_total, x_centroid
 
 def check_even(n):
     if n % 2 ==0:
@@ -197,7 +197,7 @@ def MOI_multi_cell(y):
     MOI_total = MOI_front_spar + MOI_rear_spar + MOI_middle_spar + MOI_stringer + MOI_top + MOI_bottom
    
     
-    return MOI_total
+    return MOI_total, x_centroid
 
 
 def plot_MOI_single_cell(y=None, n=200, figsize=(10,4), dpi=100):
