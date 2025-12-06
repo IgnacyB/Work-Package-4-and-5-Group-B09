@@ -28,7 +28,7 @@ f_dist = None
 
 #Assumptions
 #The wing and fuel weight force act in the centroid of the wingbox
-x_bar_c = MOI(y_arr)[1]  # x-coordinate of centroid of wingbox as function of spanwise location
+x_bar_c= np.vectorize(lambda y: MOI(y)[1])(y_arr)  # x-coordinate of centroid of wingbox as function of spanwise location
 x_lift = 1/4 #location of aerodynamic lift assumed to be at quarter chord
 
 #WEIGHT DISTRIBUTION (HALF OF SPAN)
