@@ -17,7 +17,7 @@ def MOI(y):
     else:
         MOI_value, x_centroid = MOI_single_cell(y)
 
-    return MOI_value
+    return MOI_value, x_centroid
 
 
 def MOI_single_cell(y):
