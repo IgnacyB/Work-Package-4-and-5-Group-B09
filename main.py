@@ -44,7 +44,7 @@ Load_cases_ids = [case[0] for case in Load_cases_list]
 #=================User input=================#
 choice = input("Do you want to analyse specyfic Load cases or most constraining ones? (input 1 for specific, 2 for constraining): ")
 if choice == '1':
-    print("Available load cases are presebted in the file 'Loadcases.txt'")
+    print("Available load cases are presented in the file 'Loadcases.txt'")
     selected_idxs = input("Enter the case indetifiers separated by commas (e.g., LC-1,LC-2,LC-3): ")
     try:
         selected_idxs = [idx.strip() for idx in selected_idxs.split(',')]
