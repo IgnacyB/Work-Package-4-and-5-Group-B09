@@ -17,7 +17,7 @@ from grid_setup import y_arr
 def lateral_deflection_function():
 
     #vectorize MOI calculations
-    MOI_vec = np.vectorize(MOI)
+    MOI_vec = np.vectorize(lambda y: MOI(y)[0])
     MOI_grid = MOI_vec(y_arr)
     #calculate M and h 
     M_grid = M()
