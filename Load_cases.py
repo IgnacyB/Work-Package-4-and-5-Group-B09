@@ -1,10 +1,10 @@
 #Put here cases from V-n diaagrams
 
 #============CASE I============#
-mass_aircraft = 2.9 * 9425  # Mass of the aircraft in kg
+mass_aircraft = 2.9 * 9425 * 1.5  # Mass of the aircraft in kg
 v_cruise =  121.5 # Flight speed in m/s
 rho_cruise = 1.225 # Air density at cruise altitude in kg/m^3
-mass_fuel = 2.9 * 2622 # Total fuel mass in kg
+mass_fuel = 2.9 * 2622 * 1.5 # Total fuel mass in kg
 
 #============CASE II============#
 
