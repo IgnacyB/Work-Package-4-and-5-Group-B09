@@ -10,6 +10,7 @@ from Aircraft_parameters import mass_wing, n_fuel, b, c_r, c_t, c, S_w
 from scipy.integrate import cumulative_trapezoid
 #importing functions from other files if needed
 from XFLRextraction import dL_array, dD_array, dM_array, alpha, set_flight_conditions
+from CENTROID import get_centroid
 
 #importing y grid
 from grid_setup import y_arr
@@ -27,7 +28,7 @@ f_dist = None
 
 #Assumptions
 #The wing and fuel weight force act in the centroid of the wingbox
-x_bar_c = 1/2 #location of centroid of wing box assumed to be at half the chord (Should be update with more accurate data!!!)
+x_bar_c = get_centroid()[0]  #location of centroid of wingbox
 x_lift = 1/4 #location of aerodynamic lift assumed to be at quarter chord
 
 #WEIGHT DISTRIBUTION (HALF OF SPAN)
@@ -66,7 +67,7 @@ def set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fue
 
 #DISTANCE FROM LIFT TO CENTROID OF WINGBOX AS FUNCTION OF SPANWISE LOCATION
 def distance_lift_centroid(x_bar_c, x_lift):
-    return (x_bar_c - x_lift) * c(y_arr)
+    return (x_bar_c) - x_lift * c(y_arr)
 
 def dN():
     if CL_op is None:
