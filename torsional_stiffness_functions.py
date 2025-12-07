@@ -1,10 +1,8 @@
 import numpy as np
 import scipy as sp
-from scipy import interpolate
 
 
-#function that takes the chordwise position of a spar as input and outputs the y-coordinates of the upper and lower airfoil surfaces
-#function is done
+#function that takes chordwise position and outputs the normalized distance to upper and lower airfoil skin
 def find_sparheight(chord_pos):
     x_pos_upper = [1.00000, 0.95033, 0.90066, 0.85090, 0.80103, 0.75107, 0.70101, 0.65086, 0.60064, 0.55035, 0.50000,  0.44962, 0.39923, 0.34884, 0.29846, 0.24881, 0.19781, 0.14757, 0.09746, 0.07247, 0.04757, 0.02283, 0.01059, 0.00580, 0.00347, 0.00000]
     x_pos_lower = [0.00000, 0.00653, 0.00920, 0.01441, 0.02717, 0.05243, 0.07753, 0.10254, 0.15243, 0.20219, 0.25189, 0.30154, 0.35116, 0.40077, 0.45038, 0.50000, 0.54965, 0.59936, 0.64914, 0.69899, 0.74893, 0.79897, 0.84910, 0.89934, 0.94967, 1.00000]
@@ -21,14 +19,16 @@ from airfoil_geometry import *
 from Aircraft_parameters import c_r, c_t, b
 from material_properties import G
 
+#function that outputs the torsional constant J at a position y along the span
 def torsional_constant(y):
-    #calculating J for MULTICELL -> THREE SPARS
+
+    #calculate chord
+    c = c_r-((c_r-c_t)/(b/2))*y
+
+    #calculating J for THREE SPARS
     if n_spars > 2 and y < end_third_spar*b/2: 
 
-            #calculate c as a function of y
-            c = c_r-((c_r-c_t)/(b/2))*y
-
-            #calculate distance to upper and lower surface for 3 spars
+            #find normalized distance to upper and lower surface for all 3 spars
             h_upper_front, h_lower_front = find_sparheight(location_front)
             h_upper_middle, h_lower_middle = find_sparheight(location_middle)
             h_upper_rear, h_lower_rear = find_sparheight(location_rear)
@@ -51,15 +51,14 @@ def torsional_constant(y):
             solution = np.linalg.solve(lefthand_matrix, righthand_matrix)
             twist_rate = solution[2]
 
+            #return torsional constant 
             J_y = 1/(G*twist_rate)
 
 
-    #calculating J for SINGLE CELL -> TWO SPARS
+    #calculating J for TWO SPARS
     else:
-            #calculate c as a function of y
-            c = c_r-((c_r-c_t)/(b/2))*y
 
-            #calculate distance to upper and lower surface for 2 spars
+            #find normalized distance to upper and lower surface for 2 spars
             h_upper_front, h_lower_front = find_sparheight(location_front)
             h_upper_rear, h_lower_rear = find_sparheight(location_rear)
 
@@ -67,7 +66,7 @@ def torsional_constant(y):
             l_upper = np.sqrt(((location_rear-location_front)*c)**2+((h_upper_rear-h_upper_front)*c)**2)
             l_lower = np.sqrt(((location_rear-location_front)*c)**2+((h_lower_rear-h_lower_front))**2)
 
-            #calculate enclosed area, integral and torsional stiffness
+            #calculate enclosed area, path integral and torsional stiffness constant
             A = ((location_rear-location_front)*c*c*((h_upper_front-h_lower_front)+(h_upper_rear-h_lower_rear)))/2
             int = (l_upper/t_skin)+(l_lower/t_skin)+((h_upper_front-h_lower_front)*c/t_front)+((h_upper_rear-h_lower_rear)*c/t_rear)
             J_y = (4*A*A)/int
