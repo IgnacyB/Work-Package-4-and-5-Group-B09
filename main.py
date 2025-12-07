@@ -2,10 +2,7 @@
 import load_calculations
 import internal_load_diagrams as ild
 import Deflection_Graphs as defl
-import numpy as np
-from Aircraft_parameters import b
 
-shared_y = np.linspace(0, b/2, 600)
 #=================Load cases extraction=================#
 
 def parse_loadcases(path):
@@ -65,12 +62,10 @@ if choice == '1':
 
         # set per-case operating conditions in the module (no circular import)
         load_calculations.set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fuel)
-        # precompute once per case on shared grid
-        load_calculations.precompute_internal_loads(shared_y)
 
         print(f"Plotting internal loads for case {case[0]}")
         title=f"Load case {case[0]} (v={v_cruise} m/s, n={load_factor})"
-        ild.plot_internal_loads(y=shared_y, title=title)
+        ild.plot_internal_loads(title=title)
         print(f"Plotting deflections for case {case[0]}")
         defl.plot_lateral_deflection(title=title)
         defl.plot_twist_distribution(title=title)
@@ -89,7 +84,6 @@ elif choice == '2':
 
         # set per-case operating conditions in the module (no circular import)
         load_calculations.set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fuel)
-        load_calculations.precompute_internal_loads(shared_y)
 
         M_case = (load_calculations.M())[0]
         T_case = (load_calculations.T())[0]
@@ -126,7 +120,6 @@ elif choice == '2':
         
         # configure load_calculations for this case and precompute grid for speed
         load_calculations.set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fuel)
-        load_calculations.precompute_internal_loads(shared_y)
 
         # build descriptive title indicating why this case is critical
         reasons = []
@@ -142,7 +135,7 @@ elif choice == '2':
 
         title = f"Load case {case[0]} — {reason_str}"
         print(f"Plotting internal loads for case {case[0]} (index {idx}): {reason_str}")
-        ild.plot_internal_loads(y=shared_y, title=title)
+        ild.plot_internal_loads(title=title)
         # pass the descriptive title to deflection plots so they indicate the load case
         defl.plot_lateral_deflection(title=title)
         defl.plot_twist_distribution(title=title)

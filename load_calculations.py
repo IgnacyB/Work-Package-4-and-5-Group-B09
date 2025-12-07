@@ -254,66 +254,11 @@ def plot_integrated_dL(y=None, n=300):
     plt.tight_layout()
     plt.show()
 
-def precompute_internal_loads(y_grid):
-    """Precompute V, T, M on a shared ascending y_grid and cache them."""
-    global _grid_y, _grid_V, _grid_T, _grid_M
-
-    y = np.asarray(y_grid, dtype=float)
-    if y.ndim != 1 or y.size < 2 or not np.all(np.diff(y) > 0):
-        raise ValueError("y_grid must be 1D strictly ascending")
-
-    # evaluate distributed loads on y
-    dV_arr = dV(y)  # ensure dV returns arrays on input arrays
-    dT_arr = dT(y)
-
-    # integrate from root then shift so tip=0
-    cum_dV = cumulative_trapezoid(dV_arr, y, initial=0.0)
-    cum_dT = cumulative_trapezoid(dT_arr, y, initial=0.0)
-    V_arr = cum_dV - cum_dV[-1]
-    T_arr = cum_dT - cum_dT[-1]
-
-    # bending moment: integrate V and shift so M(b/2)=0
-    cum_V = cumulative_trapezoid(V_arr, y, initial=0.0)
-    M_arr = cum_V - cum_V[-1]
-
-    _grid_y, _grid_V, _grid_T, _grid_M = y, V_arr, T_arr, M_arr
-
-def V(y):
-    y_arr = np.asarray(y, dtype=float)
-    if y_arr.ndim == 0:
-        if _grid_y is not None:
-            return float(np.interp(y_arr, _grid_y, _grid_V))
-    else:
-        if _grid_y is not None:
-            return np.interp(y_arr, _grid_y, _grid_V)
-
-    # fallback: compute on-the-fly on provided y_arr
-    dV_arr = dV(y_arr)
-    cum_dV = cumulative_trapezoid(dV_arr, y_arr, initial=0.0)
-    return cum_dV - cum_dV[-1]
-
-def T(y):
-    y_arr = np.asarray(y, dtype=float)
-    if y_arr.ndim == 0:
-        if _grid_y is not None:
-            return float(np.interp(y_arr, _grid_y, _grid_T))
-    else:
-        if _grid_y is not None:
-            return np.interp(y_arr, _grid_y, _grid_T)
-
-    dT_arr = dT(y_arr)
-    cum_dT = cumulative_trapezoid(dT_arr, y_arr, initial=0.0)
-    return cum_dT - cum_dT[-1]
-
-def M(y):
-    y_arr = np.asarray(y, dtype=float)
-    if y_arr.ndim == 0:
-        if _grid_y is not None:
-            return float(np.interp(y_arr, _grid_y, _grid_M))
-    else:
-        if _grid_y is not None:
-            return np.interp(y_arr, _grid_y, _grid_M)
-
-    V_arr = V(y_arr)
-    cum_V = cumulative_trapezoid(V_arr, y_arr, initial=0.0)
-    return cum_V - cum_V[-1]
+if __name__ == "__main__":
+    plot_internal_loads(y_arr)
+    plot_distributed_loads(y_arr)
+    plot_dN(y_arr)
+    plot_dL(y_arr)
+    plot_wing_and_fuel_distributions(y_arr)
+    plot_integrated_distributions(y_arr)
+    plot_integrated_dL(y_arr)
