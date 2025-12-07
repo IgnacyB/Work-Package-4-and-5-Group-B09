@@ -86,15 +86,15 @@ def area_for_fuel(y):
 #2780 kg/m^3
 Density = 2780 
 
-Area_at_root = area_for_fuel(0)
-Area_at_tip = area_for_fuel(b/2)
-print(Area_at_root)
-print(Area_at_tip)
+# Area_at_root = area_for_fuel(0)
+# Area_at_tip = area_for_fuel(b/2)
+# print(Area_at_root)
+# print(Area_at_tip)
 
 Volume_material, error1 = quad(area_of_material,0,b/2)
-Volume_fuel, erro2 = quad(area_for_fuel,0,b/2)
+Volume_fuel, error2 = quad(area_for_fuel,0,b/2)
 
 Mass = Density*Volume_material
 print("The volume is ",Volume_material)
 print("The fuel volume is ",Volume_fuel, "m^3")
-print("The mass of the wingbox structure is", Mass)
+print("The mass of the wingbox structure is", Mass, "kg")
