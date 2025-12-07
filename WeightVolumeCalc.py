@@ -15,9 +15,7 @@ def area_of_material (y):
 
     from Aircraft_parameters import b, c_r, c_t
     from torsional_stiffness_functions import find_sparheight
-    from MOI import check_even
     from CENTROID import get_stringer_coordinates_only
-    from CENTROID import get_centroid
 
     #calculate chord
     chord = c_r-((c_r-c_t)/(b/2))*y
@@ -34,10 +32,6 @@ def area_of_material (y):
     spars = []
     spars.append(chord_position_front)
     spars.append(chord_position_rear)
-
-    stringer_chord = get_stringer_coordinates_only(chord,spars,n_stringer)
-
-    #print(stringer_chord)
 
     # code to calculate MOI for front and rear spar
 
@@ -72,9 +66,6 @@ def area_for_fuel(y):
 
     from Aircraft_parameters import b, c_r, c_t
     from torsional_stiffness_functions import find_sparheight
-    from MOI import check_even
-    from CENTROID import get_stringer_coordinates_only
-    from CENTROID import get_centroid
 
     #calculate chord
     chord = c_r-((c_r-c_t)/(b/2))*y
