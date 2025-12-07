@@ -3,6 +3,7 @@ import numpy as np
 import scipy as sp
 from Aircraft_parameters import b
 import matplotlib.pyplot as plt
+from thickness_distribution import t_front_func, t_middle_func, t_rear_func
 
 """
 The main MOI function is a logic function. If check for the different cases of the design what equation to use.
@@ -41,9 +42,12 @@ Therefore more in depth working of the code is only explained in single cell, mu
 def MOI_single_cell(y):
     #import the necessary parameters form other files x
     from airfoil_geometry import t_skin as skin_thickness
-    from airfoil_geometry import t_middle as thickness_middle
-    from airfoil_geometry import t_front as thickness_front
-    from airfoil_geometry import t_rear as thickness_rear
+    from thickness_distribution import t_middle_func
+    thickness_middle = t_middle_func(y)
+    from thickness_distribution import t_front_func
+    thickness_front = t_front_func(y)
+    from thickness_distribution import t_rear_func 
+    thickness_rear = t_rear_func(y)
     from airfoil_geometry import a_stringer as mass_stringer
     from airfoil_geometry import n_stringer
     from airfoil_geometry import location_front as chord_position_front
@@ -119,9 +123,12 @@ def MOI_single_cell(y):
 def MOI_multi_cell(y):
     #import the necessary functions from other
     from airfoil_geometry import t_skin as skin_thickness
-    from airfoil_geometry import t_middle as thickness_middle
-    from airfoil_geometry import t_front as thickness_front
-    from airfoil_geometry import t_rear as thickness_rear
+    from thickness_distribution import t_middle_func
+    thickness_middle = t_middle_func(y)
+    from thickness_distribution import t_front_func
+    thickness_front = t_front_func(y)
+    from thickness_distribution import t_rear_func 
+    thickness_rear = t_rear_func(y)
     from airfoil_geometry import a_stringer as mass_stringer
     from airfoil_geometry import n_stringer
     from airfoil_geometry import location_front as chord_position_front
@@ -273,6 +280,12 @@ def plot_MOI_multi_cell(y=None, n=200, figsize=(10,4), dpi=100):
     ax.legend(fontsize=9)
     plt.tight_layout()
     plt.show()
+
+#Setting MOI grid for further calculations
+from grid_setup import y_arr
+MOI_vec = np.vectorize(MOI)
+MOI_grid = MOI_vec(y_arr)[0]  # extract only MOI values, not centroids
+cx_grid = MOI_vec(y_arr)[1]  # extract only centroid x locations
 
 if __name__ == "__main__":
     plot_MOI_single_cell()

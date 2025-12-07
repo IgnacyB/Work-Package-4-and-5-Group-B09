@@ -1,4 +1,6 @@
-t_front = 0.0016 #m
+#spar thickness varies linearly along the spar's span'
+
+t_front = 0.0016 #m 
 t_front_2 = 0.0016 #m
 t_middle = 0.0016 #m
 t_middle_2 = 0.0016 #m
