@@ -7,9 +7,9 @@ from scipy.integrate import quad
 def area_of_material (y):
     #import the necessary functions from other
     from airfoil_geometry import t_skin as skin_thickness
-    from airfoil_geometry import t_front as thickness_front
-    from airfoil_geometry import t_middle as thickness_middle
-    from airfoil_geometry import t_rear as thickness_rear
+    #from airfoil_geometry import t_front as thickness_front
+    #from airfoil_geometry import t_middle as thickness_middle
+    #from airfoil_geometry import t_rear as thickness_rear
     from airfoil_geometry import a_stringer as mass_stringer
     from airfoil_geometry import n_stringer
     from airfoil_geometry import location_front as chord_position_front
@@ -20,6 +20,12 @@ def area_of_material (y):
 
     from Aircraft_parameters import b, c_r, c_t
     from torsional_stiffness_functions import find_sparheight
+    import thickness_distribution as t
+
+    thickness_front = t.t_front_func(y)
+    thickness_middle =  t.t_middle_func(y)
+    thickness_rear = t.t_rear_func(y)
+
 
     #calculate chord
     chord = c_r-((c_r-c_t)/(b/2))*y
