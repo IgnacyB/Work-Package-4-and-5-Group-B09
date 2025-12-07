@@ -8,7 +8,7 @@ from scipy.interpolate import interp1d
 
 #import constants from other files
 from material_properties import E
-from MOI import MOI
+from MOI import MOI_grid
 from load_calculations import M
 from Aircraft_parameters import b
 
@@ -16,9 +16,6 @@ from Aircraft_parameters import b
 from grid_setup import y_arr
 def lateral_deflection_function():
 
-    #vectorize MOI calculations
-    MOI_vec = np.vectorize(lambda y: MOI(y)[0])
-    MOI_grid = MOI_vec(y_arr)
     #calculate M and h 
     M_grid = M()
     h_grid = M_grid / (E * MOI_grid)

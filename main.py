@@ -1,8 +1,6 @@
-#Import necessary modules
-import load_calculations
-import internal_load_diagrams as ild
-import Deflection_Graphs as defl
 
+#=================STARTING POINT OF THE PROGRAM=================#
+print("Starting load analysis program...")
 #=================Load cases extraction=================#
 
 def parse_loadcases(path):
@@ -41,6 +39,12 @@ def parse_loadcases(path):
 
 Load_cases_list = parse_loadcases('Loadcases.txt')
 Load_cases_ids = [case[0] for case in Load_cases_list]
+
+#=================Importing necessary modules=================#
+import load_calculations
+import internal_load_diagrams as ild
+import Deflection_Graphs as defl
+from internal_load_diagrams import plot_all_cases_internal_distributions
 #=================User input=================#
 choice = input("Do you want to analyse specyfic Load cases or most constraining ones? (input 1 for specific, 2 for constraining): ")
 if choice == '1':
@@ -69,6 +73,11 @@ if choice == '1':
         print(f"Plotting deflections for case {case[0]}")
         defl.plot_lateral_deflection(title=title)
         defl.plot_twist_distribution(title=title)
+
+    #Plotting all internal distributions for selected load cases
+    if len(Load_cases_list) > 1:
+        print("Plotting all selected load cases internal distributions")
+        plot_all_cases_internal_distributions(Load_cases_list, load_calculations)
     
 elif choice == '2':
     Bending_moment_list = []
@@ -140,7 +149,6 @@ elif choice == '2':
         defl.plot_lateral_deflection(title=title)
         defl.plot_twist_distribution(title=title)
 
-    from internal_load_diagrams import plot_all_cases_internal_distributions
 
     print("Plotting all load cases internal distributions")
     plot_all_cases_internal_distributions(Load_cases_list, load_calculations)

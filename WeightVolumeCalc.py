@@ -107,8 +107,8 @@ def area_for_fuel(y):
         y_top_middle_spar = y_top_middle_spar_percentage*chord
         y_bottom_middle_spar = y_bottom_middle_spar_percentage*chord
 
-        Area_1 = ((y_top_front_spar-y_bottom_front_spar)+(y_top_middle_spar-y_bottom_middle_spar)/2)*(chord_position_middle*chord-chord_position_front*chord)
-        Area_2 = ((y_top_rear_spar-y_bottom_rear_spar)+ (y_top_middle_spar-y_bottom_middle_spar)/2)*(chord_position_rear*chord - chord_position_middle*chord)
+        Area_1 = ((y_top_front_spar-y_bottom_front_spar)+(y_top_middle_spar-y_bottom_middle_spar))/2*(chord_position_middle*chord-chord_position_front*chord)
+        Area_2 = ((y_top_rear_spar-y_bottom_rear_spar)+ (y_top_middle_spar-y_bottom_middle_spar))/2*(chord_position_rear*chord - chord_position_middle*chord)
         Area = Area_1+Area_2
 
         return Area
