@@ -12,6 +12,8 @@ from MOI import MOI
 from load_calculations import M
 from Aircraft_parameters import b
 
+#importing y grid
+from grid_setup import y_arr
 def lateral_deflection_function():
 
     #define grid with y positions
@@ -21,21 +23,15 @@ def lateral_deflection_function():
     print(y_max)
 
     #vectorize MOI calculations
-    MOI_vec = np.vectorize(MOI)
-    MOI_grid = MOI_vec(y_grid)
-
+    MOI_vec = np.vectorize(lambda y: MOI(y)[0])
+    MOI_grid = MOI_vec(y_arr)
     #calculate M and h 
-    M_grid = M(y_grid)
+    M_grid = M()
     h_grid = M_grid / (E * MOI_grid)
 
     #double integration to obtain deflection profile
-    dvdy_grid = -1 * cumulative_trapezoid(h_grid, y_grid, initial=0)
-    v_grid = cumulative_trapezoid(dvdy_grid, y_grid, initial = 0)
-
-    #make function callable
-    # h = interp1d(y_grid, h_grid, fill_value = "extrapolate")
-    # dvdy = interp1d(y_grid, dvdy_grid, fill_value = "extrapolate")
-    lateral_deflection = interp1d(y_grid, v_grid, fill_value = "extrapolate")
+    dvdy_grid = -1 * cumulative_trapezoid(h_grid, y_arr, initial=0)
+    v_grid = cumulative_trapezoid(dvdy_grid, y_arr, initial = 0)
 
     return(y_grid, v_grid)
 
