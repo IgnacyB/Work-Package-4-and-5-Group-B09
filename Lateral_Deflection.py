@@ -36,5 +36,3 @@ def lateral_deflection_function():
     return(y_grid, v_grid)
 
 # lateral_deflection_at_tip = lateral_deflection_function()[1][-1]
-
-lateral_deflection_function()
