@@ -16,6 +16,7 @@ def area_of_material (y):
     from airfoil_geometry import location_middle as chord_position_middle
     from airfoil_geometry import location_rear as chord_position_rear
     from airfoil_geometry import n_spars 
+    from airfoil_geometry import end_third_spar
 
     from Aircraft_parameters import b, c_r, c_t
     from torsional_stiffness_functions import find_sparheight
@@ -39,7 +40,7 @@ def area_of_material (y):
     A_rear_spar = thickness_rear*(y_top_rear_spar-y_bottom_rear_spar)
 
     # code to calculate MOI for front and rear spar
-    if n_spars > 2:
+    if n_spars > 2 and y < end_third_spar*b/2:
 
         A_middle_spar = thickness_middle*(y_top_middle_spar-y_bottom_middle_spar)
         
@@ -49,7 +50,7 @@ def area_of_material (y):
 
         A_flange_top_rear = skin_thickness*np.sqrt(np.power((y_top_middle_spar-y_top_rear_spar),2) + np.power((chord_position_middle*chord-chord_position_rear*chord),2))
         A_flange_bottom_rear = skin_thickness*np.sqrt(np.power((y_bottom_middle_spar-y_bottom_front_spar),2) + np.power((chord_position_middle*chord-chord_position_front*chord),2))
-        A_bottom = A_flange_bottom_front + A_flange_bottom_rear
+        A_bottom = A_flange_top_rear + A_flange_bottom_rear
         
     else:
 
@@ -75,6 +76,7 @@ def area_for_fuel(y):
     from airfoil_geometry import location_middle as chord_position_middle
     from airfoil_geometry import location_rear as chord_position_rear
     from airfoil_geometry import n_spars 
+    from airfoil_geometry import end_third_spar
 
     from Aircraft_parameters import b, c_r, c_t
     from torsional_stiffness_functions import find_sparheight
@@ -83,8 +85,8 @@ def area_for_fuel(y):
     chord = c_r-((c_r-c_t)/(b/2))*y
     # code to open the data file for geometry and location stringers 
 
-
-    if n_spars > 2:
+        #
+    if n_spars > 2 and y < end_third_spar*b/2:
 
         y_top_front_spar_percentage, y_bottom_front_spar_percentage = find_sparheight(chord_position_front)
         y_top_rear_spar_percentage, y_bottom_rear_spar_percentage = find_sparheight(chord_position_rear)
@@ -119,11 +121,7 @@ def area_for_fuel(y):
 
 #2780 kg/m^3
 from material_properties import rho as Density
-
-# Area_at_root = area_for_fuel(0)
-# Area_at_tip = area_for_fuel(b/2)
-# print(Area_at_root)
-# print(Area_at_tip)
+from grid_setup import y_arr
 
 Volume_material, error1 = quad(area_of_material,0,b/2)
 Volume_fuel, error2 = quad(area_for_fuel,0,b/2)
