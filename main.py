@@ -2,7 +2,8 @@
 import load_calculations
 import internal_load_diagrams as ild
 import Deflection_Graphs as defl
-
+#=================STARTING POINT OF THE PROGRAM=================#
+print("Starting load analysis program...")
 #=================Load cases extraction=================#
 
 def parse_loadcases(path):
