@@ -1,7 +1,4 @@
-#Import necessary modules
-import load_calculations
-import internal_load_diagrams as ild
-import Deflection_Graphs as defl
+
 #=================STARTING POINT OF THE PROGRAM=================#
 print("Starting load analysis program...")
 #=================Load cases extraction=================#
@@ -43,7 +40,10 @@ def parse_loadcases(path):
 Load_cases_list = parse_loadcases('Loadcases.txt')
 Load_cases_ids = [case[0] for case in Load_cases_list]
 
-
+#=================Importing necessary modules=================#
+import load_calculations
+import internal_load_diagrams as ild
+import Deflection_Graphs as defl
 #=================User input=================#
 choice = input("Do you want to analyse specyfic Load cases or most constraining ones? (input 1 for specific, 2 for constraining): ")
 if choice == '1':
