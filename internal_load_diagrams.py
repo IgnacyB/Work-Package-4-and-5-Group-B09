@@ -3,40 +3,30 @@ import numpy as np
 import math
 #Importing important constants and functions
 from Aircraft_parameters import b
-from load_calculations import V, T, M   
+from load_calculations import V, T, M, precompute_internal_loads   
 
 #importing y grid
 from grid_setup import y_arr
 
-def plot_internal_loads(title=None):
-    V_arr = V()
-    T_arr = T()
-    M_arr = M()
+def plot_internal_loads(y=None, n=600, title=None):
+    y = np.asarray(y if y is not None else np.linspace(0, b/2, n), dtype=float)
 
-    fig, axs = plt.subplots(3, 1, figsize=(8, 10), constrained_layout=True)
+    # precompute on the same grid used for plotting
+    try:
+        precompute_internal_loads(y)
+    except Exception:
+        pass
 
+    V_arr = V(y)
+    T_arr = T(y)
+    M_arr = M(y)
+
+    fig, axs = plt.subplots(3, 1, figsize=(9, 10), constrained_layout=True)
     if title:
         fig.suptitle(title, fontsize=14)
-
-    axs[0].plot(y_arr, V_arr, lw=2, color="tab:blue")
-    axs[0].axhline(0, color="k", lw=0.6)
-    axs[0].set_ylabel("V(y) [N]")
-    axs[0].set_title("Internal Shear Force along wing span")
-    axs[0].grid(True)
-
-    axs[1].plot(y_arr, T_arr, lw=2, color="tab:green")
-    axs[1].axhline(0, color="k", lw=0.6)
-    axs[1].set_ylabel("T(y) [N·m]")
-    axs[1].set_title("Internal Torque along wing span")
-    axs[1].grid(True)
-
-    axs[2].plot(y_arr, M_arr, lw=2, color="tab:red")
-    axs[2].axhline(0, color="k", lw=0.6)
-    axs[2].set_xlabel("Spanwise coordinate y [m]")
-    axs[2].set_ylabel("M(y) [N·m]")
-    axs[2].set_title("Internal Bending Moment along wing span")
-    axs[2].grid(True)
-
+    axs[0].plot(y, V_arr, lw=2); axs[0].set_ylabel("V(y) [N]"); axs[0].grid(True)
+    axs[1].plot(y, T_arr, lw=2); axs[1].set_ylabel("T(y) [N·m]"); axs[1].grid(True)
+    axs[2].plot(y, M_arr, lw=2); axs[2].set_xlabel("y (m)"); axs[2].set_ylabel("M(y) [N·m]"); axs[2].grid(True)
     plt.show()
 
 def plot_all_cases_internal_distributions(Load_cases_list, load_calculations, case_indexes=None, split_legend=False):
