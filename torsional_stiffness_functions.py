@@ -15,15 +15,21 @@ def find_sparheight(chord_pos):
 
 
 #import data
-from airfoil_geometry import *
+from airfoil_geometry import n_spars, end_third_spar, location_front, location_middle, location_rear, t_skin
 from Aircraft_parameters import c_r, c_t, b
 from material_properties import G
+from thickness_distribution import t_front_func, t_middle_func, t_rear_func
 
 #function that outputs the torsional constant J at a position y along the span
 def torsional_constant(y):
 
     #calculate chord
     c = c_r-((c_r-c_t)/(b/2))*y
+
+    #calculate thickness of spars
+    t_front = t_front_func(y)
+    t_middle = t_middle_func(y)
+    t_rear = t_rear_func(y)
 
     #calculating J for THREE SPARS
     if n_spars > 2 and y < end_third_spar*b/2: 
