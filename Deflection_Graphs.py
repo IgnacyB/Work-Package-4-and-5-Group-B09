@@ -12,7 +12,7 @@ from grid_setup import y_arr
 def plot_lateral_deflection(title=None):
     """Plot lateral deflection. If title provided, include it in the figure title."""
 
-    plt.plot(y_grid, v_grid, lw=2, color="tab:blue")
+    plt.plot(y_arr, v_grid, lw=2, color="tab:blue")
     if v_grid[-1] < 0:
         plt.gca().invert_yaxis()
 
