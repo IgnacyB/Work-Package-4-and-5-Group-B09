@@ -10,7 +10,7 @@ from Aircraft_parameters import mass_wing, n_fuel, b, c_r, c_t, c, S_w
 from scipy.integrate import cumulative_trapezoid
 #importing functions from other files if needed
 from XFLRextraction import dL_array, dD_array, dM_array, alpha, set_flight_conditions
-from MOI import MOI
+from MOI import cx_grid
 
 #importing y grid
 from grid_setup import y_arr
@@ -28,7 +28,7 @@ f_dist = None
 
 #Assumptions
 #The wing and fuel weight force act in the centroid of the wingbox
-x_bar_c= np.vectorize(lambda y: MOI(y)[1])(y_arr)  # x-coordinate of centroid of wingbox as function of spanwise location
+x_bar_c= cx_grid  # x-coordinate of centroid of wingbox as function of spanwise location
 x_lift = 1/4 #location of aerodynamic lift assumed to be at quarter chord
 
 #WEIGHT DISTRIBUTION (HALF OF SPAN)
