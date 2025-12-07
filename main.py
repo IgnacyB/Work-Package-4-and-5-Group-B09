@@ -73,10 +73,11 @@ if choice == '1':
         print(f"Plotting deflections for case {case[0]}")
         defl.plot_lateral_deflection(title=title)
         defl.plot_twist_distribution(title=title)
-    
+
     #Plotting all internal distributions for selected load cases
-    print("Plotting all selected load cases internal distributions")
-    plot_all_cases_internal_distributions(Load_cases_list, load_calculations)
+    if len(Load_cases_list) > 1:
+        print("Plotting all selected load cases internal distributions")
+        plot_all_cases_internal_distributions(Load_cases_list, load_calculations)
     
 elif choice == '2':
     Bending_moment_list = []
