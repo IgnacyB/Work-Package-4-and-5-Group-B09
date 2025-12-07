@@ -4,6 +4,21 @@ import scipy as sp
 from Aircraft_parameters import b
 import matplotlib.pyplot as plt
 from thickness_distribution import t_front_func, t_middle_func, t_rear_func
+#import the necessary functions from other
+from airfoil_geometry import t_skin as skin_thickness
+from thickness_distribution import t_middle_func
+from thickness_distribution import t_front_func
+from thickness_distribution import t_rear_func 
+from airfoil_geometry import a_stringer as mass_stringer
+from airfoil_geometry import n_stringer
+from airfoil_geometry import location_front as chord_position_front
+from airfoil_geometry import location_rear as chord_position_rear
+from airfoil_geometry import location_middle as chord_position_middle
+#import needed functions
+from Aircraft_parameters import b, c_r, c_t
+from torsional_stiffness_functions import find_sparheight
+from CENTROID import get_stringer_coordinates_only
+from CENTROID import get_centroid
 
 """
 The main MOI function is a logic function. If check for the different cases of the design what equation to use.
@@ -40,23 +55,9 @@ Therefore more in depth working of the code is only explained in single cell, mu
 
 #MOI function for if we have a single cell design, so two spars
 def MOI_single_cell(y):
-    #import the necessary parameters form other files x
-    from airfoil_geometry import t_skin as skin_thickness
-    from thickness_distribution import t_middle_func
-    thickness_middle = t_middle_func(y)
-    from thickness_distribution import t_front_func
     thickness_front = t_front_func(y)
-    from thickness_distribution import t_rear_func 
+    thickness_middle = t_middle_func(y)
     thickness_rear = t_rear_func(y)
-    from airfoil_geometry import a_stringer as mass_stringer
-    from airfoil_geometry import n_stringer
-    from airfoil_geometry import location_front as chord_position_front
-    from airfoil_geometry import location_rear as chord_position_rear
-    #import necessary functions from other files
-    from Aircraft_parameters import b, c_r, c_t
-    from torsional_stiffness_functions import find_sparheight
-    from CENTROID import get_stringer_coordinates_only
-    from CENTROID import get_centroid
 
     #calculate chord
     chord = c_r-((c_r-c_t)/(b/2))*y
@@ -121,24 +122,10 @@ def MOI_single_cell(y):
 
 #calculate MOI in cases of a multicell concept so three spars
 def MOI_multi_cell(y):
-    #import the necessary functions from other
-    from airfoil_geometry import t_skin as skin_thickness
-    from thickness_distribution import t_middle_func
-    thickness_middle = t_middle_func(y)
-    from thickness_distribution import t_front_func
+    #Setup thicknesses
     thickness_front = t_front_func(y)
-    from thickness_distribution import t_rear_func 
+    thickness_middle = t_middle_func(y)
     thickness_rear = t_rear_func(y)
-    from airfoil_geometry import a_stringer as mass_stringer
-    from airfoil_geometry import n_stringer
-    from airfoil_geometry import location_front as chord_position_front
-    from airfoil_geometry import location_rear as chord_position_rear
-    from airfoil_geometry import location_middle as chord_position_middle
-    #import needed functions
-    from Aircraft_parameters import b, c_r, c_t
-    from torsional_stiffness_functions import find_sparheight
-    from CENTROID import get_stringer_coordinates_only
-    from CENTROID import get_centroid
 
     #calculate chord
     chord = c_r-((c_r-c_t)/(b/2))*y
