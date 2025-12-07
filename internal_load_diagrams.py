@@ -31,7 +31,7 @@ def plot_internal_loads(y=None, n=200, title=None):
 
     axs[2].plot(y, M_arr, lw=2, color="tab:red")
     axs[2].axhline(0, color="k", lw=0.6)
-    axs[2].set_xlabel("Spanwise coordinate y (m)")
+    axs[2].set_xlabel("Spanwise coordinate y [m]")
     axs[2].set_ylabel("M(y) [N·m]")
     axs[2].set_title("Internal Bending Moment along wing span")
     axs[2].grid(True)

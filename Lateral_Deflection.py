@@ -18,6 +18,7 @@ def lateral_deflection_function():
     n = 3000
     y_max = b/2
     y_grid = np.linspace(0, y_max, n)
+    print(y_max)
 
     #vectorize MOI calculations
     MOI_vec = np.vectorize(MOI)
@@ -39,3 +40,5 @@ def lateral_deflection_function():
     return(y_grid, v_grid)
 
 # lateral_deflection_at_tip = lateral_deflection_function()[1][-1]
+
+lateral_deflection_function()
