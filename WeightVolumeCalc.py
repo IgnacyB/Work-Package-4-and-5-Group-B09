@@ -84,7 +84,7 @@ def area_for_fuel(y):
     return Area
 
 #2780 kg/m^3
-Density = 2780 
+from material_properties import rho as Density
 
 # Area_at_root = area_for_fuel(0)
 # Area_at_tip = area_for_fuel(b/2)
