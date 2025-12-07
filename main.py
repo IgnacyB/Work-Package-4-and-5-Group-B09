@@ -41,6 +41,8 @@ def parse_loadcases(path):
 
 Load_cases_list = parse_loadcases('Loadcases.txt')
 Load_cases_ids = [case[0] for case in Load_cases_list]
+
+
 #=================User input=================#
 choice = input("Do you want to analyse specyfic Load cases or most constraining ones? (input 1 for specific, 2 for constraining): ")
 if choice == '1':

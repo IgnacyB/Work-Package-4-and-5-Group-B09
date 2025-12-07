@@ -281,6 +281,12 @@ def plot_MOI_multi_cell(y=None, n=200, figsize=(10,4), dpi=100):
     plt.tight_layout()
     plt.show()
 
+#Setting MOI grid for further calculations
+from grid_setup import y_grid
+MOI_vec = np.vectorize(MOI)
+MOI_grid = MOI_vec(y_grid)[0]  # extract only MOI values, not centroids
+cx_grid = MOI_vec(y_grid)[1]  # extract only centroid x locations
+
 if __name__ == "__main__":
     plot_MOI_single_cell()
     plot_MOI_multi_cell()
