@@ -1,4 +1,5 @@
 import numpy as np
+import scipy as sp
 
 # Code to calculate weight
 from Aircraft_parameters import b
@@ -7,9 +8,6 @@ from scipy.integrate import quad
 def area_of_material (y):
     #import the necessary functions from other
     from airfoil_geometry import t_skin as skin_thickness
-    #from airfoil_geometry import t_front as thickness_front
-    #from airfoil_geometry import t_middle as thickness_middle
-    #from airfoil_geometry import t_rear as thickness_rear
     from airfoil_geometry import a_stringer as mass_stringer
     from airfoil_geometry import n_stringer
     from airfoil_geometry import location_front as chord_position_front
@@ -26,7 +24,7 @@ def area_of_material (y):
     thickness_middle =  t.t_middle_func(y)
     thickness_rear = t.t_rear_func(y)
 
-
+    
     #calculate chord
     chord = c_r-((c_r-c_t)/(b/2))*y
     # code to open the data file for geometry and location stringers 
@@ -47,15 +45,15 @@ def area_of_material (y):
 
     # code to calculate MOI for front and rear spar
     if n_spars > 2 and y < end_third_spar*b/2:
-
+        
         A_middle_spar = thickness_middle*(y_top_middle_spar-y_bottom_middle_spar)
         
         A_flange_top_front = skin_thickness*np.sqrt(np.power((y_top_middle_spar-y_top_front_spar),2) + np.power((chord_position_middle*chord-chord_position_front*chord),2))
         A_flange_bottom_front = skin_thickness*np.sqrt(np.power((y_bottom_middle_spar-y_bottom_front_spar),2) + np.power((chord_position_middle*chord-chord_position_front*chord),2))
         A_top = A_flange_top_front + A_flange_bottom_front
-
+       
         A_flange_top_rear = skin_thickness*np.sqrt(np.power((y_top_middle_spar-y_top_rear_spar),2) + np.power((chord_position_middle*chord-chord_position_rear*chord),2))
-        A_flange_bottom_rear = skin_thickness*np.sqrt(np.power((y_bottom_middle_spar-y_bottom_front_spar),2) + np.power((chord_position_middle*chord-chord_position_front*chord),2))
+        A_flange_bottom_rear = skin_thickness*np.sqrt(np.power((y_bottom_middle_spar-y_bottom_rear_spar),2) + np.power((chord_position_middle*chord-chord_position_rear*chord),2))
         A_bottom = A_flange_top_rear + A_flange_bottom_rear
         
     else:
@@ -66,14 +64,18 @@ def area_of_material (y):
         distance_top = chord*(chord_position_rear-chord_position_front)/np.cos(alpha_top)
         distance_bottom = chord*(chord_position_rear-chord_position_front)/np.cos(alpha_bottom)
 
-        A_top = distance_top*skin_thickness
-        A_bottom = distance_bottom*skin_thickness
+        A_top = skin_thickness*np.sqrt(  np.power((y_top_front_spar-y_top_rear_spar),2) + np.power((chord_position_rear*chord - chord_position_front*chord),2))
+        A_bottom = skin_thickness*np.sqrt(  np.power((y_bottom_front_spar-y_bottom_rear_spar),2) + np.power((chord_position_rear*chord - chord_position_front*chord),2))
+        #A_top = distance_top*skin_thickness
+        #A_bottom = distance_bottom*skin_thickness
         A_middle_spar = 0
-
+   
     A_stringer = mass_stringer*n_stringer
 
-    A_total = A_front_spar+A_rear_spar+A_top+A_bottom+A_stringer + A_middle_spar
-   
+    A_total = A_front_spar + A_rear_spar + A_top + A_bottom + A_stringer + A_middle_spar
+    
+
+
     return A_total
 
 def area_for_fuel(y):
@@ -127,7 +129,8 @@ def area_for_fuel(y):
 
 #2780 kg/m^3
 from material_properties import rho as Density
-from grid_setup import y_arr
+
+test = area_of_material(4)
 
 Volume_material, error1 = quad(area_of_material,0,b/2)
 Volume_fuel, error2 = quad(area_for_fuel,0,b/2)
@@ -136,3 +139,16 @@ Mass = Density*Volume_material
 print("The volume is ",Volume_material)
 print("The fuel volume is ",Volume_fuel, "m^3")
 print("The mass of the wingbox structure is", Mass, "kg")
+
+#################################################################################
+"""
+
+from grid_setup import y_arr
+from scipy.integrate import cumulative_trapezoid
+
+Volume_material_vec = np.vectorize(lambda y: area_of_material(y))
+Volume_material_grid = Volume_material_vec(y_arr)
+Volume_2 = cumulative_trapezoid(Volume_material_grid, y_arr, initial = 0)
+Mass_2 =sum(Volume_2*Density)
+print("Second try at mass",Mass_2)
+"""
