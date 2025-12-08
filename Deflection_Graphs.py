@@ -48,7 +48,7 @@ def plot_twist_distribution(title=None):
     twist_deg = twist_grid * 180 / math.pi
 
     # Plot twist distribution
-    plt.plot(y_arr, twist_deg, lw=2, color="tab:blue")
+    plt.plot(y_arr, twist_deg, lw=2, color="tab:red")
 
     if twist_deg[-1] < 0:
         plt.gca().invert_yaxis()
@@ -61,7 +61,7 @@ def plot_twist_distribution(title=None):
     plt.xlabel("Spanwise position [m]")
     plt.ylabel("Angle of twist [degree]")
 
-    plt.plot(y_arr[-1], twist_deg[-1], marker='o', color='blue')
+    plt.plot(y_arr[-1], twist_deg[-1], marker='o', color='red')
 
     plt.annotate(
         f'{twist_deg[-1]:.2f}',
