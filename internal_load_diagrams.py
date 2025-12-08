@@ -1,5 +1,6 @@
-import matplotlib.pyplot as plt
+import os
 import numpy as np
+import matplotlib.pyplot as plt
 import math
 #Importing important constants and functions
 from Aircraft_parameters import b
@@ -8,10 +9,18 @@ from load_calculations import V, T, M
 #importing y grid
 from grid_setup import y_arr
 
-def plot_internal_loads(title=None):
-    V_arr = V()
-    T_arr = T()
-    M_arr = M()
+def _eval_on_grid(f, y):
+    try:
+        return np.asarray(f(y), dtype=float)  # function expects y
+    except TypeError:
+        return np.asarray(f(), dtype=float)   # function returns cached array
+
+def plot_internal_loads(title=None, case_id=None, save=False, save_dir=None):
+    """Plot V, T, M as three separate figures. Optionally save with naming:
+       'LC-XX Shear distribution', 'LC-XX Torque distribution', 'LC-XX Bending moment distribution'."""
+    V_arr = _eval_on_grid(V, y_arr)
+    T_arr = _eval_on_grid(T, y_arr)
+    M_arr = _eval_on_grid(M, y_arr)
 
     # Shear force — separate figure
     figV, axV = plt.subplots(figsize=(8, 4), constrained_layout=True)
@@ -45,6 +54,18 @@ def plot_internal_loads(title=None):
     axM.set_ylabel("M(y) [N·m]")
     axM.set_title("Internal Bending Moment along wing span")
     axM.grid(True)
+
+    # Optional saving with required naming convention
+    if save and case_id:
+        if save_dir:
+            os.makedirs(save_dir, exist_ok=True)
+            mk = lambda name: os.path.join(save_dir, f"{case_id} {name}.png")
+        else:
+            mk = lambda name: f"{case_id} {name}.png"
+
+        figV.savefig(mk("Shear distribution"), dpi=150, bbox_inches="tight")
+        figT.savefig(mk("Torque distribution"), dpi=150, bbox_inches="tight")
+        figM.savefig(mk("Bending moment distribution"), dpi=150, bbox_inches="tight")
 
     plt.show()
 

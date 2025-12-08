@@ -1,4 +1,3 @@
-
 #=================STARTING POINT OF THE PROGRAM=================#
 print("Starting load analysis program...")
 #=================Load cases extraction=================#
@@ -142,9 +141,10 @@ elif choice == '2':
             reasons.append("maximum negative torsion")
         reason_str = "; ".join(reasons) if reasons else "critical case"
 
-        title = f"Load case {case[0]} — {reason_str}"
+        title = f"Load case {case[0]}"
         print(f"Plotting internal loads for case {case[0]} (index {idx}): {reason_str}")
-        ild.plot_internal_loads(title=title)
+        # Save three separate figures with required filenames in the current folder
+        ild.plot_internal_loads(title=title, case_id=case[0], save=True)
         # pass the descriptive title to deflection plots so they indicate the load case
         defl.plot_lateral_deflection(title=title)
         defl.plot_twist_distribution(title=title)
