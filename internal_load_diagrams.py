@@ -3,18 +3,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import colorsys
 import math
-#Importing important constants and functions
 from Aircraft_parameters import b
-from load_calculations import V, T, M   
-
-#importing y grid
+from load_calculations import V, T, M
 from grid_setup import y_arr
 
 def _eval_on_grid(f, y):
     try:
-        return np.asarray(f(y), dtype=float)  # function expects y
+        return np.asarray(f(y), dtype=float)  # vector path
     except TypeError:
-        return np.asarray(f(), dtype=float)   # function returns cached array
+        return np.asarray(f(), dtype=float)   # cached path
 
 def _big_distinct_palette(n, hsv_sat=0.97, hsv_val=0.92, hsv_offset=0.11, mix=0.6):
     """
@@ -98,7 +95,14 @@ def plot_internal_loads(title=None, case_id=None, save=False, save_dir=None):
 
     plt.show()
 
-def plot_all_cases_internal_distributions(Load_cases_list, load_calculations, case_indexes=None, split_legend=False):
+def plot_all_cases_internal_distributions(Load_cases_list, load_calculations, case_indexes=None, split_legend=False, save=False, save_dir=None):
+    """
+    Plot V/T/M for multiple cases with a big distinct palette.
+    If save=True, writes three files:
+      'shear distribution all relevant cases.png'
+      'torque distribution all relevant cases.png'
+      'bending distribution all relevant cases.png'
+    """
     if case_indexes is None:
         case_indexes = list(range(len(Load_cases_list)))
 
@@ -106,7 +110,6 @@ def plot_all_cases_internal_distributions(Load_cases_list, load_calculations, ca
     figT, axT = plt.subplots(figsize=(9, 4))
     figM, axM = plt.subplots(figsize=(9, 4))
 
-    # bigger, distinct color palette for all load cases
     colors = _big_distinct_palette(len(case_indexes))
 
     for i, idx in enumerate(case_indexes):
@@ -130,10 +133,8 @@ def plot_all_cases_internal_distributions(Load_cases_list, load_calculations, ca
 
     axV.set_title("Internal Shear V(y) — multiple load cases")
     axV.set_ylabel("V(y) [N]")
-
     axT.set_title("Internal Torque T(y) — multiple load cases")
     axT.set_ylabel("T(y) [N·m]")
-
     axM.set_title("Bending Moment M(y) — multiple load cases")
     axM.set_ylabel("M(y) [N·m]")
 
@@ -153,6 +154,22 @@ def plot_all_cases_internal_distributions(Load_cases_list, load_calculations, ca
     else:
         for ax in (axV, axT, axM):
             ax.legend(ncol=2, loc="best", fontsize="small")
+
+    # saving for “all relevant cases”
+    if save:
+        if save_dir:
+            os.makedirs(save_dir, exist_ok=True)
+            pathV = os.path.join(save_dir, "shear distribution all relevant cases.png")
+            pathT = os.path.join(save_dir, "torque distribution all relevant cases.png")
+            pathM = os.path.join(save_dir, "bending distribution all relevant cases.png")
+        else:
+            pathV = "shear distribution all relevant cases.png"
+            pathT = "torque distribution all relevant cases.png"
+            pathM = "bending distribution all relevant cases.png"
+
+        figV.savefig(pathV, dpi=150, bbox_inches="tight")
+        figT.savefig(pathT, dpi=150, bbox_inches="tight")
+        figM.savefig(pathM, dpi=150, bbox_inches="tight")
 
     plt.show()
 
