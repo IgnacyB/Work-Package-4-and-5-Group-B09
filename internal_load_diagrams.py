@@ -1,36 +1,45 @@
 import matplotlib.pyplot as plt
 import numpy as np
-#Importing important constants and functions
 from Aircraft_parameters import b
-from load_calculations import V, T, M   
-#Defining y values for plotting
-def plot_internal_loads(y=None, n=200):
+from load_calculations import V, T, M
+
+def plot_internal_loads(y=None, n=200, title=None):
     if y is None:
         y = np.linspace(0, b/2, n)
+
     V_arr = V(y) if callable(V) else np.asarray(V)
     T_arr = T(y) if callable(T) else np.asarray(T)
     M_arr = M(y) if callable(M) else np.asarray(M)
 
-    fig, axs = plt.subplots(3, 1, figsize=(8, 10), constrained_layout=True)
+    # Shear force — separate figure
+    figV, axV = plt.subplots(figsize=(8, 4), constrained_layout=True)
+    if title: figV.suptitle(f"{title} — Shear V(y)")
+    axV.plot(y, V_arr, lw=2, color="tab:blue")
+    axV.axhline(0, color="k", lw=0.6)
+    axV.set_xlabel("Spanwise coordinate y (m)")
+    axV.set_ylabel("V(y) [N]")
+    axV.set_title("Internal Shear Force along wing span")
+    axV.grid(True)
 
-    axs[0].plot(y, V_arr, lw=2, color="tab:blue")
-    axs[0].axhline(0, color="k", lw=0.6)
-    axs[0].set_ylabel("V(y) [N]")
-    axs[0].set_title("Internal Shear Force along wing span")
-    axs[0].grid(True)
+    # Torque — separate figure
+    figT, axT = plt.subplots(figsize=(8, 4), constrained_layout=True)
+    if title: figT.suptitle(f"{title} — Torque T(y)")
+    axT.plot(y, T_arr, lw=2, color="tab:green")
+    axT.axhline(0, color="k", lw=0.6)
+    axT.set_xlabel("Spanwise coordinate y (m)")
+    axT.set_ylabel("T(y) [N·m]")
+    axT.set_title("Internal Torque along wing span")
+    axT.grid(True)
 
-    axs[1].plot(y, T_arr, lw=2, color="tab:green")
-    axs[1].axhline(0, color="k", lw=0.6)
-    axs[1].set_ylabel("T(y) [N·m]")
-    axs[1].set_title("Internal Torque along wing span")
-    axs[1].grid(True)
-
-    axs[2].plot(y, M_arr, lw=2, color="tab:red")
-    axs[2].axhline(0, color="k", lw=0.6)
-    axs[2].set_xlabel("Spanwise coordinate y (m)")
-    axs[2].set_ylabel("M(y) [N·m]")
-    axs[2].set_title("Internal Bending Moment along wing span")
-    axs[2].grid(True)
+    # Bending moment — separate figure
+    figM, axM = plt.subplots(figsize=(8, 4), constrained_layout=True)
+    if title: figM.suptitle(f"{title} — Bending Moment M(y)")
+    axM.plot(y, M_arr, lw=2, color="tab:red")
+    axM.axhline(0, color="k", lw=0.6)
+    axM.set_xlabel("Spanwise coordinate y (m)")
+    axM.set_ylabel("M(y) [N·m]")
+    axM.set_title("Internal Bending Moment along wing span")
+    axM.grid(True)
 
     plt.show()
 
