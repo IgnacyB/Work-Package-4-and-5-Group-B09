@@ -15,18 +15,33 @@ def _eval_on_grid(f, y):
     except TypeError:
         return np.asarray(f(), dtype=float)   # function returns cached array
 
-def _colors_for_cases(n, cmap_name_sequence=("tab20", "Set3", "Accent", "Dark2", "Paired", "hsv", "nipy_spectral")):
-    """Return n distinct RGBA colors sampled from a suitable colormap."""
-    for name in cmap_name_sequence:
-        try:
-            cmap = plt.get_cmap(name)
-            colors = cmap(np.linspace(0.0, 1.0, max(n, 2)))
-            return colors[:n]
-        except Exception:
-            continue
-    # fallback
-    cmap = plt.get_cmap("viridis")
-    return cmap(np.linspace(0.0, 1.0, max(n, 2)))[:n]
+def _big_distinct_palette(n, hsv_sat=0.97, hsv_val=0.92, hsv_offset=0.11, mix=0.6):
+    """
+    Generate n visually distinct RGBA colors by:
+    - sampling HSV hues evenly (high saturation/value),
+    - mixing with categorical palettes to increase variation.
+    """
+    if n <= 0:
+        return np.empty((0, 4), dtype=float)
+
+    # HSV base
+    hues = (np.linspace(0.0, 1.0, n, endpoint=False) + hsv_offset) % 1.0
+    hsv_rgbs = np.array([colorsys.hsv_to_rgb(h, hsv_sat, hsv_val) for h in hues], dtype=float)
+
+    # categorical palettes for variety
+    cat_names = ["tab20", "Set3", "Accent", "Dark2", "Paired", "tab20b", "tab20c"]
+    cat_rgbs = []
+    for name in cat_names:
+        cmap = plt.get_cmap(name)
+        m = max(n, 20)
+        cat_rgbs.append(cmap(np.linspace(0, 1, m))[:, :3])
+    cat_rgbs = np.vstack(cat_rgbs)
+    cat_pick = cat_rgbs[np.linspace(0, len(cat_rgbs) - 1, n).astype(int)]
+
+    # mix HSV and categorical colors
+    rgbs = (mix * hsv_rgbs + (1.0 - mix) * cat_pick)
+    rgbs = np.clip(rgbs, 0.0, 1.0)
+    return np.hstack([rgbs, np.ones((n, 1))])  # add alpha=1
 
 def plot_internal_loads(title=None, case_id=None, save=False, save_dir=None):
     """Plot V, T, M as three separate figures. Optionally save with naming:
@@ -83,42 +98,38 @@ def plot_internal_loads(title=None, case_id=None, save=False, save_dir=None):
     plt.show()
 
 def plot_all_cases_internal_distributions(Load_cases_list, load_calculations, case_indexes=None, split_legend=False):
-
     if case_indexes is None:
         case_indexes = list(range(len(Load_cases_list)))
 
-    figV, axV = plt.subplots(figsize=(8,4))
-    figT, axT = plt.subplots(figsize=(8,4))
-    figM, axM = plt.subplots(figsize=(8,4))
+    figV, axV = plt.subplots(figsize=(9, 4))
+    figT, axT = plt.subplots(figsize=(9, 4))
+    figM, axM = plt.subplots(figsize=(9, 4))
 
-    # generate a distinct color per case
-    colors = _colors_for_cases(len(case_indexes))
+    # bigger, distinct color palette for all load cases
+    colors = _big_distinct_palette(len(case_indexes))
 
     for i, idx in enumerate(case_indexes):
         case = Load_cases_list[idx]
-        v_cruise = case[1]
-        mass_aircraft =  case[2]
-        load_factor = case[3]
-        rho = case[4]
-        mass_fuel = case[5]
-
+        v_cruise, mass_aircraft, load_factor, rho, mass_fuel = case[1], case[2], case[3], case[4], case[5]
         load_calculations.set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fuel)
 
-        V_arr = load_calculations.V()
-        T_arr = load_calculations.T()
-        M_arr = load_calculations.M()
-        label = f"{case[0]} (v={v_cruise:.1f} m/s, n={case[3]:.2f})"
-        color = colors[i % len(colors)]
-        axV.plot(y_arr, V_arr, lw=1.6, color=color, label=label)
-        axT.plot(y_arr, T_arr, lw=1.6, color=color, label=label)
-        axM.plot(y_arr, M_arr, lw=1.6, color=color, label=label)
-    for fig, ax in ((figV, axV), (figT, axT), (figM, axM)):
+        V_arr = load_calculations.V(y_arr)
+        T_arr = load_calculations.T(y_arr)
+        M_arr = load_calculations.M(y_arr)
+        label = f"{case[0]} (v={v_cruise:.1f} m/s, n={load_factor:.2f})"
+        color = colors[i]
+
+        axV.plot(y_arr, V_arr, lw=1.8, color=color, label=label)
+        axT.plot(y_arr, T_arr, lw=1.8, color=color, label=label)
+        axM.plot(y_arr, M_arr, lw=1.8, color=color, label=label)
+
+    for ax in (axV, axT, axM):
         ax.set_xlabel("y [m]")
-        ax.grid(True)
+        ax.grid(True, linestyle="--", alpha=0.5)
 
     axV.set_title("Internal Shear V(y) — multiple load cases")
     axV.set_ylabel("V(y) [N]")
-
+    
     axT.set_title("Internal Torque T(y) — multiple load cases")
     axT.set_ylabel("T(y) [N·m]")
 
@@ -126,10 +137,8 @@ def plot_all_cases_internal_distributions(Load_cases_list, load_calculations, ca
     axM.set_ylabel("M(y) [N·m]")
 
     if split_legend:
-        # make room on the right for two stacked legend boxes
         for fig in (figV, figT, figM):
             fig.subplots_adjust(right=0.72)
-
         for ax in (axV, axT, axM):
             handles, labels = ax.get_legend_handles_labels()
             if not labels:
@@ -141,7 +150,6 @@ def plot_all_cases_internal_distributions(Load_cases_list, load_calculations, ca
                              bbox_to_anchor=(1.02, 0.45), loc='upper left', fontsize='small', frameon=True)
             ax.add_artist(leg1)
     else:
-        # single legend with two columns (compact)
         for ax in (axV, axT, axM):
             ax.legend(ncol=2, loc="best", fontsize="small")
 
