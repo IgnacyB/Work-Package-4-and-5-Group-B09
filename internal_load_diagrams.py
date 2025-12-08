@@ -15,6 +15,19 @@ def _eval_on_grid(f, y):
     except TypeError:
         return np.asarray(f(), dtype=float)   # function returns cached array
 
+def _colors_for_cases(n, cmap_name_sequence=("tab20", "Set3", "Accent", "Dark2", "Paired", "hsv", "nipy_spectral")):
+    """Return n distinct RGBA colors sampled from a suitable colormap."""
+    for name in cmap_name_sequence:
+        try:
+            cmap = plt.get_cmap(name)
+            colors = cmap(np.linspace(0.0, 1.0, max(n, 2)))
+            return colors[:n]
+        except Exception:
+            continue
+    # fallback
+    cmap = plt.get_cmap("viridis")
+    return cmap(np.linspace(0.0, 1.0, max(n, 2)))[:n]
+
 def plot_internal_loads(title=None, case_id=None, save=False, save_dir=None):
     """Plot V, T, M as three separate figures. Optionally save with naming:
        'LC-XX Shear distribution', 'LC-XX Torque distribution', 'LC-XX Bending moment distribution'."""
@@ -78,7 +91,10 @@ def plot_all_cases_internal_distributions(Load_cases_list, load_calculations, ca
     figT, axT = plt.subplots(figsize=(8,4))
     figM, axM = plt.subplots(figsize=(8,4))
 
-    for idx in case_indexes:
+    # generate a distinct color per case
+    colors = _colors_for_cases(len(case_indexes))
+
+    for i, idx in enumerate(case_indexes):
         case = Load_cases_list[idx]
         v_cruise = case[1]
         mass_aircraft =  case[2]
@@ -92,9 +108,10 @@ def plot_all_cases_internal_distributions(Load_cases_list, load_calculations, ca
         T_arr = load_calculations.T()
         M_arr = load_calculations.M()
         label = f"{case[0]} (v={v_cruise:.1f} m/s, n={case[3]:.2f})"
-        axV.plot(y_arr, V_arr, lw=1.2, label=label)
-        axT.plot(y_arr, T_arr, lw=1.2, label=label)
-        axM.plot(y_arr, M_arr, lw=1.2, label=label)
+        color = colors[i % len(colors)]
+        axV.plot(y_arr, V_arr, lw=1.6, color=color, label=label)
+        axT.plot(y_arr, T_arr, lw=1.6, color=color, label=label)
+        axM.plot(y_arr, M_arr, lw=1.6, color=color, label=label)
     for fig, ax in ((figV, axV), (figT, axT), (figM, axM)):
         ax.set_xlabel("y [m]")
         ax.grid(True)
