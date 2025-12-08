@@ -28,7 +28,7 @@ f_dist = None
 
 #Assumptions
 #The wing and fuel weight force act in the centroid of the wingbox
-x_bar_c= cx_grid  # x-coordinate of centroid of wingbox as function of spanwise location
+x_bar_c= 1/2  # x-coordinate of centroid of wingbox as function of spanwise location
 x_lift = 1/4 #location of aerodynamic lift assumed to be at quarter chord
 
 #WEIGHT DISTRIBUTION (HALF OF SPAN)
@@ -67,7 +67,7 @@ def set_operating_conditions(v_cruise, mass_aircraft, load_factor, rho, mass_fue
 
 #DISTANCE FROM LIFT TO CENTROID OF WINGBOX AS FUNCTION OF SPANWISE LOCATION
 def distance_lift_centroid(x_bar_c, x_lift):
-    return (x_bar_c) - x_lift * c(y_arr)
+    return (x_bar_c - x_lift) * c(y_arr)
 
 def dN():
     if CL_op is None:
