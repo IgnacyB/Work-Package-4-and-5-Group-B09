@@ -190,90 +190,18 @@ def MOI_multi_cell(y):
    
     return MOI_total, x_centroid
 
-"""
-The plotting functions use the same principle to plot the MOI as a function of span for either single or multicell
-"""
 
-def plot_MOI_single_cell(y=None, n=200, figsize=(10,4), dpi=100):
-    """Plot MOI_single_cell from 0 to b/2.
-    Evaluates MOI_single_cell on n points (or on provided y array) and shows a simple plot.
-    """
-    if y is None:
-        y = np.linspace(0, b/2, n)
-    else:
-        y = np.asarray(y)
-
-    # evaluate (use Python loop because MOI_single_cell does internal imports and is not vectorized)
-    vals = []
-    for yy in y:
-        try:
-            vals.append(MOI_single_cell(float(yy)))
-        except Exception as e:
-            vals.append(np.nan)
-
-    vals = np.asarray(vals, dtype=float)
-
-    fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
-    ax.plot(y, vals, lw=2, color="#1f77b4")
-    ax.fill_between(y, vals, alpha=0.12, color="#1f77b4")
-    ax.set_xlabel("Spanwise coordinate y (m)")
-    ax.set_ylabel("MOI_single_cell [m^4]")
-    ax.set_title("MOI_single_cell along half-span (0 to b/2)")
-    ax.grid(True, linestyle="--", alpha=0.6)
-
-    # mark and annotate max value (ignoring NaNs)
-    if np.any(~np.isnan(vals)):
-        idx = np.nanargmax(vals)
-        ax.plot(y[idx], vals[idx], "o", color="#d62728")
-        ax.annotate(f"{vals[idx]:.3e}", xy=(y[idx], vals[idx]),
-                    xytext=(8, 8), textcoords="offset points", fontsize=9,
-                    arrowprops=dict(arrowstyle="->", lw=0.8))
-
-    plt.tight_layout()
-    plt.show()
-
-
-def plot_MOI_multi_cell(y=None, n=200, figsize=(10,4), dpi=100):
-    """Plot MOI_multi_cell from 0 to b/2."""
-    if y is None:
-        y = np.linspace(0, b/2, n)
-    else:
-        y = np.asarray(y)
-
-    vals = []
-    for yy in y:
-        try:
-            vals.append(MOI_multi_cell(float(yy)))
-        except Exception:
-            vals.append(np.nan)
-
-    vals = np.asarray(vals, dtype=float)
-
-    fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
-    ax.plot(y, vals, lw=2, color="#2ca02c", label="MOI_multi_cell")
-    ax.fill_between(y, vals, alpha=0.12, color="#2ca02c")
-    ax.set_xlabel("Spanwise coordinate y (m)")
-    ax.set_ylabel("MOI_multi_cell [m^4]")
-    ax.set_title("MOI_multi_cell along half-span (0 to b/2)")
-    ax.grid(True, linestyle="--", alpha=0.6)
-
-    if np.any(~np.isnan(vals)):
-        idx = np.nanargmax(vals)
-        ax.plot(y[idx], vals[idx], "o", color="#d62728")
-        ax.annotate(f"{vals[idx]:.3e}", xy=(y[idx], vals[idx]),
-                    xytext=(8, 8), textcoords="offset points", fontsize=9,
-                    arrowprops=dict(arrowstyle="->", lw=0.8))
-
-    ax.legend(fontsize=9)
-    plt.tight_layout()
-    plt.show()
-
-#Setting MOI grid for further calculations
 from grid_setup import y_arr
 MOI_vec = np.vectorize(MOI)
 MOI_grid = MOI_vec(y_arr)[0]  # extract only MOI values, not centroids
 cx_grid = MOI_vec(y_arr)[1]  # extract only centroid x locations
 
 if __name__ == "__main__":
-    plot_MOI_single_cell()
-    plot_MOI_multi_cell()
+    import matplotlib.pyplot as plt
+
+    plt.plot(y_arr, MOI_grid)
+    plt.title("Moment of Inertia Distribution along the Wing Span")
+    plt.xlabel("Spanwise Location y (m)")
+    plt.ylabel("Moment of Inertia Ixx (m^4)")
+    plt.grid()
+    plt.show()
