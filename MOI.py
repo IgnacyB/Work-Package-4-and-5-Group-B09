@@ -201,7 +201,7 @@ if __name__ == "__main__":
 
     plt.plot(y_arr, MOI_grid)
     plt.title("Moment of Inertia Distribution along the Wing Span")
-    plt.xlabel("Spanwise Location y (m)")
-    plt.ylabel("Moment of Inertia Ixx (m^4)")
+    plt.xlabel("Spanwise Location y [m]")
+    plt.ylabel("Moment of Inertia Ixx [m^4]")
     plt.grid()
     plt.show()
