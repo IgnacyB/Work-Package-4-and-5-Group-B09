@@ -25,11 +25,9 @@ CL = 2 * mass_aircraft * g / (rho_cruise * v_cruise**2 * S_w) # Calculating the 
 def weight_distribution(mass_wing, b, c_r, c_t):
 
     y_0 = b / 2 * c_r / (c_r - c_t) #location where the load distribution becomes zero
-    print("y0 wing:", y_0)
-    A = mass_wing*g / (y_0**2-(y_0 - b/2)**2)  #It is divided by 2 since we are only considering half the span and thus half of the weight
-    print("A wing:", A)
+    A = 3 / 2 * mass_wing*g * np.cos(np.radians(CL))/ (y_0**3-(y_0 - b/2)**3)  #It is divided by 2 since we are only considering half the span and thus half of the weight
     def w_dist(y):
-        return A * (y_0 - y)
+        return A * (y_0 - y)**2
     
     return w_dist
 
@@ -40,10 +38,7 @@ def weight_distribution(mass_wing, b, c_r, c_t):
 def fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t):
 
     y_0 = b / 2 * c_r / (c_r - c_t) #location where the load distribution becomes zero
-    print("y0 fuel:", y_0)
-
-    A = 3 / 2 * n_fuel * mass_fuel*g / (y_0**3-(y_0 - b/2)**3) #It is divided by 2 since we are only considering half the span and thus half of the weight
-    print("A fuel:", A)
+    A = 3 / 2 * mass_fuel*g * np.cos(np.radians(CL))/ (y_0**3-(y_0 - b/2)**3) #It is divided by 2 since we are only considering half the span and thus half of the weight
     def f_dist(y):
         return A * (y_0 - y)**2
     
