@@ -32,18 +32,3 @@ def twist_function():
     twist = interp1d(y_arr, twist_grid, fill_value = "extrapolate")
 
     return twist_grid
-
-# twist_at_tip = twist_function()[1][-1]
-#print("The twist angle is {} rad or {} degrees".format(twist_function(b/2),twist_function(b/2)*180/math.pi))
-
-
-
-# def dthetady(y):
-#     return T(y) / (G * torsional_constant_singlecell(y))
-
-# #y_pos = int(input("Spanwise location: "))
-
-# def twist(y):
-#     return sp.integrate.quad(dthetady,0,float(y))[0]
-
-# print(twist(5))

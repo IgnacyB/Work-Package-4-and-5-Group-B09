@@ -78,3 +78,17 @@ def torsional_constant(y):
             J_y = (4*A*A)/int
 
     return J_y
+
+from grid_setup import y_arr
+J_vec = np.vectorize(torsional_constant)
+J_grid = J_vec(y_arr)
+
+if __name__ == "__main__": 
+      import matplotlib.pyplot as plt
+
+      plt.plot(y_arr, J_grid)
+      plt.title("Torsional constant distribution along the wingspan")
+      plt.xlabel("Spanwise location y [m]")
+      plt.ylabel("Torsional stiffness constant J [m^4]")
+      plt.grid()
+      plt.show()
