@@ -14,7 +14,8 @@ def plot_lateral_deflection(title=None):
     v_grid = lateral_deflection_function()
     plt.plot(y_arr, v_grid, lw=2, color="tab:blue")
     
-    plt.gca().invert_yaxis()
+    if v_grid[-1] < 0:
+        plt.gca().invert_yaxis()
 
     if title:
         plt.title(f"{title} — Lateral deflection")
@@ -48,6 +49,9 @@ def plot_twist_distribution(title=None):
 
     # Plot twist distribution
     plt.plot(y_arr, twist_deg, lw=2, color="tab:blue")
+
+    if twist_deg[-1] < 0:
+        plt.gca().invert_yaxis()
 
     if title:
         plt.title(f"{title} — Twist distribution")
