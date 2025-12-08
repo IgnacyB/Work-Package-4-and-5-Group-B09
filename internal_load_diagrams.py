@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+import colorsys
 import math
 #Importing important constants and functions
 from Aircraft_parameters import b
@@ -129,7 +130,7 @@ def plot_all_cases_internal_distributions(Load_cases_list, load_calculations, ca
 
     axV.set_title("Internal Shear V(y) — multiple load cases")
     axV.set_ylabel("V(y) [N]")
-    
+
     axT.set_title("Internal Torque T(y) — multiple load cases")
     axT.set_ylabel("T(y) [N·m]")
 
