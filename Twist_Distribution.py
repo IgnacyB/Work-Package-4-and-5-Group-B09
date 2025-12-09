@@ -1,36 +1,42 @@
-# This is the file used to calculate the twist distribution in the wing
+## This is the file used to calculate the twist distribution in the wing
 
 #first import the necessary packages and functions from 
 import numpy as np
+import math
 import scipy as sp
 from scipy.integrate import cumulative_trapezoid
 from scipy.interpolate import interp1d
 
 #import constants from other files
 from material_properties import G
-from torsional_stiffness_functions import torsional_constant_singlecell
+from torsional_stiffness_functions import torsional_constant
 from load_calculations import T
 from Aircraft_parameters import b
 
-n = 3000
-y_max = b/2
-y_grid = np.linspace(0, y_max, n)
+def twist_function():
+    n = 3000
+    y_max = b/2
+    y_grid = np.linspace(0, y_max, n)
 
-#vectorize torsional stiffness J calculations
-J_vec = np.vectorize(torsional_constant_singlecell)
-J_grid = J_vec(y_grid)
+    #vectorize torsional stiffness J calculations
+    J_vec = np.vectorize(torsional_constant)
+    J_grid = J_vec(y_grid)
 
-#calculate T and dthetady
-T_grid = T(y_grid)
-dthetady_grid = T_grid / (G * J_grid)
+    #calculate T and dthetady
+    
+    T_grid = T(y_grid)
+    dthetady_grid = T_grid / (G * J_grid)
 
-#integrate to obtain twist
-twist_grid = cumulative_trapezoid(dthetady_grid, y_grid, initial = 0)
+    #integrate to obtain twist
+    twist_grid = cumulative_trapezoid(dthetady_grid, y_grid, initial = 0)
 
-#make function callable
-twist = interp1d(y_grid, twist_grid, fill_value = "extrapolate")
+    #make function callable
+    twist = interp1d(y_grid, twist_grid, fill_value = "extrapolate")
 
-print(twist(b/2))
+    return(y_grid, twist_grid)
+
+# twist_at_tip = twist_function()[1][-1]
+#print("The twist angle is {} rad or {} degrees".format(twist_function(b/2),twist_function(b/2)*180/math.pi))
 
 
 

@@ -25,8 +25,7 @@ CL = 2 * mass_aircraft * g / (rho_cruise * v_cruise**2 * S_w) # Calculating the 
 def weight_distribution(mass_wing, b, c_r, c_t):
 
     y_0 = b / 2 * c_r / (c_r - c_t) #location where the load distribution becomes zero
-
-    A = 3 / 2 * mass_wing*g / (y_0**3-(y_0 - b/2)**3) #It is divided by 2 since we are only considering half the span and thus half of the weight
+    A = 3 / 2 * mass_wing*g * np.cos(np.radians(CL))/ (y_0**3-(y_0 - b/2)**3)  #It is divided by 2 since we are only considering half the span and thus half of the weight
     def w_dist(y):
         return A * (y_0 - y)**2
     
@@ -39,8 +38,7 @@ def weight_distribution(mass_wing, b, c_r, c_t):
 def fuel_distribution(mass_fuel, n_fuel, b, c_r, c_t):
 
     y_0 = b / 2 * c_r / (c_r - c_t) #location where the load distribution becomes zero
-
-    A = 3 / 2 * n_fuel * mass_fuel*g / (y_0**3-(y_0 - b/2)**3) #It is divided by 2 since we are only considering half the span and thus half of the weight
+    A = 3 / 2 * mass_fuel*g * np.cos(np.radians(CL))/ (y_0**3-(y_0 - b/2)**3) #It is divided by 2 since we are only considering half the span and thus half of the weight
     def f_dist(y):
         return A * (y_0 - y)**2
     
@@ -90,7 +88,7 @@ def _call_array(func, y):
 def V(y):
     # scalar behavior (keep previous quad-based result)
     if np.ndim(y) == 0:
-        Vval, error = sp.integrate.quad(dV, b/2, float(y))
+        Vval, error = sp.integrate.quad(dV, float(y), b/2)
         return Vval
     # array/vectorized behavior (fast cumulative integration)
     y_arr = np.asarray(y)
@@ -99,10 +97,10 @@ def V(y):
     V_flip = cumulative_trapezoid(np.flip(dV_arr), np.flip(y_arr), initial=0)
     V_arr = -1 * np.flip(V_flip)
     return V_arr
-
+print(V(b/2), V(0))
 def T(y):
     if np.ndim(y) == 0:
-        Tval, error = sp.integrate.quad(dT, b/2, float(y))
+        Tval, error = sp.integrate.quad(dT, float(y), b/2)
         return Tval
     y_arr = np.asarray(y)
     dT_arr = _call_array(dT, y_arr)
@@ -113,7 +111,7 @@ def T(y):
 def M(y):
     # scalar: integrate V via quad (keeps previous API)
     if np.ndim(y) == 0:
-        Mval, error = sp.integrate.quad(lambda s: V(s), b/2, float(y))
+        Mval, error = sp.integrate.quad(lambda s: V(s), float(y), b/2)
         return Mval
     # array: build V array then integrate
     y_arr = np.asarray(y)
