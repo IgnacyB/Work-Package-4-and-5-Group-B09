@@ -4,7 +4,7 @@ from Aircraft_parameters import b, c_r, c_t, c, S_w
 #Importing functions from other files
 from Linearmodel import linear_model
 from Interpolation import interpolate
-from Load_cases import v_cruise, rho_cruise
+
 
 #import modules
 import numpy as np
