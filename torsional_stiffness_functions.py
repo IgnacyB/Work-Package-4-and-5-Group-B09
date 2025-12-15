@@ -41,9 +41,9 @@ def torsional_constant(y):
 
             #calculate lenghts of upper and lower wingbox components
             l_upper_1 = np.sqrt(((location_middle-location_front)*c)**2+((h_upper_middle-h_upper_front)*c)**2)
-            l_lower_1 = np.sqrt(((location_middle-location_front)*c)**2+((h_lower_middle-h_lower_front))**2)
+            l_lower_1 = np.sqrt(((location_middle-location_front)*c)**2+((h_lower_middle-h_lower_front)*c)**2)
             l_upper_2 = np.sqrt(((location_rear-location_middle)*c)**2+((h_upper_rear-h_upper_middle)*c)**2)
-            l_lower_2 = np.sqrt(((location_rear-location_middle)*c)**2+((h_lower_rear-h_lower_middle))**2)
+            l_lower_2 = np.sqrt(((location_rear-location_middle)*c)**2+((h_lower_rear-h_lower_middle)*c)**2)
 
             #calculate enclosed areas 
             A_1 = ((location_middle-location_front)*c*c*((h_upper_front-h_lower_front)+(h_upper_middle-h_lower_middle)))/2
@@ -70,7 +70,7 @@ def torsional_constant(y):
 
             #calculate lengths of upper and lower wingbox components
             l_upper = np.sqrt(((location_rear-location_front)*c)**2+((h_upper_rear-h_upper_front)*c)**2)
-            l_lower = np.sqrt(((location_rear-location_front)*c)**2+((h_lower_rear-h_lower_front))**2)
+            l_lower = np.sqrt(((location_rear-location_front)*c)**2+((h_lower_rear-h_lower_front)*c)**2)
 
             #calculate enclosed area, path integral and torsional stiffness constant
             A = ((location_rear-location_front)*c*c*((h_upper_front-h_lower_front)+(h_upper_rear-h_lower_rear)))/2
@@ -84,11 +84,14 @@ J_vec = np.vectorize(torsional_constant)
 J_grid = J_vec(y_arr)
 
 if __name__ == "__main__": 
-      import matplotlib.pyplot as plt
+    import matplotlib.pyplot as plt
 
-      plt.plot(y_arr, J_grid)
-      plt.title("Torsional constant distribution along the wingspan")
-      plt.xlabel("Spanwise location y [m]")
-      plt.ylabel("Torsional stiffness constant J [m^4]")
-      plt.grid()
-      plt.show()
+    plt.plot(y_arr, J_grid)
+    plt.title("Torsional constant distribution along the wingspan")
+    plt.xlabel("Spanwise location y [m]")
+    plt.ylabel("Torsional stiffness constant J [m^4]")
+    plt.grid()
+    plt.show()
+
+    print(J_grid[0])
+      
